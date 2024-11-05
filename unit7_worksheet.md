@@ -49,39 +49,78 @@ cat /etc/*release
   ```
   This searches for filenames in `/etc` that are common repository names.  
 
+Finding a way to automate this task with a shell script would make it easier to do this for more than one server. It could also be written to take arguments so that this particular piece of software isn't hard-coded. It could look something like this:
+```bash
+#!/bin/bash
+
+declare OS_TYPE
+
+if [ $# -eq 0 ]; then 
+    printf "You didn't provide any arguments!\n" && exit
+fi
+
+
+# or
+OS_TYPE="$(grep -i 'id_like' /etc/*release | awk -F= '{print $2}')"
+
+case $OS_TYPE in:
+    (*rhel*|*centos*|*redhat*)
+        success=$(cat /etc/yum.repos.d/*.repo | grep "$1");
+        ;;
+    (*debian*)
+        success=$(cat /etc/apt/sources* | grep "$1");
+        ;;
+    (*)
+        printf "Couldn't identify the operating system (not debian or redhat based)";
+        ;;
+esac
+
+if [ -n $success ]; then
+    printf "Success: %s\n" "$success"
+else
+    printf "Couldn't verify the existence of the package: %s\n" "$1"
+fi
+```
+
+
 
 2.	How would you check another server to see if the software was installed there?
 
 I could SSH into that server, then do a check for the software they need. 
-For Debian-based:
-```bash
-dpkg -l | grep -i 'software_name'
-```
-For RedHat-based: 
-```bash
-rpm -qa | grep -i 'software_name'
-```
-If the software wasn't on the other server, I'd want to check that the repos were
-properly configured there by checking the repos as I did in the first question.  
+* For Debian-based:
+  ```bash
+  # Using dpkg:
+  dpkg -l | grep -i 'software_name'
+  # Using apt:
+  apt list --installed package_name 
+  # If it's been a while since the software was installed, check older logs.
+  # The logs may have been archived if it's been a while.  
+  zgrep "install software_name" /var/log/dpkg.log.*.gz
+  ```
+
+* For RedHat-based: 
+  ```bash
+  rpm -qa | grep -i 'software_name'
+  ```
+If the software wasn't on the other server, I'd want to check that the repositories that contain the software were properly configured there by checking the repos as I did in the first question.  
 
 
 3.	If you find the software, how might you figure out when it was installed? (Time/Date)
 
-Depending on the OS being used, the package managers have some commands that will
-show when a specific package was installed.  
+Depending on the OS being used, the package managers have some commands that will show when a specific package was installed.  
 
-For Debian-based:
-```bash
-apt list --installed package_name
-```
+* For Debian-based:
+  ```bash
+  grep -i 'package_name' /var/log/dpkg.log
+  ```
 
-For RedHat-based:
-```bash
-rpm -qi package_name | grep -i 'install'
-yum history list package_name
-```
-
-
+* For RedHat-based:
+  ```bash
+  rpm -qi package_name | grep -i 'install'
+  yum history list package_name
+  ```
+  
+  
 
 ## Unit 7 Discussion Post 3
 (After you have completed the lab) - Looking at the concept of group install from DNF or Yum. Why do you think an administrator may never want to use that in a running system? Why might an engineer want to or not want to use that? This is a thought exercise, so it’s not a “right or wrong” answer it’s for you to think about.
