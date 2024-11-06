@@ -9,17 +9,8 @@ Fill out this sheet as you progress through the lab and discussions. Hold onto a
 ### Unit 7 Discussion Post 1
 Why is software versioning so important to software security? Can you find 3 reasons, from the internet, AI, or your peers? 
 1. CVEs (Common Vulnerability Exposures). These are publications on the latest known security vulnerabilities in software. It's important to make sure your software's versions are newer than the last CVEs regarding each piece of software.  
-2. Compatibility. Software often pushes "breaking changes," which means that an
-   update may contain software that could make your current configurations or
-   dependencies on that software package obsolete. If you have written code that
-   depends on a tool, if that tool has just pushed a critical change then it could
-   change the way your code works. This could cause unpredictable behavior, and
-   unpredictable code being run on your servers is always a security risk.  
-3. Potential unknown security risks. If a company updates to the newest version of a
-   software package that just dropped, there's a chance there may be some critical
-   security vulnerability that has not been discovered yet. As long as the package
-   version is newer than the latest CVE, there should be no need to update it if it
-   works as intended.  
+2. Compatibility. Software often pushes "breaking changes," which means that an update may contain software that could make your current configurations or dependencies on that software package obsolete. If you have written code that depends on a tool, if that tool has just pushed a critical change then it could change the way your code works. This could cause unpredictable behavior, and unpredictable code being run on your servers is always a security risk.  
+3. Potential unknown security risks. If a company updates to the newest version of a software package that just dropped, there's a chance there may be some critical security vulnerability that has not been discovered yet. As long as the package version is newer than the latest CVE, there should be no need to update it if it works as intended.  
 
 
 ### Unit 7 Discussion Post 2
@@ -36,65 +27,33 @@ cat /etc/*release
   cat /etc/apt/sources.list
   cat /etc/apt/sources.list.d/*.list
   ```
-  * If the OS is RedHat-based (Rocky, RHEL, CentOS), then `yum`/`dnf` is used:   
+  * If the OS is RedHat-based (Rocky, RHEL, CentOS), then `yum`/`rpm`/`dnf` is used:   
   ```bash
   cat /etc/yum.repos.d/*.repo
   ```
-  Each `.repo` file defines a repository with URLs and configurations for `yum` or
-  `dnf` to use.  
+  Each `.repo` file defines a repository with URLs and configurations for `yum` or `dnf` to use.  
 * For openSUSE: `zypper repos`
-* To scan for common repository names in `/etc`:
+* To manually scan for common repository names in `/etc`:
   ```bash
   grep -rE '^.deb |^.repo ' /etc/*
   ```
   This searches for filenames in `/etc` that are common repository names.  
 
-Finding a way to automate this task with a shell script would make it easier to do this for more than one server. It could also be written to take arguments so that this particular piece of software isn't hard-coded. It could look something like this:
-```bash
-#!/bin/bash
-
-declare OS_TYPE
-
-if [ $# -eq 0 ]; then 
-    printf "You didn't provide any arguments!\n" && exit
-fi
-
-
-# or
-OS_TYPE="$(grep -i 'id_like' /etc/*release | awk -F= '{print $2}')"
-
-case $OS_TYPE in:
-    (*rhel*|*centos*|*redhat*)
-        success=$(cat /etc/yum.repos.d/*.repo | grep "$1");
-        ;;
-    (*debian*)
-        success=$(cat /etc/apt/sources* | grep "$1");
-        ;;
-    (*)
-        printf "Couldn't identify the operating system (not debian or redhat based)";
-        ;;
-esac
-
-if [ -n $success ]; then
-    printf "Success: %s\n" "$success"
-else
-    printf "Couldn't verify the existence of the package: %s\n" "$1"
-fi
-```
-
 
 
 2.	How would you check another server to see if the software was installed there?
 
-I could SSH into that server, then do a check for the software they need. 
+I could SSH into that server, then do a check for the software that we need. 
 * For Debian-based:
   ```bash
   # Using dpkg:
   dpkg -l | grep -i 'software_name'
   # Using apt:
   apt list --installed package_name 
-  # If it's been a while since the software was installed, check older logs.
-  # The logs may have been archived if it's been a while.  
+  ```
+  If the software was installed on the server a while ago, I might need to check
+  older logs that have been archived and compressed using `zgrep`
+  ```bash
   zgrep "install software_name" /var/log/dpkg.log.*.gz
   ```
 
@@ -102,21 +61,60 @@ I could SSH into that server, then do a check for the software they need.
   ```bash
   rpm -qa | grep -i 'software_name'
   ```
+
 If the software wasn't on the other server, I'd want to check that the repositories that contain the software were properly configured there by checking the repos as I did in the first question.  
 
+Automating this task with a shell script would make it easier to do this for more than one server. It could also be written to take arguments so that this particular piece of software isn't hard-coded, making it reusable to check for other software in the future:  
+```bash
+#!/bin/bash
+
+# Check for an argument
+if [ $# -eq 0 ]; then 
+    printf "You didn't provide any arguments.\n" && exit
+fi
+
+# Check the current OS
+declare DISTRO_TYPE
+DISTRO_TYPE="$(grep -i 'id_like' /etc/*release | awk -F= '{print $2}')"
+
+case $DISTRO_TYPE in:
+    (*rhel*|*centos*|*fedora*)
+        if ! rpm -qa | grep -qi "$1"; then
+            printf "Couldn't find the package %s on the system.\n" "$1" && exit
+        else 
+            printf "Package %s exists on this system.\n" "$1" && exit
+        fi;
+        ;;
+    (*debian*)
+        if ! dpkg -l | grep -qi "$1"; then
+            printf "Couldn't find the package %s in the repositories.\n" "$1" && exit
+        else 
+            printf "Package %s exists on this system.\n" "$1" && exit
+        fi
+        ;;
+    (*)
+        printf "Couldn't verify the existence of the package: %s\n" "$1"; 
+        printf "Couldn't identify the operating system (not debian or redhat based)\n";
+        exit; 
+        ;;
+esac
+```
+But since the task is urgent and the manager is hovering over me, I'd probably save this for another day.  
 
 3.	If you find the software, how might you figure out when it was installed? (Time/Date)
 
 Depending on the OS being used, the package managers have some commands that will show when a specific package was installed.  
 
-* For Debian-based:
+* For Debian-based systems, you can check the `dpkg` logs to find out when it was installed:
   ```bash
   grep -i 'package_name' /var/log/dpkg.log
+  # If it's an older compressed log, use zgrep
+  zgrep -i 'package_name' /var/log/dpkg.log.*.gz
   ```
 
-* For RedHat-based:
+* For RedHat-based, you can either query `rpm` or check `yum history list`:
   ```bash
-  rpm -qi package_name | grep -i 'install'
+  rpm -qi package_name | grep -i 'install date'
   yum history list package_name
   ```
   
