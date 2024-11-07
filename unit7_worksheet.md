@@ -101,6 +101,7 @@ esac
 ```
 But since the task is urgent and the manager is hovering over me, I'd probably save this for another day.  
 
+
 3.	If you find the software, how might you figure out when it was installed? (Time/Date)
 
 Depending on the OS being used, the package managers have some commands that will show when a specific package was installed.  
@@ -125,7 +126,6 @@ Depending on the OS being used, the package managers have some commands that wil
 
 1.	What is the concept of software bloat, and how do you think it relates?
 
-
 2.	What is the concept of a security baseline, and how do you think it relates?
 
 3.	How do you think something like this affects performance baselines?
@@ -133,13 +133,25 @@ Depending on the OS being used, the package managers have some commands that wil
 
 ## Definitions/Terminology
 * Yum: Yellowdog Updater, Modified. A package manager for RedHat-based systems.  
-* DNF: DNF is a package manager for RPM-based Linux distributions.  
+* DNF: DNF is a package manager for Linux distributions that use RPM, the RedHat
+  Package Manager.  
 * Repo: A repository is a collection of software packages that the package managers are allowed to draw from.  
-* GPG Key: Gnu Privacy Guard key. A key that is used, among other things, to sign
-  packages to verify authenticity.  
+* GPG Key: Gnu Privacy Guard key. A key that is used to sign things, such as software
+  packages. Used to verify authenticity, making sure that it came from a trusted
+  source.  
 * Software dependency: A software package that another package depends on. If a package is missing a dependency then it cannot be used.   
-* Software version
-* Semantic Version
+* Software version: A number that is assigned to a software package to identify the version of the software.  
+* Semantic Version: A versioning system that uses three numbers to respresent a
+  software version.
+    * Uses a naming convention of `<major.minor.patch>`
+        * The `major` version **must** be incremented any time backwards-incompatible changes 
+          are introduced the the public API.  
+            * Major version `0` is for initial development, when anything is subject to change at any given time, before a stable public API is released.
+            * When the stable public API is released, that is major version 1.
+            * `1.0.0` defines the public API.
+        * The `minor` version incremented when new, backwards-compatible features are introduced to the public API.
+            * Whenever the minor version is incremented, the patch version must be set back to `0`.  
+        * The `patch` version must be incremented when *only* backwards-compatible bug fixes are implemented.  
 
 
 ## Notes During Lecture/Class:
