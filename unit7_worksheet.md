@@ -234,8 +234,8 @@ https://semver.org/
   dnf config-manager --disable repo_name
   dnf repolist
   ```
-    * `dnf update --exclude=kernel*`: Update everything except for the kernel.  
-    * `dnf update --exclude=kernel* --exclude=kernel-core`: Update everything except for the kernel and the kernel-core.
+    * `dnf update --exclude=kernel*`: Update everything except for the kernel.
+      Supports the `*` wildcard.    
     * `dnf update systemd`: Update the given package only.  
     * `dnf search mariadb`: Search for a specific package.  
     * `dnf search all mariadb`: Search for a package, including everything matches
