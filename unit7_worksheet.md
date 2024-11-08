@@ -90,7 +90,7 @@ case $DISTRO_TYPE in:
             printf "Couldn't find the package %s in the repositories.\n" "$1" && exit
         else 
             printf "Package %s exists on this system.\n" "$1" && exit
-        fi
+        fi;
         ;;
     (*)
         printf "Couldn't verify the existence of the package: %s\n" "$1"; 
