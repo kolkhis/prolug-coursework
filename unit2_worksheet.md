@@ -2,6 +2,21 @@
 # ProLUG 101  
 ## Unit 2 Worksheet  
 
+## Table of Contents
+* [Unit 2 Worksheet](#unit-2-worksheet) 
+* [Instructions](#instructions) 
+* [Discussion Questions](#discussion-questions) 
+    * [Unit 1 Discussion Post 1: Think about how week 1 went for you.](#unit-1-discussion-post-1-think-about-how-week-1-went-for-you) 
+    * [Unit 1 Discussion Post 2](#unit-1-discussion-post-2) 
+* [Definitions/Terminology](#definitionsterminology) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
+    * [Links](#links) 
+    * [Terms](#terms) 
+    * [Useful tools](#useful-tools) 
+* [Lab and Assignment](#lab-and-assignment) 
+* [Digging Deeper](#digging-deeper) 
+* [Reflection Questions](#reflection-questions) 
+
 ## Instructions  
 Fill out this sheet as you progress through the lab and discussions. Turn in the sheet to scott.champine@simple2serious.com for grading and feedback.  
 

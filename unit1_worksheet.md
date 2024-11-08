@@ -2,6 +2,12 @@
 # ProLUG 101
 Unit 1 Worksheet
 
+## Table of Contents
+* [Instructions](#instructions) 
+* [Lab and Assignment](#lab-and-assignment) 
+    * [Digging Deeper](#digging-deeper) 
+    * [Reflection Questions](#reflection-questions) 
+
 ## Instructions
 Fill out this sheet as you progress through the lab and discussions.  
  
