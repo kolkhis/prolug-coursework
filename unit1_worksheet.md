@@ -108,10 +108,13 @@ administration of Linux systems in some way.
 
 ### Reflection Questions
 1.	What questions do you still have about this week?
-    * All block devices are not necessarily disks, but are all disks block devices?
+
+All block devices are not necessarily disks, but are all disks block devices?
+
 
 2.	How are you going to use what you’ve learned in your current role?
-    * I'm not in a role, but I will try to close the gap between where I am and where I
-      want to be as a sysadmin.
+
+I'm not in a role, but I will try to close the gap between where I am and where I
+want to be as a systems administrator.
 
 

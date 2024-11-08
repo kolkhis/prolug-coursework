@@ -126,9 +126,17 @@ Depending on the OS being used, the package managers have some commands that wil
 
 1.	What is the concept of software bloat, and how do you think it relates?
 
+Software bloat is when a system has more software than is needed to perform its tasks operate smoothly. Unnecessary software can take up critical system resources (CPU, memory, disk space) without contributing to the essential functionality of what the system needs to run.  
+Group installs could cause a system to experience software bloat, installing dependencies that might not be needed for the system to function.  
+
+
 2.	What is the concept of a security baseline, and how do you think it relates?
 
+A security baseline is a set of system configurations and the minimum amount of software a system needs for it to meet its security requirements. Going back to group installs, installing unnecessary dependencies could widen the attack surface of a machine, which would compromise the security baseline.  
+
 3.	How do you think something like this affects performance baselines?
+
+A performance baseline is the expected resource usage and responsiveness of a system wheen it is operating under normal conditions. If a system has installed a bunch of unnecessary software, it could be using up more resources than it needs to, which would affect the performance baseline.  
 
 
 ## Definitions/Terminology
@@ -156,29 +164,14 @@ Depending on the OS being used, the package managers have some commands that wil
 
 ## Notes During Lecture/Class:
 
-* How do we update?
-    * RedHat-based systems:
-        * `dnf`: `yum update`  
-    * Debian-based systems:  
-        * `dpkg`: `apt update`/`apt upgrade`
 
-For stateful nodes in enterprise:
-* You want to use a controlled internal repo for patching.
-* You download the software repos and then mirror it (mirrored internal controlled repo).   
+Misc notes:
 
 You shouldn't update the kernel unless you're ready to reboot that box.  
-The kernel is never actually updated. It installs the new kernel, and then moves over to that kernel.  
+The kernel is never actually "updated." The system installs the new kernel, and then moves over to that kernel, rather than updating the kernel in-place.  
 
----
 
-* When do we update?
-    * Stateful nodes need to be patched.  
-        * This is because 
-    * Stateless nodes don't get patched. The node will live its full life, and will come up with a new image (which may be patched).  
 
-Where are software packages stored?
-When were they last updated?
-What files are brought in by the package?
 
 ---
 
@@ -188,20 +181,37 @@ https://semver.org/
 
 
 ### Terms:
-Repos (Repositories): Can be local or remote.  
-* All packages come from a repo.  
-* Repos can be enabled or disabled as you wish (`dnf config-manager --disable/enable repo`).  
-* You can force GPG verification of all software found in the repositories.  
+* Repos (Repositories): Collections of software packages that package managers are allowed to draw from.  
+    * Can be local or remote.  
+    * All packages come from a repo.  
+    * Repos can be enabled or disabled as you wish (`dnf config-manager --disable/enable repo_name`).  
+    * You can force GPG verification of all software found in the repositories.  
+* Semantic Versioning: A versioning system that uses three numbers to represent a
+  software version and what potential breaking changes it may have from other
+  versions. 
+* Stateful nodes: Nodes that maintiain their state (configurations, data, and files)
+  across multiple sessions and reboots.  
+    * Stateful nodes need to be patched regularly. These will not be coming up with a new image like stateless nodes, and persistence is needed.  
+    * For stateful nodes in enterprise:
+        * You want to use a controlled internal repo for patching.
+        * You download the software repos and then mirror it (mirrored internal controlled repo).   
+* Stateless nodes: Nodes that are ephemeral - they do not retain their state across
+  sessions or reboots. 
+    * Stateless nodes don't get patched. The node will live its full life, and will come up with a new image (which may be patched).  
+    * These are easier to scale and redeploy with updated versions.  
+
 
 
 ### Useful tools:
 * `rmp`: RedHat Package Manager
+    * `rpm -qa`: Query all packages installed on the system.  
     * `rpm -qi systemd`: Show information about the given package
     * `rpm -q systemd`: See if the package is installed
-    * `rpm -qc systemd`: Show what files the 
-    * `rpm -ql systemd`: Show all files the package brings in
-    * `rpm -qR systemd`: Show all dependencies of the package (Required packages)
+    * `rpm -qc systemd`: Show the configuration files of the package.  
+    * `rpm -ql systemd`: Show all files the package brings into the system.  
+    * `rpm -qR systemd`: Show all dependencies of the package (required external packages).  
     * `rpm -q -changelog systemd`: Show the changelog of the package. 
+    
 
 * `dnf`: 
   ```bash
@@ -209,18 +219,25 @@ Repos (Repositories): Can be local or remote.
   dnf repolist
   ```
     * `dnf update --exclude=kernel*`: Update everything except for the kernel.  
-    * `dnf search mariadb`: Search for a specific package
+    * `dnf update --exclude=kernel* --exclude=kernel-core`: Update everything except for the kernel and the kernel-core.
+    * `dnf update systemd`: Update the given package only.  
+    * `dnf search mariadb`: Search for a specific package.  
     * `dnf search all mariadb`: Search for a package, including everything matches
       the package name
-    * `dnf update systemd`: Update a package
-    * `dnf repolist`: Show the list of repos
+    * `dnf repolist`: Show the list of repositories.  
     * `dnf history`: Show history of installed packages
     * Config file: `/etc/dnf/dnf.conf`
 * `yum`
-    * Config file: `/etc/yum.conf`
-    * `/etc/yum/yum.repos.d` 
+    * `yum repolist`: Shows the list of repositories (same as `dnf repolist`)
+    * Repos for the system are stored in `/etc/yum/yum.repos.d` 
+        * Files in this directory will be named `*.repo`, and will contain a list of
+          repositories and their configuration info.
+            * You can see if the repos are enabled, if they support GPG checking, shows
+              their URLs and mirrors, GPG key location, etc..  
+        * When a repo is added, it is enabled by default.  
+        * Disable a repo with `dnf config-manager --disable repo_name`
     * `yum update`
-* `rpm -qi kernel-core`: shows information about a package
+    * Config file: `/etc/yum.conf`
 
 
 ## Lab and Assignment
@@ -240,10 +257,11 @@ You will research, design, deploy, and document a system that improves your admi
 1.	What is semantic versioning? https://semver.org/
 Semantic Versioning is a naming convention and best practices for software versions.  
 It's a set of rules defining a way to convey what type of changes are being made with new versions.  
-The naming convention is as follows:
+The naming convention follows the format:
 ```plaintext
 package X.Y.Z
 ```
+* `package` is the name of the software package.  
 * `X` is the "Major Version."
     * Major version `0` is for initial development, when anything is subject to change at any given time, before a stable public API is released.
     * When the stable public API is released, that is major version 1.
@@ -266,12 +284,19 @@ E.g.:
 ```
 
 
-Reflection Questions
+## Reflection Questions
 1.	What questions do you still have about this week?
+
+How often do system administrators update their systems? Are updates on a schedule?
+Is a system only updated if a CVE is released on a package in use? Or are there
+regular updates to newer versions to eliminate potential security risks?
 
 
 2.	How does security as a system administrator differ from what you expected?
 
+Security as a sysadmin is more of a process than a single tool. It's not just about
+making sure ports are locked off and a firewall is set up correctly, software
+versions need to be taken into account as well.  
 
 
 

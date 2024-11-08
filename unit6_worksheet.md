@@ -1,5 +1,23 @@
 # ProLUG 101
 ## Unit 6 Worksheet
+
+
+## Table of Contents
+* [Unit 6 Worksheet](#unit-6-worksheet) 
+* [Instructions](#instructions) 
+* [Discussion Questions](#discussion-questions) 
+    * [Unit 5 Discussion Post 1](#unit-5-discussion-post-1) 
+    * [Unit 5 Discussion Post 2](#unit-5-discussion-post-2) 
+* [Definitions/Terminology](#definitionsterminology) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
+    * [Links](#links) 
+    * [Terms](#terms) 
+    * [Useful tools](#useful-tools) 
+* [Lab and Assignment](#lab-and-assignment) 
+* [Digging Deeper](#digging-deeper) 
+* [Reflection Questions](#reflection-questions) 
+
+
 ## Instructions
 Fill out this sheet as you progress through the lab and discussions. Hold onto all of your work to send to me at the end of the course.
 
@@ -159,7 +177,7 @@ Both the network firewall and the WAF are important tools in our network's secur
 
 ## Definitions/Terminology
 * Firewall: A network security tool that monitors and controls inbound and outbound network traffic based on predefined security rules.  
-* Zone: A logical grouping of network interfaces in a firewall configuration. A "zone" is a level of security or strictness in `firewalld`. With `firewalld`, one zone can be attached to a network interface at a time.  
+* Zone: A logical grouping of network interfaces in a firewall configuration. Zones are levels of security or strictness in `firewalld`. With `firewalld`, one zone can be attached to a network interface at a time.  
 * Service: In the context of firewalls, a service is an application or protocol (like HTTP, SSH, DNS, etc) that requires network access
 * DMZ (Demilitarized Zone): The part of the internal network that is used to separate internal and external networks. The DMZ allows access to your system, but limits its access to the internal network.  
 * Proxy: A server that acts as an intermediary between a client and a server.  
@@ -190,14 +208,7 @@ Therefore, it is best to place a standard firewall as the first layer of securit
 
 ---
 
-* Defense in depth - multiple layers of protection so when one fails, another control still covers the gap
-* `/usr/lib/firewalld/`
 
-* setup screen
-* firewalld configurations
-* checking zones
-* applying zones to interfaces
-* writing a new service definition
 
 ### Links:
 https://owasp.org/www-project-top-ten/
@@ -219,6 +230,8 @@ ps -ef | grep -i sleep
 ps -ef | grep -i sleep 
 # sleep is still there
 ```
+* Defense in depth: Multiple layers of protection so that when one layer fails, another layer still covers the gap
+* `/usr/lib/firewalld/`: The location of the firewalld configuration files.
 
 `screen` and `tmux` are both nohup'd environments.  
 ```bash
@@ -254,17 +267,26 @@ Begin working on your project from the Project Guide
 6.	Programming/Automation
 
 You will research, design, deploy, and document a system that improves your administration of Linux systems in some way.
-Digging Deeper
+
+## Digging Deeper
 1.	Read https://docs.rockylinux.org/zh/guides/security/firewalld-beginners/
 What new things did you learn that you didn’t learn in the lab?
 What functionality of firewalld are you likely to use in your professional work?
 
-Reflection Questions
+I learned that you can use `firewalld` to only allow specific IPs or places access to a server.  
+The functionality of `firewalld` that I'm likely to use in my professional work (if I ever get any) is enabling services to communicate through their necessary ports, opening ports to specific IPs, and to allow specific IPs access to a server to communicate with services.
+
+## Reflection Questions
 1.	What questions do you still have about this week?
 
+When using tmux to connect to servers, is it usually preferred to use tmux on your
+local terminal session and connect to the server using SSH, or is a tmux session usually started
+on the remote server, after SSHing into the remote server?
 
 2.	How does security as a system administrator differ from what you expected?
 
-
+Security as a systems administrator is about what I expected (so far). Managing
+access from within the network and outside the network is a key concept of any
+system's security.  
 
 

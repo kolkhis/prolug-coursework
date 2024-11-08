@@ -84,6 +84,7 @@ To triage is to sort by order of importance. I've only ever triaged in troublesh
 
 ### Unit 3 Discussion Post 2
 Ask google, find a blog, or ask an AI about high availability. (Here’s one if you need it: https://docs.aws.amazon.com/pdfs/whitepapers/latest/real-time-communication-on-aws/real-time-communication-on-aws.pdf#high-availability-and-scalability-on-aws)  
+
 1.  What are some important terms you read about?  
 
 * High Availability (HA)  
@@ -169,12 +170,10 @@ https://www.notion.so/
 ### Terms  
 * Mount Points: These are **directories** in a file system where additional storage (disks, 
   partitions, or network shares) are attached (mounted) for the operating system to use.  
-
 * Triage - Sorting issues by order of importance.  
 * HA (High Availability)  
 * Logical volume management  
 * RAID  
-* Mount Points  
 * Key Performance Indicators (KPI)  
 * Journals - Tool used to go back to older state of file system  
 
@@ -186,10 +185,9 @@ https://www.notion.so/
     * Operate  
     * Optimize  
 
-
 * Individual Contributor (IC): A person that spends more time doing hands-on work and  
   less time in meetings.  
-* GUID Partition Table (GPT)
+* GUID Partition Table (GPT): A partitioning scheme that allows for a computer to have disks with more than 2TB of storage.  
 
 ### Useful tools  
 
@@ -271,7 +269,9 @@ and mounts it to the directory `/directory`
       ```bash
       journalctl -p 3 -xb
       ```
-        * `-x`: Add explanatory help texts from the message catalog.  
+        * `-p 3`: Show only logs with the given priority. 
+            * In this case, only messages with an error level of 3 or higher (critical errors)
+        * `-x`: Add explanatory help texts about the logs from the "message catalog", which provides possible causes or solutions to certain log messages.  
         * `-b`: Show only the latest boot.  
 
 * `mkfs`
@@ -520,8 +520,11 @@ fdisk -l | grep -i xvd  # See all xvd-type raw disks
 vgcreate vg1 /dev/xvdb /dev/xvdc  # Make a volume group called vg1, with the two physical volumes xvdb and xvdc  
 pvs # Show all physical volumes  
 vgextend vg1 /dev/xvde  # Add the 3rd physical volume to the volume group  
+
 lvcreate vg1 -n space -L 5G # Create a logical volume called space, with 5GB of storage space  
-lvs  
+# Or, use `-l +100%FREE` to use all available space in the VG.  
+lvcreate vg1 -n space -l +100%FREE # Create a logical volume called "space", with all the storage availabe in the volume group "vg1"
+lvs  # List the logical volumes on the system
 # The logical volume will be stored in /dev/mapper/vg1-space  
 mkfs.ext4 /dev/mapper/vg1-space 
 mount /dev/mapper/vg1-space /space  
@@ -572,66 +575,6 @@ I'm not working, but I'll be using this knowledge to further my goal of become a
 
 
 
-
-## Lab Solution
-```bash
-fdisk -l | grep lvm
-blkid
-umount /dev/mapper/VolGroupTest-lv_test
-umount /dev/VolGroupTest/lv_test
-lvremove /dev/mapper/VolGroupTest-lv_test
-blkid
-
-vgremove VolGroupTest
-lvdisplay
-vgdisplay
-pvdisplay
-pvremove /dev/md0  # Failed. Not a PV.  
-lvdisplay 
-pvdisplay
-vgdisplay
-fdisk -l | grep xvd
-pvcreate /dev/xvda /dev/xvdb
-blkid
-vgcreate outer_space
-pvcreate /dev/xvdc  # Failed. 
-pvcreate /dev/xvdd
-pvcreate /dev/xvde
-ls
-lsblk
-umount /dev/md0
-lvs; pvs; vgs
-vgcreate outer_space /dev/xvda
-lvcreate outer_space -n SpaceLV -L 15G
-lvcreate outer_space -n SpaceLV -L 14G
-
-lvcreate outer_space -n SpaceLV -L 14G
-lvs
-mkfs.xfs /dev/mapper/outer_space-SpaceLV
-lsblk
-blkid /dev/mapper/outer_space-SpaceLV
-mkdir /outer_space
-mount /dev/mapper/outer_space-SpaceLV /outer_space/
-cd /outer_space/
-lsblk
-history | tail -n 20 > LVM_creation_commands
-vim LVM_creation_commands
-history | tail -n 40 > LVM_creation_commands
-```
-
-Lab:
-Write test:
-```bash
-for i in {1..10}; do time dd if=/dev/zero of=/space/testfile_$i bs=1024k count=1000 | tee -a /tmp/speedtest1.basiclvm
-```
-Read tests:
-```bash
-for i in seq 1 10; do time dd if=/space/testfile_$i of=/dev/null; done
-```
-Cleanup:
-```bash
-for i in seq 1 10; do rm -rf /space/testfile_$i; done
-```
 
 
 

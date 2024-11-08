@@ -1,6 +1,22 @@
 # ProLUG 101  
 ## Unit 4 Worksheet  
 
+## Table of Contents
+* [Unit 4 Worksheet](#unit-4-worksheet) 
+* [Instructions](#instructions) 
+* [Discussion Questions](#discussion-questions) 
+    * [Unit 4 Discussion Post 1](#unit-4-discussion-post-1) 
+    * [Unit 4 Discussion Post 2](#unit-4-discussion-post-2) 
+* [Definitions/Terminology](#definitionsterminology) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
+    * [Links](#links) 
+    * [Terms](#terms) 
+    * [Useful tools](#useful-tools) 
+* [Lab and Assignment](#lab-and-assignment) 
+* [Digging Deeper](#digging-deeper) 
+* [Reflection Questions](#reflection-questions) 
+
+
 ## Instructions  
 Fill out this sheet as you progress through the lab and discussions. Hold onto all of your work to send to me at the end of the course.  
 
@@ -47,9 +63,11 @@ You may use AI for this, but let us know if you do.
 Indentify the scope of the issue; is it a security incident or a local issue?  
 For the sake of this discussion, I'm going to assume it's a potential security issue.  
 If there's a server acting unusual:  
+
 * Don't do anything that may alert an attacker.  
 * If there's ANY suspicion of a security incident, continue without accessing many 
   files or installing new tools to retain the attacker's footprints.  
+
 1. Gather data  
     * Check system logs, security logs, and application logs for unusual events.  
     * Check all your normal system health indicators: uptime, load, memory, disk space, etc.  
@@ -87,6 +105,7 @@ If there's a server acting unusual:
       find /etc -ctime -1  
       find /dev -ctime -1  
       ```
+
 2. Decide whether or not to escalate the issue. 
     * If you think there's a potential security incident, escalate the issue to the appropriate parties.  
     
@@ -310,9 +329,17 @@ If you don't understand your tools, you won't be able to use them effectively.
 ## Reflection Questions  
 1.	What questions do you still have about this week?  
 
+What are the most common RAID setups in enterprise environments? 
+Are RAID arrays and Logical Volumes typically used in tandem?
+
 
 2.	How much better has your note taken gotten since you started? What do you still need to work on? Have you started using a different tool? Have you taken more notes?  
 
+It's gotten a bit better - I'm still working on it. The live-lecture type of learning
+is very new to me, but I'm starting to get a bit less sloppy.
+I'm now writing down names of tools, terms, and phrases I'm not familiar with to look
+up on my own later instead of trying to finish notes on a single topic before moving
+onto the next.  
 
 
 
