@@ -229,11 +229,13 @@ https://semver.org/
     * `rpm -q -changelog systemd`: Show the changelog of the package. 
     
 
+
 * `dnf`: 
   ```bash
   dnf config-manager --disable repo_name
   dnf repolist
   ```
+    * `dnf whatprovides iostat`: Find out what package provides the given file or command.  
     * `dnf update --exclude=kernel*`: Update everything except for the kernel.
       Supports the `*` wildcard.    
     * `dnf update systemd`: Update the given package only.  
@@ -241,8 +243,19 @@ https://semver.org/
     * `dnf search all mariadb`: Search for a package, including everything matches
       the package name
     * `dnf repolist`: Show the list of repositories.  
-    * `dnf history`: Show history of installed packages
+    * `dnf history`: Show history of installed packages. The number shown next to the
+      transactions can be used with other `dnf history` commands.  
+        * `dnf history info last`: Show all packages and their versions that were
+          installed in the last transaction.  
+        * `dnf history undo last`: Undo the last transaction.  
+        * `dnf history userinstalled`: Show all packages that were installed by the
+          user, and not installed as dependencies.  
+        * `dnf history rollback <transaction_number>`: Roll back to the given 
+          transactions. It will undo all transactions after the given transaction.  
     * Config file: `/etc/dnf/dnf.conf`
+    * Cache dir: `/var/cache/dnf`
+
+
 * `yum`
     * `yum repolist`: Shows the list of repositories (same as `dnf repolist`)
     * Repos for the system are stored in `/etc/yum/yum.repos.d` 
