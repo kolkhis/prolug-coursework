@@ -1,5 +1,11 @@
 # ProLUG 101 Systems Administration Course - Project Ideas
 
+1. Setting up homelab with Proxmox, and run some services in containers
+    * For containers, do something interesting with Container Volumes.
+        * Container volumes are how you map a directory on the host to a directory in the container.
+        * E.g., One volume for config and one for data
+        * Example: Plex media server running as a podman container, one volume for config, one for the media. That way, you can nuke the container, re-launch it later, and it's all configured
+
 
 1. Monitoring - Bash script to gather metrics from `/proc` and other sources. Set
    thresholds and configure alerts based on those thresholds. Use `cron` to automate.  
@@ -22,7 +28,6 @@
     * Script that generates file checksums (`cksum`, `sha256sum`) for critical system files and compares
       them regularly to detect changes
     * Set up alerts if file contents change unexpectedly and log all integrity checks
-
 
 
 
