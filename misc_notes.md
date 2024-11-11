@@ -5,6 +5,12 @@
     * `iowait`
     * `ionotify`
 * `/usr/lib/firewalld/`: The location of the firewalld configuration files.
+* `logrotate`: Designed to manage log files.
+    * `logratate` is normally run as a daily cron job.  
+* `gcc`: The GNU C Compiler.  
+  ```bash
+  gcc -o hello hello.c
+  ```
 
 ## Logical Volume Management (LVM) - Unit 3 Lab Solution
 
