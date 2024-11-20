@@ -201,6 +201,8 @@ podman logs -l # Show the logs from the latest container
 podman run -dt -p 8080:80/tcp docker.io/library/httpd 
 podman ps # Get the funky name of the container
 podman inspect -l # Display configuration of the container
+podman attach -l  # Attach to the most recently started container
+podman exec -it mycontainer bash  # Start a new bash shell inside the container and attach to it
 
 podman stop <name> # Stop a container by name or ID
 ```
@@ -216,6 +218,10 @@ container that was made, used in place of a container name or ID.
     * `-l`: Shows the last created container. Used in place of a container name.  
 * `podman top -l`: Display running processes inside of the container.  
     * `-l`: Shows the last created container. Used in place of a container name.  
+* `podman exec -it mycontainer bash`: Attach to a container with a bash shell.
+    * `-i`: Make it interactive. Enables keyboard input.
+    * `-t`: Allocate a pseudo-TTY. Enables terminal output.  
+    * `bash`: The process to run.  
 
 
 
@@ -244,15 +250,54 @@ You will research, design, deploy, and document a system that improves your admi
 
 
 a.	What worked well?
+
+Pulling the images from `docker.io` worked well. I found that I could specify just
+the image name and it let me select the registry it would pull from (red hat access
+registries or docker.io).  
+I was able to get it running in the end! 
+
 b.	What did you have to troubleshoot?
+
+Environment varaibles and container networking... Mainly container networking.  
+When trying to exec into the wikijs container to test database connectivity, it wasn't running.
+The wikijs container was not under `podman ps`.  
+I used `podman ps -a` and saw that it exited.  
+`podman logs wikijs` shows that there's a database connection error.  
+I thought it could use podman's default network, but I guess it didn't want to.  
+I needed to set up a network for the two containers to connect, so I used 
+`podman network create wikinet` to create a network and specified `--network wikinet`
+in each of the `podman run` commands for the containers.  
+
+```bash
+podman rm -f wikijs postgres-wiki
+podman network create wikinet
+podman run -d --name postgres-wiki --network wikinet -e POSTGRES_USER=wikijs -e POSTGRES_PASSWORD=wikijsrocks -e POSTGRES_DB=wiki postgres
+podman run -d --name wikijs --network wikinet -e DB_TYPE=postgres -e DB_HOST=postgres-wiki -e DB_PORT=5432 -e DB_USER=wikijs -e DB_PASS=wikijsrocks -e DB_NAME=wiki -p 8080:3000 requarks/wiki
+```
+Making the network `wikinet` solved the networking issue, and all of the `-e` options
+set the environment variables that I needed to set.  
+Writing them down in a script helped. It's a lot to type.  
+
+
 c.	What documentation can you make to be able to do this faster next time?
+
+Well, now I can make a wiki page detailing how to set it up and troubleshoot.  
+But you'd need to have it running before being able to access it... 
+
+Kidding, I can note the commands I ran to get it running, and the errors that I ran
+into when trying to get it running, as well as how to fix them.  
+
 
 ## Reflection Questions
 1.	What questions do you still have about this week?
+
+How often does someone need to manually create a podman network in a professional role?
+Are there companies that use container technology but don't rely on k8s or similar tools?
 
 
 
 2.	How can you apply this now in your current role in IT? If you’re not in IT, how can you look to put something like this into your resume or portfolio?
 
+I'm definitely going to use this in my homelab. I'm hoping to get some experience deploying out cool services that give skills that I can put into my resume.  
 
  
