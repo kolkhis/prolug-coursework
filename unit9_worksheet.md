@@ -190,6 +190,7 @@ Why care about containers as System Administrators?
 
 ### Useful tools:
 ```bash
+podman run -dt -p 8080:80/tcp docker.io/library/httpd # Run Apache webserver in a container on port 8080 of the host
 podman --version
 dnf whatprovides podman
 which podman
@@ -198,19 +199,23 @@ podman images  # Show images available
 podman top -l  # Show the running processes inside the latest container
 podman logs -l # Show the logs from the latest container
 # Start a pod on local port 8080, and port 80 internal to the container
-podman run -dt -p 8080:80/tcp docker.io/library/httpd 
 podman ps # Get the funky name of the container
 podman inspect -l # Display configuration of the container
 podman attach -l  # Attach to the most recently started container
 podman exec -it mycontainer bash  # Start a new bash shell inside the container and attach to it
-
-podman stop <name> # Stop a container by name or ID
+podman stop mycontainer # Stop a container by name or ID
+podman build -t mycontainer:tag . # Build a container image from the Dockerfile in the current directory
 ```
-The image will still be there when you stop the container, it will stay until you
-delete it.  
 
 The `-l` (`--latest`) option for a lot of these commands is a shortcut for the last 
 container that was made, used in place of a container name or ID.  
+
+---
+
+Images will still be there when you stop containers.
+They will stay until you delete it.  
+
+---
 
 * `podman inspect -l`: Displays information about the container.  
     * Container, image, volume, network, and/or configuration
@@ -223,7 +228,22 @@ container that was made, used in place of a container name or ID.
     * `-t`: Allocate a pseudo-TTY. Enables terminal output.  
     * `bash`: The process to run.  
 
+* `podman run`
+    ```bash
+    podman run -d \
+        --name coolname \
+        --network host -e \
+        -e DB_PORT=5432 \
+        -p 8080:3000 \
+        requarks/wiki
+    ```
+    * `-d`: Run the container in the background. (detached mode)
+    * `--name`: Name the container
+    * `-e DB_PORT=5432`: Set an environment variable.  
+    * `-p 8080:3000`: Forward port `8080` on the host to port `3000` inside the container.  
+    * `requarks/wiki`: The image to run.  
 
+---
 
 
 
@@ -277,6 +297,9 @@ podman run -d --name wikijs --network wikinet -e DB_TYPE=postgres -e DB_HOST=pos
 Making the network `wikinet` solved the networking issue, and all of the `-e` options
 set the environment variables that I needed to set.  
 Writing them down in a script helped. It's a lot to type.  
+
+After the fact, I realized that I could have written Dockerfiles for each of these,
+to build images that have all the environment variables and network set.  
 
 
 c.	What documentation can you make to be able to do this faster next time?
