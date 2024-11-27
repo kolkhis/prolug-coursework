@@ -196,15 +196,73 @@ that helps deploy and manage containerized applications.
 ### Terms:
 * Storage volumes: Storage volumes are volumes used by kubernetes pods to persist data.  
     * Not always HDD/SSDs (physical disks). 
+        * Volumes can be in-memory (`emptyDir`) or network-based (`NFS`/`Ceph`)
     * While the pod doesn't necessarily need to be stateful, pods also support volumes
       attached to aid in persistent storage betweeen restarts.  
-    * You can provide storage volumes to a pod using a PersistentVolumeClaim.  
+    * You can provide storage volumes to a pod using a PersistentVolumeClaim (PVC),
+      which requests storage resources from the cluster.  
 
-* Ephemeral volumes: 
-* configMap: A YAML file used to inject configuration data into pods.  
+* Persistent Volumes: Cluster-wide resources that represent physical or logical
+  storage provisioned for kubernetes.  
+
+* PersistentVolumeClaim (PVC): A request for storage by a pod.
+    * The PVC binds to a matching PV based on resource requirements.  
+
+* Ephemeral volumes: Temporary storage volumes that only live as long as the pod.  
+    * Data stored in an ephemeral volume is lost when the pod is deleted or restarted.  
+    * Types of ephemeral volumes include `emptyDir` (shared storage within a pod) and
+      `configMap` or `secret` (temporary injected data).  
+
+* `configMap`: A YAML file used to inject configuration data into pods.  
+    * These are used to decouple configuration from application code.  
+    * Can store data like environment variables, config files, or CLI arguments.  
+    * Injection methods:
+        * As environment variables
+        * Mounted as a file in a volume
+        * Directly accessed via the k8s API  
+    * Example `configMap`:
+      ```yaml
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: app-config
+      data:
+        app.properties: |
+          key=value
+          setting=true
+      ```
+
+* `secret`s: Similar to `ConfigMap`s, but they're specifically designed to store
+  sensitive data (e.g., passwords, API keys, certs, etc.).
+    * Secrets are base64 encoded and can be encrypted while stored on the disk (e.g., 
+      in `etcd` for Kubernetes), so it can't be read without decryption keys even if the 
+      storage is compromised.  
+    * They're injected into pods as envionment variables or mounted as volumes.  
+
+
+* Deployment: Resource object used to manage and scale a set of replica pods
+  (instances of an application). 
+    * Defined as a yaml (or json) file 
+    * Easily scaled up and down with the `kubectl scale` command or by modifying the
+      yaml file used as the deployment specification. 
+    * Supports rolling updates. Updates your application incrementally to minimize
+      downtime and ensure new pods are created while old pods are terminated safely.  
 
 
 ### Useful tools:
+`kubectl`:
+```bash
+kubectl version         # Show the version running on the cluster
+kubectl run nginx --image=nginx # Create a pod named "nginx" with an nginx container
+kubectl get nodes       # List all nodes in the cluster
+kubectl get pods        # List all pods in the current namespace
+kubectl get pods -A     # List all pods across all namespaces
+kubectl get pods -o wide # Show additional information
+kubectl exec -it 'pod-name' -- /bin/bash # Open a shell inside a running pod
+kubectl port-forward 'pod-name' 'local-port':'pod-port' # Forward a local port to a pod's port
+kubectl cp 'pod-name':'container-path' 'local-file'     # Copy a file from a pod to local
+```
+
 
 ## Lab and Assignment
 ### Unit 10 Lab k3s
@@ -282,7 +340,7 @@ set up k3s.
         executable: /bin/bash
       become: yes
 ```
-I can't (or don't know how) to fully test this playbook in the ProLUG lab environment, 
+I can't (or don't know how to) fully test this playbook in the ProLUG lab environment, 
 but I'm going to test it on my homelab once I have it set up.  
 
 ---
