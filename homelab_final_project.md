@@ -1,18 +1,24 @@
 
 # ProLUG 101 Final Project
 
+
 ## Table of Contents
+* [My Hardware](#my-hardware) 
 * [Initial System Setup (Installation)](#initial-system-setup-installation) 
 * [Set up a New User](#set-up-a-new-user) 
+* [Setting up Storage for the Homelab](#setting-up-storage-for-the-homelab) 
 * [Package Setup](#package-setup) 
-* [Troubleshooting Installation](#troubleshooting-installation) 
-    * [Troubleshooting Steps Taken](#troubleshooting-steps-taken) 
+* [Troubleshooting Write-ups](#troubleshooting-write-ups) 
+    * [Troubleshooting Logical Volume Management (LVM) Commands](#troubleshooting-logical-volume-management-lvm-commands) 
+        * [Troubleshooting the Disk - Creating the Logical Volume (TS)](#troubleshooting-the-disk---creating-the-logical-volume-ts) 
+    * [Troubleshooting Installation](#troubleshooting-installation) 
+    * [Installation Troubleshooting Steps Taken](#installation-troubleshooting-steps-taken) 
         * [Reconfiguing BIOS (UEFI)](#reconfiguing-bios-uefi) 
         * [Re-scanning for Drives](#re-scanning-for-drives) 
         * [Updating Firmware](#updating-firmware) 
         * [Hardware RAID Controller Device settings](#hardware-raid-controller-device-settings) 
-* [Send input to `fdisk` (or `gdisk`) without entering the interactive prompt](#send-input-to-fdisk-or-gdisk-without-entering-the-interactive-prompt) 
 * [Initial Setup Troubleshooting TL;DR](#initial-setup-troubleshooting-tldr) 
+* [Misc](#misc) 
 
 
 ## My Hardware
@@ -156,6 +162,8 @@ sudo apt-get install sysstat
 
 ---
 
+### Setting up LVM
+
 I couldn't find some LVM commands (`lvs`, `lvdisplay`, etc.), so I had to go and [find out where the commands were](#troubleshooting-logical-volume-management-lvm).  
 
 After doing that, I provisioned the entire partition I made on the 800GB SSD as a single logical volume for
@@ -165,32 +173,167 @@ pvcreate /dev/sdb1
 vgcreate vg1 /dev/sdb1
 lvcreate vg1 -n storage -l 100%FREE 
 ```
+I got an error here and had to [troubleshoot the disk](#troubleshooting-logical-volume-management-lvm)
 
-Got an error when running `lvcreate`:
-```plaintext
-kolkhis@home-pve:~/scratch$ sudo lvcreate vg1 -n storage -l 100%FREE
-[sudo] password for kolkhis:
-Interrupted initialization of logical volume vg1/storage at position 0 and size 4096.
-Aborting. Failed to wipe start of new LV.
-Error writing device /dev/sdb1 at 7168 length 1024.
-WARNING: bcache_invalidate: block (0, 0) still dirty.
-Failed to write metadata to /dev/sdb1.
-Failed to write VG vg1.
-Manual intervention may be required to remove abandoned LV(s) before retrying.
+
+### Replacing the Old Disk and Partitioning the New Ones
+Using `smartctl`, I discovered that the disk had seen 7 years of active use (61,436 hours, 2559.83 days)... I'm pretty sure I need to replace it.  
+2554 days + 16 hours
+
+---
+
+I replaced the 800GB SSD.
+I replaced it with a 512GB, and added an additional 3rd SSD, also 512GB.  
+```bash
+sdb                  8:16   0 476.9G  0 disk
+sdc                  8:32   0 476.9G  0 disk
+
+Disk /dev/sdb: 476.94 GiB, 512110190592 bytes, 1000215216 sectors
+Disk model: FIKWOT FX812 512
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+Disk /dev/sdc: 476.94 GiB, 512110190592 bytes, 1000215216 sectors
+Disk model: FIKWOT FX815 512
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
 ```
-After this happened the device no longer showed up in `lsblk` or `fdisk -l`.  
-The light on the disk's caddy was blinking, so I reaseated the disk and it was recognized again.  
+I will turn these into Logical Volumes, and provision 100GB for ISOs and the rest will be for provisioning VMs/containers.  
+
+---
 
 
 ---
 
+I decided to try using the Web UI provided by Proxmox to provision these disks. 
+I did a test run of doing this with one of the 512GB disks for storing ISOs.
+It created a **partition** that used the entire capacity of the disk, `/dev/sdb1`, and mounted it on `/mnt/pve/iso_storage`.
+Now, seeing as I have two 512GB SSDs, and 512GB seems like overkill for ISO storage, I am going to create a 100GB partition on one drive (`/dev/sdb`) for ISO storage, and see if I can provision the rest for VMs.  
+I'm unable to use the Web UI to provision Logical Volumes, so I'm going to create partitions instead. 
+
+```bash
+sudo gdisk /dev/sdb
+o  # Create new partition table
+n  # Create new partition
+p  # Make it the primary partition
+# Use defaults for everything except "Last sector", set to +100G
+w  # Write changes
+```
+Then I created another partition using the rest of the disk, and made the second disk one partition using the whole disk.  
+
+I created a Volume Group named `VMs`, through the Proxmox Web UI, using the second partition of the `/dev/sdb` disk.
+Strangely, this volume group is not visible using `lsblk`.  
+
+## Use Web UI to Create Directory and Upload ISOs
+I used the Proxmox Web UI to provision the 100GB partition for ISO images.
+```yaml
+Datacenter > homepve > Disks > Directory > Create: Directory
+Select '/dev/sdb1', 'ext4', Name: "ISO_Storage"
+```
+This creates the directory `/mnt/pve/ISO_Storage` and populates it with the necessary files that Proxmox
+needs
+
+Upload ISOs to the new directory 
+```yaml
+Datacenter > home-pve > ISO_Storage > ISO Images > Upload
+```
+The images that are uploaded are stored in:
+```bash
+/mnt/pve/ISO_Storage/template/iso/ 
+```
+I uploaded several ISO images to this.  
+
+
+## Creating the First VM
+
+After the ISOs are uploaded, click "Create VM" at the top right.  
+It will take you through a setup process.  
+You'll select the ISO storage you set up, and select the ISO from there.  
+Under "Disks", select the Volume Group `VMs` (or whatever you named it) and give it some disk space. Be generous but don't exceed the disk size, and leave space for other VMs.  
+
+Under CPU you can assign the number of cores to use. My PowerEdge R730 has 24 cores x 2 threads each (48), I decided to assign 4 cores. 
+I assigned 4GB of RAM (4096).  
+The rest, defaults.
+
+I decided to use Ubuntu Server 22.04.01 LTS.  
+Use the "Console" in the Web UI to go through installation of the guest OS.  
+
+* Consideration: I found out after the fact that VMs running on `ext4` filesystems do not support snapshots 
+
+---
+
+## Moving to ZFS
+I wanted support for VM snapshots, so I'm thinking I'll go for ZFS.  
+I'll [move to ceph later](~/scratch/migration_to_ceph.md) when I get more nodes.  
+
+* Erase any existing partitions on the disks you want to use:
+  ```bash
+  wipefs -a /dev/sd{b,c}
+  ```
+
+* Create a ZFS Pool:
+    * `RAID 1`: If you want redundancy, use a `mirror`. This will mirror across both disks.  
+      ```bash
+      zpool create <poolname> mirror /dev/sdb /deb/sdc
+      ```
+    * `RAID 0`: If you want performance, use striping. This is the default, so just don't use `mirror`.  
+      ```bash
+      zpool create <poolname> /deb/sdb /dev/sdc
+      ```
+      I'm going to use a `RAID 0` setup for now, and name my pool `vmdata`.  
+      ```bash
+      zpool create vmdata /dev/sdb/ /dev/sdc
+      ```
+
+Creating a ZFS pool created some interesting partitions in `lsblk`:
+```bash
+sdb                  8:16   0 476.9G  0 disk
+├─sdb1               8:17   0 476.9G  0 part
+└─sdb9               8:25   0     8M  0 part
+sdc                  8:32   0 476.9G  0 disk
+├─sdc1               8:33   0 476.9G  0 part
+└─sdc9               8:41   0     8M  0 part
+```
+
+
+* Configure the Pool in the Proxmox Web UI:
+    * Go to `Datacenter > Storage > Add > ZFS`
+    * Select the pool name, and proxmox will handle the integration.  
+
+
+* Using snapshots:
+    * Create manual snapshots with:
+      ```bash
+      zfs snapshot poolname/dataset@snapshot-name
+      ```
+    * Or, enable automatic scheduled snapshots using `zfs-auto-snapshot`.  
+
+
+* You can add compression if you want, to save space. Maybe not great for my
+  hardware, but ZFS supports it.
+    * ZFS supports "transparent compression" for better performance and space efficiency.  
+      ```bash
+      zfs set compression=on poolname
+      ```
+
+---
+
+I switched the Ubuntu Server VM over to the new ZFS storage.  
+
+## Setting up Monitoring
+See [monitoring setup](./fp_monitoring_setup.md)
+
+---
+
+
+
+
 ## Troubleshooting Write-ups
+### Troubleshooting Logical Volume Management (LVM) Commands
 
-### Troubleshooting Logical Volume Management (LVM)
-
-When trying to create a new logical volume from the second disk, I ran into a problem
-where I did not have the `pvs`/`pvdisplay`, `vgs`/`vgdisplay`, or `lvs`/`lvdisplay`
-commands on the system.
+When trying to create a new logical volume from the second disk, I ran into a problem where I did not have the `pvs`/`pvdisplay`, `vgs`/`vgdisplay`, or `lvs`/`lvdisplay` commands on the system.
 
 With a quick `apt search lvdisplay` I find the package:
 ```plaintext
@@ -199,6 +342,7 @@ With a quick `apt search lvdisplay` I find the package:
  Linux::LVM parses the output from vgdisplay, pvdisplay, and lvdisplay and
  makes it available as a Perl hash.
 ```
+After installing `liblinux-lvm-perl` on my homelab I did not have access to the commands `pvs`/`pvdisplay`, `vgs`/`vgdisplay`, or `lvs`/`lvdisplay`.
 
 Looking at the ProLUG lab environment:
 ```bash
@@ -209,7 +353,6 @@ Shows the package:
 lvm2-9:2.03.23-2.el9.x86_64 : Userland logical volume management tools
 ```
 
-After installing `liblinux-lvm-perl` on my homelab I did not have access to the commands `pvs`/`pvdisplay`, `vgs`/`vgdisplay`, or `lvs`/`lvdisplay`.
 I'll try installing the `lvm2` package:
 ```plaintext
 kolkhis@home-pve:~/scratch$ sudo apt install lvm2
@@ -221,7 +364,7 @@ lvm2 is already the newest version (2.03.16-2).
 ```
 The package is already installed.  
 
-I decide to search for the binary itself. It must be on the system somewhere since
+I search for the binary itself. It must be on the system somewhere since
 I have the package installed.  
 ```bash
 sudo find / -name pvs 2>/dev/null
@@ -235,9 +378,10 @@ I'll add `/usr/sbin` to my `$PATH` environment variable in `~/.bashrc`.
 export PATH="$PATH:/usr/sbin"
 ```
 
+
 ---
 
-#### Creating the Logical Volume (TS)
+### Troubleshooting the Disk - Creating the Logical Volume 
 After finding the executables, I tried to create the logical volume again, but got an error when running `lvcreate`:
 ```plaintext
 kolkhis@home-pve:~/scratch$ sudo lvcreate vg1 -n storage -l 100%FREE
@@ -253,6 +397,7 @@ Manual intervention may be required to remove abandoned LV(s) before retrying.
 After this happened the device no longer showed up in `lsblk` or `fdisk -l`.  
 The light on the disk's caddy was blinking, so I reaseated the disk and it was recognized again.  
 
+---
 
 I decided to try to recreate the LV:
 ```bash
@@ -272,20 +417,19 @@ sudo wipefs -a /dev/sdb1
 
 Zero out the start of the partition with `dd`:  
 ```bash
+# Zero out the first 100MB of the disk
 sudo dd if=/dev/zero of=/dev/sdb1 bs=1M count=100
 ```
 
-I'll reinitialize it as a physical volume:
+I tried to remake everything.  
 ```bash
+# I reinitialized it as a physical volume
+sudo pvremove /dev/sdb1
 sudo pvcreate /dev/sdb1
-```
-I'll remake the volume group too, in case it was corrupted by earlier attempts:
-```bash
+# I remade the volume group too, in case it was corrupted by earlier attempts:
 sudo vgremove vg1
-```
-
-Now I'll try making the LV again:
-```bash
+sudo vgcreate vg1 /dev/sdb1
+# Then attempted to remake the LV
 sudo lvcreate -l 100%FREE -n storage vg1
 ```
 Same issue.  
@@ -309,17 +453,17 @@ When using `lvdisplay` I get the following output:
 ```
 * `LV Status` is `NOT available`. 
 
-The logical volume storage is visible in the output of `lvs` with the expected size after the disk reseat, it does indicate that lvcreate partially succeeded... but the recurring errors and need to reseat the disk are serious red flags.
+The logical volume storage is visible in the output of `lvs` with the expected size after the disk reseat, it does indicate that `lvcreate` partially succeeded... but the recurring errors and need to reseat the disk are serious red flags.
 
-I can manually activate the LV with `lvchange`
+I manually activated the LV with `lvchange`
 ```bash
 lvchange -ay vg1/storage
 ```
-This changes the output of `lvdisplay` to show `LV Status` as `available`.  
+This changed the output of `lvdisplay` to show `LV Status` as `available`.  
 
 I'll now try to format and mount the logical volume. 
 ```bash
-sudo mkfs.ext4 /dev/mapper/vg1-storage
+# sudo mkfs.ext4 /dev/mapper/vg1-storage
 mke2fs 1.47.0 (5-Feb-2023)
 Discarding device blocks: done
 Creating filesystem with 195352576 4k blocks and 48840704 inodes
@@ -336,8 +480,9 @@ Writing superblocks and filesystem accounting information: mkfs.ext4: Input/outp
 Got an error at the end, and had to reseat the disk for it to be recognized by the system again.  
 
 
-As per ChatGPT's advice, I'm going to try to use the `smartctl` tool to check for
-signs of hardware failure.  
+As per ChatGPT's advice, I'm going to try to use the `smartctl` tool to check for signs of hardware failure.  
+Using `smartctl`, I discovered that the disk had seen 7 years of active use (61,436 hours, 2559.83 days)... I'm pretty sure I need to replace it.  
+2554 days + 16 hours
 
 
 
@@ -398,7 +543,8 @@ After switching to AHCI mode, I added a second disk (the aforementioned 240GB SA
 #### Re-scanning for Drives 
 Using the Proxmox shell, I'll re-scan for drives with this nifty command I found:
 ```bash
-echo "- - -" | sudo tee /sys/class/scsi_disk/hosts*/scan
+echo "- - -" | sudo tee /sys/class/scsi_host/host*/scan
+
 ```
 
 This did not change the output of either `lsblk` or `fdisk -l`
@@ -508,8 +654,34 @@ F#$! it. I can still use it for storage on the system, so I will keep the 240 dr
 
 I did a small write-up (a summary of all the notes I took while troubleshooting), if anyone is interested
 
+
+## Removing a VM that is Pointing to a Nonexistent Storage
+When I switched to ZFS from paritions/lvm, I neglected to destroy the VM I had set
+up using that volume group, named `VMs`.  
+
+I checked `/etc/pve/storage.conf`, no reference to VMs. 
+I checked `/etc/pve/qemu-server/100.conf`, and there were references to `VMs` in
+there. I deleted them and saved.  
+
+```bash
+sudo vim /etc/pve/qemu-server/100.conf
+# delete any reference to the VMs volume group
+sudo systemctl restart pvedaemon.service pveproxy.service pvestatd.service
+```
+That solved the issue, I was able to remove the VM after that.  
+
+I could have tried pointing it at the new ZFS pool, but I wanted to start fresh
+anyway.  
+
+---
+
+
+
 ## Misc
 Restarting services after changing hostname:
 ```bash
 sudo systemctl restart pvedaemon pveproxy pvestatd
 ```
+
+
+
