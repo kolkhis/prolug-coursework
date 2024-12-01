@@ -1,0 +1,212 @@
+\documentclass[14pt,compress,usenames,dvipsnames,aspectratio=169]{beamer}
+%\usetheme{Singapore}
+\useoutertheme{shadow}
+\usetheme{CambridgeUS}
+\definecolor{mygreen}{RGB}{150, 255, 210}%186}
+\definecolor{leftblue}{RGB}{230,255,255}
+\definecolor{rightblue}{RGB}{111,195,223}
+\definecolor{lefttron}{RGB}{19,44,65}
+\definecolor{myblack}{RGB}{27,27,27}
+\definecolor{mypurple}{RGB}{205,87,255}
+
+\usecolortheme{owl}
+
+% \setbeamercolor{section in head/foot}{fg = white,bg=black}
+\setbeamercolor{title}{fg=mygreen,bg=black}
+\setbeamercolor{titlelike}{fg=yellow,bg=black}
+\setbeamercolor{item}{fg=mygreen}
+\setbeamercolor{block title}{fg=white,bg=myblack!200}
+\setbeamercolor{block body}{bg=normal text.bg!80}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercolor{normal text}{fg=white,bg=myblack}%!89.9}
+
+%Gradient
+\setbeamercolor{frametitle}{fg=orange,bg=black}
+\setbeamercolor{frametitle right}{fg=white,bg=gray}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{shadowtext}
+\usepackage{multicol}
+\usepackage[makeroom]{cancel}
+
+\usepackage{listings} % For code blocks
+
+%\graphicspath{{./figures/},
+%}
+
+%\AtBeginSection{\frame{\sectionpage}}
+
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage{bibentry}
+\usepackage{animate}
+\usepackage{varwidth}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+%%%%%%%%% TITLE SLIDE %%%%%%%%%
+\title{\textbf{Setting up a Proxmox Homelab on an Enterprise Server}}
+\author{Using a Dell PowerEdge R730}
+
+\date{}  % Get rid of date
+
+\usefonttheme{professionalfonts}
+
+\usepackage{mydefs}
+
+\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\titlegraphic{
+\begin{center}
+\vspace*{-30pt}
+
+\vspace*{10pt}
+    \text{by Kolkhis}
+\end{center}
+}
+%%%%%%%%% END TITLE SLIDE %%%%%%%%%
+
+
+
+\begin{document}
+
+\setbeamercovered{invisible}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+%%%% CONTENT FRAMES %%%%
+
+%%%%%%%%%%%%%% FRAME 1 %%%%%%%%%%%%%%%%%%%%
+% FRAME ONE: GOAL
+\begin{frame}{Goals}
+    \begin{enumerate}
+        \item{Set up a Type 1 hypervisor for running Virtual Machines and
+            Containerized Applications.} 
+        \item{Set up monitoring tools for analyzing resource usage and logs. }
+        \item{Automate the setup of monitoring tools on all VMs and Containers using
+            Ansible.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 2 %%%%%%%%%%%%%%%%%%%%
+% FRAME: Machine Setup
+\begin{frame}{Getting the Machine Ready}
+    \begin{enumerate}
+        \item{I discovered early on that disks in this type of server won't be recognized by installers by default.} 
+        \item{The server uses a Hardware RAID controller, so all disks are RAID devices by default.}
+        \item{I opted to use the BIOS/UEFI convert my SSDs to Non-RAID Disks instead of messing with the Hardware RAID Controller.}
+        \item{This took me a long time to figure out.}
+        \item{Later, `smartctl` showed that the 800GB drive had 7 years of active use.} 
+        \item{I wound up replacing the 800GB drive with two 512GB SSDs.} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Installing Proxmox}
+    \begin{enumerate}
+        \item{I installed "Proxmox VE (Terminal UI)", as I didn't see the need for a
+        GUI.} 
+        \item{Everything can be done from the Proxmox Web UI, from configuring
+        storage to launching VMs and containers.}
+        \item{I had quite a bit of trouble with the initial installation. I'd never
+            touched an enterprise server like this before.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME 4 (Picture) %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\linewidth]{pve_setup.jpeg}
+        \caption{Photo of the server during setup}
+        \label{fig:setup-pic}
+    \end{figure}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME: Deciding on storage %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Deciding on the Type of Storage to Use}
+    I had a hard time deciding what type of storage to use. 
+        I tried making partitions using `ext4` type filesystems, but found they didn't support VM snapshots either.
+    \begin{enumerate}
+        \item{I initially started using LVM. But this did not support snapshots or
+            data sharing.}
+        \item{I looked into Ceph, since it has native support in Proxmox, but setup
+            looked a little too complex for the timeline of this project.}
+        \item{I decided to use ZFS. Also has native support, with feature support 
+            (snapshots/sharing).}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME: USING ZFS %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Creating ZFS for Storage}
+    I wiped the two disks I was using for `ext4` filesystems and converted them
+    to a `zfs` pool.  
+
+    Then I used the Proxmox Web UI to provision the `zfs` pool for virtual
+    machines.  
+ 
+\verb+
+
+wipefs -a /dev/sdb /dev/sdc;  
+ 
+zpool create vmdata /dev/sdb/ /dev/sdc;  
+
+ 
+
+ 
+\+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME Central VM Setup %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Create a Centralized VM}
+    \begin{enumerate}
+        \item{Creating a centralized VM to host the monitoring tools.} 
+        \item{All other nodes will send metrics and logs to this VM.}
+        \item{I gave this VM 2 CPUs, 6GB RAM, and 80GB disk space.}
+            % TODO: Get a drawing (excalidraw etc) to show diagram of this
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% EMPTY FRAME %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}{References}
+    \bibliographystyle{apalike}
+    \begin{enumerate}
+        \item Proxmox Documentation
+        \item 
+    \end{enumerate}
+    \bibliography{bib}
+\end{frame}
+
+\end{document}
