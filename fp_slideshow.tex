@@ -111,11 +111,17 @@
         \item{The server uses a Hardware RAID controller, so all disks are RAID devices by default.}
         \item{I opted to use the BIOS/UEFI convert my SSDs to Non-RAID Disks instead of messing with the Hardware RAID Controller.}
         \item{This took me a long time to figure out.}
-        \item{Later, `smartctl` showed that the 800GB drive had 7 years of active use.} 
-        \item{I wound up replacing the 800GB drive with two 512GB SSDs.} 
     \end{enumerate}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\linewidth]{installer-no-disks-error.png}  
+
+        \caption{Proxmox installer error: No supported disks.}
+        \label{fig:Proxmox installer error - no disks.}
+    \end{figure}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 %%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Installing Proxmox}
@@ -125,7 +131,7 @@
         \item{Everything can be done from the Proxmox Web UI, from configuring
         storage to launching VMs and containers.}
         \item{I had quite a bit of trouble with the initial installation. I'd never
-            touched an enterprise server like this before.}
+            touched an enterprise server before.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,14 +150,14 @@
 %%%%%%%%%%%%%% FRAME: Deciding on storage %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Deciding on the Type of Storage to Use}
     I had a hard time deciding what type of storage to use. 
-        I tried making partitions using `ext4` type filesystems, but found they didn't support VM snapshots either.
     \begin{enumerate}
         \item{I initially started using LVM. But this did not support snapshots or
             data sharing.}
+        \item{I tried making partitions using `ext4` type filesystems, but found they didn't support VM snapshots either.}
         \item{I looked into Ceph, since it has native support in Proxmox, but setup
             looked a little too complex for the timeline of this project.}
         \item{I decided to use ZFS. Also has native support, with feature support 
-            (snapshots/sharing).}
+            (snapshots/sharing). I just wanted to get it up and running.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -179,15 +185,39 @@ zpool create vmdata /dev/sdb/ /dev/sdc;
 
 
 %%%%%%%%%%%%%% FRAME Central VM Setup %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Create a Centralized VM}
+\begin{frame}{Monitoring, Pt1: Create a Centralized VM}
     \begin{enumerate}
         \item{Creating a centralized VM to host the monitoring tools.} 
         \item{All other nodes will send metrics and logs to this VM.}
         \item{I gave this VM 2 CPUs, 6GB RAM, and 80GB disk space.}
-            % TODO: Get a drawing (excalidraw etc) to show diagram of this
+    \end{enumerate}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\linewidth]{monitoring_stack_viz.png}
+        \caption{Monitoring Schema}
+        \label{fig:enter-label}
+    \end{figure} 
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME Write Playbooks to Install Tools on Central VM %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Monitoring, Pt2: Install the Tools on Central VM}
+    Writing an Ansible playbook to install tools on the central VM.
+    \begin{enumerate}
+        \item{I started with the central VM to host these tools:} 
+            \begin{enumerate}
+                \item{Prometheus (Metrics TSDB)}
+                \item{Grafana (Visualizations)}
+                \item{Loki (Log Storage)}
+            \end{enumerate}
+        \item{I wrote a play that would just run on that VM and install these tools.}
+        \item{I can't automate setting up the Grafana dashboard. (or I just don't
+            know how)}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 %%%%%%%%%%%%%% EMPTY FRAME %%%%%%%%%%%%%%%%%%%%
@@ -202,10 +232,8 @@ zpool create vmdata /dev/sdb/ /dev/sdc;
 
 \begin{frame}{References}
     \bibliographystyle{apalike}
-    \begin{enumerate}
-        \item Proxmox Documentation
-        \item 
-    \end{enumerate}
+        Proxmox docs: https://pve.proxmox.com/wiki/
+        Ansible docs: https://docs.ansible.com/ansible/latest/collections/ansible/builtin
     \bibliography{bib}
 \end{frame}
 
