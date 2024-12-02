@@ -36,84 +36,120 @@ storage system and the new storage system.
 a. What is meant by the term Ceteris Paribus, in this context?
 
 ## Definitions/Terminology
-* Baseline: 
-* Benchmark: 
-* High watermark: 
-* Scope: 
-* Methodology: 
-* Testing: 
-* Control: 
-* Experiment: 
-* Analytics: 
+
+* Baseline: Getting information about how a system is performing under normal operations. 
+    * Establish a baseline of the system under normal operations to measure how changes affect a system.  
+    * Do the same thing when the system is under load to see how the system is affected.  
+    * This can be thought of as a "low watermark" of the system.  
+    * Should be captured with telemetry and observability systems so that variations
+      from the norm can be observed.  
+
+* Benchmark: A standard point of reference used to measure and compare system performance and capabilities.  
+    * Used for performance testing under specific conditions, e.g., measuring disk IO and CPU speeds. 
+    * Allow comparisons across different systems or configurations.  
+    * Validating the way the system is. Making a change. Then measuring what changed.  
+
+* High watermark: The peak resource usage or performance level oberserved over a given time period.  
+    * Useful for capacity planning; knowing the most RAM, CPU, or bandwidth your
+      system has used.  
+    * Can help identify potential bottlenecks during peak loads.  
+
+* Scope: The boundaries/extent of what is being analyzed or managed in a system.
+    * The scope defines what the analysis, testing, or project will cover and what
+      will be excluded.  
+    * E.g., The scope of a performance test could include CPU and RAM usage, but exclude network traffic
+
+* Methodology: The structured approach or process used to achieve a specific goal.  
+    * Should include a step-by-step approach, tools to use, and best practices to follow.  
+
+* Testing: Validating a system's behavior under specific conditions.  
+    * Unit testing: Testing individual components (e.g., does a service start correctly?)
+    * Integration testing: Ensuring multiple services or systems work together.  
+    * Performance testing/Stress testing: Evaluating how well the system handles load or stress.  
+    * Regression testing: Confirming that changes haven't introduced any new issues.  
+
+* Control: A baseline or unaltered state used for comparison in tests/experiements.  
+    * In system testing, the control is the system under normal operation with no changes.  
+
+* Experiment: The process of introducing a change to the system to observe its effects.  
+    * Experiments can be modifying configurations, applying updates, or adjusting workloads.  
+    * Always compare the results of an experiement to a control or baseline.  
+
+* Analytics: Insights gained from analyzing data that has been gathered.
     - Descriptive: Deals with what happened in the past
         * How many? When and where?
     - Diagnostic: Deals with why did it happen in the past
-        where should we look? Why did it happen?
+        * where should we look? Why did it happen?
     - Predictive: Deals with what will happen in the future
-    * What will happen next? what is the pattern?
+        * What will happen next? what is the pattern?
         * If you watch your storage go from 50%, to 60%, to 70% over the past weeks,
           you can predict what will happen based on this data.  
         * HUDs, dashboards, 
     - Prescriptive: "How can we make it happen?"
-        What is the best action? What if we try this? *random testing*
+        * What is the best action? What if we try this? *random testing*
+
 
 ## Notes During Lecture/Class:
 ### Links:
-https://kaggle.com/learn
-https://kaggle.com/
-[noaa data Open Data Dessemination](https://www.noaa.gov/information-technology/open-data-dissemination)
-https://catalog.data.gov/dataset - Legally allowed to use this for stuff
+* https://kaggle.com/learn
+* [NOAA Data Open Data Dessemination](https://www.noaa.gov/information-technology/open-data-dissemination)
+    * Know the license that the data is under. Creative Commons is "public domain"
+* https://catalog.data.gov/dataset - Legally allowed to use this for stuff
 
 ### Terms:
-* Baselining: Getting information about how a system is performing **right now**. 
-    * Establish a baseline to measure how changes affect a system.  
-    * Do the same thing when the system is under load to see how the system is affected.  
-    * Follows along with observability before to see how system works under normal
-      operations. This can be thought of as a "low watermark" of the system.  
 
-* Testing: Take something that turns it into Qualitative or Quantitative data that can
-            be measured
-* Benchmarking: 
-
-* Capacity planning
+* Capacity planning:
+* Stopgap Procedures:
 
 * Find ways to describe system utilization to a manager
     * "Except for this one period of time, we sit at X% memory usage, X% CPU usage" etc.
 
 The precision of the tool and your ability to use and interpret the tool are the most
 inportant factors to making good assessments and predicting proper outcomes.  
-Garbage in, garbage out. 
 
-* The "BIG 4" (in this order, based on cost):
-    * compute
+Garbage in, garbage out. If you put garbage into the system, you'll only get garbage
+out of the system.  
+
+
+* The "Big 4" to consider when showing system utilization (in this order, based on cost):
+    * Compute
         * GPU and CPU would both be compute
-    * memory
-    * disk
-    * networking
+    * Memory
+    * Disk
+    * Networking
 
-* find a regression with the "rule of least squares"
-
-* Ceteris paribus: Holding all things equal
-All others being held equal. We try to limit any non-dependent variables from being
-important in our evaluations.
+* Ceteris paribus: "All others being held equal" Holding all things equal. Usually an economic term.
+    * We try to limit any non-dependent variables from being important in our evaluations.
+    * Non-dependent variables are variables that get pushed by other variables.  
 
 * Adding a bunch of agents could be unnecessary utilization; e.g., 5% per agent with 6 agents
 
-Benchmarking iteration:
-plan phase
-    goals identification
-    tools and metrics identification
-    planning and resource allocation
-experiment phase
-    experiment definition
-    experiment execution
-    result analysis
-improve phase
-    benchmark report
-    improvement planning
-    improvement monitoring
+* Benchmarking phase iteration:
+    * Plan phase
+        * Goals identification
+        * Tools and metrics identification
+        * Planning and resource allocation
+    * Experiment phase
+        * Experiment definition
+        * Experiment execution
+        * Result analysis
+    * Improve phase
+        * Benchmark report
+        * Improvement planning
+        * Improvement monitoring
 
-
+* Qualitative and Quantitative assessments:
+    * Qualitative assessments: Non-numerical evaluations that focus on descriptions,
+      observations, and subject insights about the system.
+        * Often involves human judgement or interpretation rather than data.
+        * Helps identify issues that may not be easily measurable (like user
+          experience, system design flaws, etc). 
+        * E.g., observing that a UI is "slow to respond" without measuring response
+          times.  
+    * Quantitative assessments: Numerical and data-driven evaluations that use
+      metrics and measurements to assess the system's performance or health.  
+        * Focuses on specific, objective, and measurable criteria.  
+        * E.g., Measuring CPU usage, memory consumption, or disk I/O
 
 ### Useful tools:
 - Spyder ide
@@ -121,6 +157,7 @@ improve phase
 * `iperf3`: Runs in either server mode or client mode.  
 * `sar`: Good for utilization metrics in the past.
     * Only good for long-term system metrics. Won't accurately represent events that happen for less than 10 minutes
+    * Logs from `sar` are stored in `/var/log/sa/`
 * `stress`: Generic workload increase tool. 
 * `Grafana K6s`: 
 
