@@ -45,6 +45,9 @@ The report made to my manager would include visualizations of resource utilizati
 shown in Grafana, and the output of commands used to monitor the resources on the  
 system. I'll use my local ubuntu box and the rocky boxes for dummy data.  
 
+
+#### First answer for Generating a Report
+
 Average CPU utilization under normal operations is well below saturation.  
 As you can see, this (relatively small) dataset shows that we're sitting at roughly ~95% idle CPU time.  
 ```bash  
@@ -181,7 +184,7 @@ I don't know if a manager wants technical details like this or not... I'd probab
 
 ---
 
-Retry:
+#### Second answer for Generating a Report
 
 I wrote bash script to format the data gathered from `sar` into CSV so it can be
 opened in excel.  
@@ -190,7 +193,7 @@ sar -r -h 1 5 |
     awk 'BEGIN {
         print "Timestamp,Free Memory,Available Memory,Used Memory,%Used Memory,Buffered Memory,Cached Memory, %Commited to System/Applications"
     } 
-    NR>3 {
+    NR>3 && /^[0-9A]/ {
         print $1, "," $2  "," $3 "," $4 "," $5 "," $6 "," $7 "," $9
     }' > memory_usage_report.csv
 if [[ ! -f memory_usage_report.csv ]]; then
@@ -200,6 +203,8 @@ fi
 I'd so the same for `sar -u` for CPU usage.
 I'd use `iperf3` for network checking, an `iostat -xz`/`dd` for checking the disks.  
 
+Afterthought, since the manager is looking to increase the budget:
+I'd also use `smartctl` to determine how long the physical storage disks have been active, and compare that to any known MTBF for that particular disk.  
 
 ### Unit 12 Discussion Post 2
 You are in a capacity planning meeting with a few of the architects.  
@@ -337,17 +342,11 @@ a. What is meant by the term Ceteris Paribus, in this context?
 
 ### Terms:  
 
-* Capacity planning:  
-* Stopgap Procedures:  
+* Capacity planning: Forecasting and allocation the required system resources (CPU,
+  memory disk, network) to meet the current a future workload demands.  
+* Stopgap Procedures: Temporary solutions or workarounds to address an immediate
+  issue or gap in functionality until a permanent fix can be applied.  
 
-* Find ways to describe system utilization to a manager  
-    * "Except for this one period of time, we sit at X% memory usage, X% CPU usage" etc.  
-
-The precision of the tool and your ability to use and interpret the tool are the most  
-inportant factors to making good assessments and predicting proper outcomes.  
-
-Garbage in, garbage out. If you put garbage into the system, you'll only get garbage  
-out of the system.  
 
 
 * The "Big 4" to consider when showing system utilization (in this order, based on cost):  
@@ -390,9 +389,19 @@ out of the system.
         * Focuses on specific, objective, and measurable criteria.  
         * E.g., Measuring CPU usage, memory consumption, or disk I/O  
 
+* The precision of the tool and your ability to use and interpret the tool are the most  
+  important factors to making good assessments and predicting proper outcomes.  
+
+* Garbage in, garbage out. If you put garbage into the system, you'll only get garbage  
+  out of the system.  
+
+
 ### Useful tools:  
 - Spyder ide  
-- Linpak (sp?)  
+* Linpack: Benchmark and stress testing tool. Best used to test system stability,
+  especially of overclocked PCs.  
+* `fio`: A benchmarking tool. It simulates real workloads, which will give more
+  accurate statistics of how a disk will behave in an actual dev/prod environment.  
 * `iperf3`: Runs in either server mode or client mode.  
 * `sar`: Good for utilization metrics in the past.  
     * Only good for long-term system metrics. Won't accurately represent events that happen for less than 10 minutes  
@@ -412,9 +421,9 @@ Topics:
 1. System Stability  
 2. System Performance  
 3. System Security  
-4. System monitoring  
+4. System monitoring  *
 5. Kubernetes  
-6. Programming/Automation  
+6. Programming/Automation  *
 You will research, design, deploy, and document a system that improves your  
 administration of Linux systems in some way.  
 
@@ -455,20 +464,19 @@ plt.plot(size, model.predict(size), color='r')
 ## Reflection Questions  
 1. What questions do you still have about this week?  
 
-I've noticed that the output from `sar` and `free -h` don't really compliment each
-other...
+I've noticed that the output from `sar` and `free -h` don't really compliment each other...
 In terms of memory usage, `sar` shows a 4.4% utilization on memory, but using
 `free -h` shows that there's almost 66% of the total memory being used, with only 33%
 available. Am I misinterpreting the output of `sar`?
 * The answer I found: `sar` excludes cache and buffers from its memory utilization
-  calculations, and focuses on the "real" usage by actual applications.  
+  calculations for `free` memory, and focuses on the "real" usage by actual applications.  
 
 2. How can you apply this now in your current role in IT? If you’re not in IT, how can you  
 look to put something like this into your resume or portfolio?  
 
 I'm not in any role. 
 When I get good at this, I can start a project that will establish baselines of
-systems and report it can be put on a resume/portfolio as 
+systems and generate reports, that can be put on a resume/portfolio as a project.  
 
 
 
