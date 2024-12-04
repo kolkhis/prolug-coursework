@@ -2,22 +2,29 @@
 # ProLUG 101
 Unit 1 Worksheet
 
+
 ## Table of Contents
 * [Instructions](#instructions) 
+* [Discussion Questions](#discussion-questions) 
+    * [Unit 1 Discussion Post 1](#unit-1-discussion-post-1) 
+    * [Unit 1 Discussion Post 2](#unit-1-discussion-post-2) 
+* [Definitions/Terminology (with notes)](#definitionsterminology-with-notes) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
 * [Lab and Assignment](#lab-and-assignment) 
     * [Digging Deeper](#digging-deeper) 
     * [Reflection Questions](#reflection-questions) 
+
 
 ## Instructions
 Fill out this sheet as you progress through the lab and discussions.  
  
 Turn in the sheet to scott.champine@simple2serious.com for grading and feedback.
 
-Discussion Questions:
+## Discussion Questions:
 
-* Unit 1 Discussion Post 1:
-    * Using a 0-10 system, rate yourself on how well you think 
-      you know each topic in the image. (You do not have to post this rating).  
+### Unit 1 Discussion Post 1
+* Using a 0-10 system, rate yourself on how well you think 
+  you know each topic in the image. (You do not have to post this rating).  
 
 * Answer these questions (here): 
 
@@ -37,20 +44,20 @@ development and I do enjoy it, though once I jumped down the Linux rabbit hole I
 As someone who has been disabled for about a decade now, I'd love to get a well-paid job that allows me to work in a way that I am able to, doing something that I enjoy. In whatever form that may take. 
 ```
 
-* Unit 1 Discussion Post 2: 
-    1.	Post a job that you are interested in from a local job website. (link or image)
-        * https://www.indeed.com/viewjob?jk=da76e7061efe123b
-    2.	What do you know how to do in the posting?
-        * Shell Scripting
-        * _Some_ automation
-        * _Some_ Linux security practices
-        * _Some_ familiarity with cloud services and infrastructure
-    3.	What don't you know how to do in the posting?
-        * Pretty much everything else
-    4.	What are you doing to close the gap? What can you do to remedy the difference?
-        * I've been studying on my own time to try and close the gap between where I am and where I want to be. I've been trying to surround myself with people who have the same interests and goals, so that I might make some connections. I know if I keep doing these things, in addition to this course that Scoot put together for us (THANK YOU AGAIN), I'll end up where I want to be.
+### Unit 1 Discussion Post 2
+1.	Post a job that you are interested in from a local job website. (link or image)
+    * https://www.indeed.com/viewjob?jk=da76e7061efe123b
+2.	What do you know how to do in the posting?
+    * Shell Scripting
+    * _Some_ automation
+    * _Some_ Linux security practices
+    * _Some_ familiarity with cloud services and infrastructure
+3.	What don't you know how to do in the posting?
+    * Pretty much everything else
+4.	What are you doing to close the gap? What can you do to remedy the difference?
+    * I've been studying on my own time to try and close the gap between where I am and where I want to be. I've been trying to surround myself with people who have the same interests and goals, so that I might make some connections. I know if I keep doing these things, in addition to this course that Scoot put together for us (THANK YOU AGAIN), I'll end up where I want to be.
 
-Definitions/Terminology (with notes)
+## Definitions/Terminology (with notes)
 
 * Kernel - A thing that has access to the hardware. It runs everything - it's a
   collection of programs that are either native or loaded later that deal with
@@ -74,7 +81,7 @@ Text Editor -
 - Volatile: Means it's lost when the system is restarted.  
     
 
-Notes During Lecture/Class:
+## Notes During Lecture/Class:
 Links:
 
 Terms:
@@ -109,7 +116,10 @@ administration of Linux systems in some way.
 
 3.	Go to https://www.youtube.com/watch?v=d8XtNXutVto and see how far you get with vim.  
     What did you learn that you did not already know about vi/vim?
-    * Nothing, but it was a nice refresher.
+    * I learned about the `:earlier` and `:later` Ex commands.  
+    * I learned that using `Alt-<norm-command>` in insert mode will execute the
+      normal mode command and put you back into normal mode. E.g., `<Alt-k>` in
+      insert mode will move you up one line and put you back into normal mode.  
 
 
 ### Reflection Questions
