@@ -322,7 +322,10 @@ sdc                  8:32   0 476.9G  0 disk
 
 I switched the Ubuntu Server VM over to the new ZFS storage.  
 
+That's the end of the system setup portion of this.  
+
 ## Setting up Monitoring
+
 See [monitoring setup](./fp_monitoring_setup.md)
 
 ---
