@@ -1,5 +1,20 @@
 # ProLUG 101 Final Project Monitoring Stack Setup
 
+## Table of Contents
+* [Monitoring Stack](#monitoring-stack) 
+    * [Central VM for Monitoring](#central-vm-for-monitoring) 
+    * [Visualization](#visualization) 
+    * [Overview](#overview) 
+* [Monitoring Stack Setup](#monitoring-stack-setup) 
+* [Grafana](#grafana) 
+    * [Programmatically Configuring Grafana Data Sources and Dashboards](#programmatically-configuring-grafana-data-sources-and-dashboards) 
+        * [Data Source Provisioning](#data-source-provisioning) 
+        * [Dashboard Provisioning](#dashboard-provisioning) 
+* [Prometheus](#prometheus) 
+    * [Prometheus Service Discovery](#prometheus-service-discovery) 
+* [Writing the Playbook](#writing-the-playbook) 
+* [Resources](#resources) 
+
 
 ## Monitoring Stack
 
@@ -42,6 +57,20 @@ Proxmox Node 2:
   - promtail: logs
 ```
 
+### Overview
+I'm going to have a Central VM that hosts Grafana, Loki, and Prometheus. Probably
+also node_exporter and promtail on this node, but I'm not going to worry about that
+yet. 
+I'm first going to set up Grafana on the server. Then, I'll set up prometheus, and
+create a `targets.json` that I can append to every time I add a new `node_exporter`
+instance on a node.  
+
+<!-- I'll see if there is any way to programmatically configure Grafana by adding Prometheus as a data source, and/or create default dashboards. -->
+<!-- Anything that I can do programmatically instead of using the Web UI. -->
+
+The `grafana-cli` tool, which ships with `grafana-server`, can be used for managing
+Grafana plugins.  
+
 
 ## Monitoring Stack Setup
 I'm going to create a central VM running Ubuntu Server that I'm going to use as my
@@ -58,6 +87,66 @@ manually again.
 
 
 ---
+
+## Grafana
+I'm going to be using Grafana for visualizations.  
+I'll be Installing and launching Grafana with an Ansible playbook.
+Steps:
+* Download the GPG key
+* Add the apt repository, signed by the GPG key.  
+* Download dependencies
+    * apt-transport-https
+    * software-properties-common
+    * unzip
+    * grafana-enterprise
+* Generate a link to the Grafana dashboard.  
+
+### Programmatically Configuring Grafana Data Sources and Dashboards
+[Grafana docs on provisioning data sources](https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources)
+
+Grafana supports provisioning data sources *and* dashboards through config files.  
+ 
+These are `yaml` files that can be included in an Ansible playbook or placed manually
+in the Grafana server's configuration directory.  
+
+These would go in `/etc/grafana/provisioning/datasources` if installed using `deb` or
+`rpm` package (if you `apt install`, this is where it goes).
+
+Otherwise, the default config location is `$WORKING_DIR/conf/`.  
+
+#### Data Source Provisioning
+Grafana provisioning directory: `/etc/grafana/provisioning/datasources/`
+To provision `prometheus`, I could create a `prometheus.yaml` in this directory:
+```yaml
+# /etc/grafana/provisioning/datasources/prometheus.yaml
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://localhost:9090
+    isDefault: true
+    editable: false
+```
+
+#### Dashboard Provisioning
+Dashboards themselves can be in `json` format in a directory on the server:
+`/var/lib/grafana/dashboards/`
+Create a provisioning file for dashboards, like
+`/etc/grafana/provisioning/dashboards/default.yaml`
+```yaml
+apiVersion: 1
+providers:
+  - name: 'default'
+    orgId: 1
+    folder: ''
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
+```
+
+
+
 
 
 
@@ -97,13 +186,13 @@ scrape_configs:
 
 ---
 
-If I can programatically generate a list of hosts running `node_exporter` using 
+If I can programmatically generate a list of hosts running `node_exporter` using 
 either a bash script or the proxmox API, I can modify this file (`targets.json`) to
 contain all of the nodes.  
 
 Alternatively, every time I deploy `node_exporter` on a container, I save the IP of
 the remote machine (VM) to the `targets.json` file. 
-Maybe I can use `jq` to get it in there correctly.  
+Maybe I can use `jq` or `jinja2` filters to get it in there correctly.  
 
 ---
 
@@ -134,3 +223,7 @@ Maybe I can use `jq` to get it in there correctly.
 
 
 
+## Resources
+
+[Grafana docs on provisioning data sources](https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources)
+[Grafana Ansible collection](https://github.com/grafana/grafana-ansible-collection)
