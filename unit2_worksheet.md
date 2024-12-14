@@ -170,6 +170,7 @@ Inventory
 
 
 ### Useful tools:  
+
 * `df` / `df -h`
 * `vmstat`
 * `nproc`
@@ -180,7 +181,7 @@ Inventory
 * `usermod`
 * `semanage`
 * `chcon`
-* `restorecon`
+* `restorecon` 
 * `audit2allow`
 * `ps`
     * `ps -e` is "standard" syntax to see all processes.  
@@ -192,6 +193,10 @@ Inventory
         * `ps -eM`
     * To just get the SELinux labels:
         * `ps -eo label`
+* `sestatus`: Check the status of SELinux
+* `getenforce`: Get the current enforcement mode.  
+* `sudo setenforce 0`: Set the enforcing mode.  
+
 
 ---  
 
