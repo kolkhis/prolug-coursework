@@ -397,7 +397,8 @@ a. What is meant by the term Ceteris Paribus, in this context?
 
 
 ### Useful tools:  
-- Spyder ide  
+* Spyder ide: A Python IDE that supports Jupyter features like showing graphs with
+  `matplotlib`.  
 * Linpack: Benchmark and stress testing tool. Best used to test system stability,
   especially of overclocked PCs.  
 * `fio`: A benchmarking tool. It simulates real workloads, which will give more
@@ -407,12 +408,18 @@ a. What is meant by the term Ceteris Paribus, in this context?
     * Only good for long-term system metrics. Won't accurately represent events that happen for less than 10 minutes  
     * Logs from `sar` are stored in `/var/log/sa/`
 * `stress`: Generic workload increase tool. 
-* `Grafana K6s`: 
+* `Grafana k6`: An opern-source, extensible load testing tool.  
 
-A loop to test 
+
+A loop to test CPU performance:
 ```bash  
+time $(i=0; while (( i < 999999 )); do (( i++ )); done)  
 time $(i=0; while (( i < 99999999 )); do (( i++ )); done)  
 ```
+The loop is single-threaded.  
+So, it doesn't test the ability of the CPU to handle parallel tasks or multi-core performance.  
+
+
 
 ## Lab and Assignment  
 Unit 12 Lab Baselining and Benchmarking  
@@ -431,7 +438,11 @@ administration of Linux systems in some way.
 1. Analyzing data may open up a new field of interest to you. Go through some of the  
 free lessons on Kaggle, here: https://www.kaggle.com/learn  
 a. What did you learn?  
+<!-- Data science it pain. -->  
+
 b. How will you apply these lessons to data and monitoring you have already  
+<!-- I hope to never apply any of this to anything ever. -->  
+
 collected as a system administrator?  
 2. Find a blog or article that discusses the 4 types of data analytics.  
 a. What did you learn about past operations?  
