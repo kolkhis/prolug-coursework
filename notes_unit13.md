@@ -18,7 +18,7 @@ Anything you do in the hardening sense is more of an engineering thing.
     * You can make STIGs for specific devices.  
 
 * OpenSCAP
-* SCC/SEC? tool
+* SCC tool
 * Radix
 
 * Pulp: OSS fetch, upload, and distribute software packages on-prem or in the cloud.  
@@ -34,7 +34,9 @@ There are only a few you need to do a "manual verification" on.
 * Take all of `/etc/*release` output in the `Finding Details` section.
     * The command you did, and its output.
     * The `Comments` are why you set it to its status (e.g., `not a finding`)
-You need to be able to show ISSO, if you have a policy to update every 2 weeks, `dnf history` - Last update 11/29 - That update is too far back. Show the output that is pertinent to discussion, say `system is out of compliance, but ISSO has given a pass until pass acceptance testing`. That STIG would remain open.
+
+You need to be able to show the ISSO (Information System Security Officer), if you have a policy to update every 2 weeks, `dnf history` - Last update 11/29 - That update is too far back.
+Show the output that is pertinent to discussion, say `system is out of compliance, but ISSO has given a pass until pass acceptance testing`. That STIG would remain open.
 
 There are Cat 1s that MUST be completed (`not a finding`), not `open`. 
 * They can be `open`, but you must have a reason for the ISSO
@@ -66,7 +68,6 @@ Understanding packaging and package methodology is important to keep a system ha
 dnf repolist # Just looking at flat files
 ```
 These are in `/etc/yum.repos.d/`
-vi 
 ```bash
 vi /etc/yum.repos.d/epel.repo
 ```
@@ -81,11 +82,6 @@ https://pulpproject.org/
 https://grafana.com/docs/grafana/latest/setup-grafana/installation/redhat-rhel-fedora/
 https://open-scap.org/getting-started
 https://www.openfoam.com/
-
-`gpgkey` points to a gpg key file
-`gpgcheck` tells dnf to ALWAYS checks the package
-`repo_gpgcheck` tells dnf to always verify the repository with the GPG key
-
 
 ## Golden image
 Get a base install image from a company.  
