@@ -230,6 +230,8 @@ Security standards:
 
 ---
 
+* Diamond model of intrusion analysis
+
 * Security teams - Governance, Risk, Compliance
 
 * Acceptance Testing: Formal testing according to user needs, requirements, and
@@ -289,6 +291,22 @@ Port number between `0` to `65534` (`65535` can't be used).
 
 * `boto3`: Python library that connects to the AWS API.  
     * Used for using ansible or python when interacting with the cloud.  
+
+* `stat`: Show statistics about a file.  
+  ```bash
+  sudo stat -c "%a %n" /etc/ssh/*.pub
+    644 /etc/ssh/ssh_host_dsa_key.pub
+    644 /etc/ssh/ssh_host_ecdsa_key.pub
+    644 /etc/ssh/ssh_host_ed25519_key.pub
+    644 /etc/ssh/ssh_host_rsa_key.pub
+  ```
+    * `"%a %n"`: The permissions (octal notation) and name of the file.  
+        * These are called format sequences.  
+    * Other useful ones:
+        * `%w`: Time of file creation.  
+        * `%x`: Time of the last file access.  
+        * `%y`: Time of the last data modification.  
+        * `%z`: Time of the last status change.  
 
 * Julia
 * OpenFoam
