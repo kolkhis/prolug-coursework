@@ -56,8 +56,8 @@
 \usetikzlibrary{shapes,arrows}
 
 %%%%%%%%% TITLE SLIDE %%%%%%%%%
-\title{\textbf{Setting up a Proxmox Homelab on an Enterprise Server}}
-\author{Using a Dell PowerEdge R730}
+\title{\textbf{Automated Setup of a Monitoring Stack using Ansible}}
+\author{Using Proxmox on a Dell PowerEdge R730}
 
 \date{}  % Get rid of date
 
@@ -103,87 +103,85 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 2 %%%%%%%%%%%%%%%%%%%%
-% FRAME: Machine Setup
-\begin{frame}{Getting the Machine Ready}
-    \begin{enumerate}
-        \item{I discovered early on that disks in this type of server won't be recognized by installers by default.} 
-        \item{The server uses a Hardware RAID controller, so all disks are RAID devices by default.}
-        \item{I opted to use the BIOS/UEFI convert my SSDs to Non-RAID Disks instead of messing with the Hardware RAID Controller.}
-        \item{This took me a long time to figure out.}
-    \end{enumerate}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.5\linewidth]{installer-no-disks-error.png}  
+%%%%%%%%%%%%%%% FRAME 2 %%%%%%%%%%%%%%%%%%%%
+%% FRAME: Machine Setup
+%\begin{frame}{Getting the Machine Ready}
+%    \begin{enumerate}
+%        \item{I discovered early on that disks in this type of server won't be recognized by installers by default.} 
+%        \item{The server uses a Hardware RAID controller, so all disks are RAID devices by default.}
+%        \item{I opted to use the BIOS/UEFI convert my SSDs to Non-RAID Disks instead of messing with the Hardware RAID Controller.}
+%        \item{This took me a long time to figure out.}
+%    \end{enumerate}
+%    \begin{figure}
+%        \centering
+%        \includegraphics[width=0.5\linewidth]{installer-no-disks-error.png}  
 
-        \caption{Proxmox installer error: No supported disks.}
-        \label{fig:Proxmox installer error - no disks.}
-    \end{figure}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        \caption{Proxmox installer error: No supported disks.}
+%        \label{fig:Proxmox installer error - no disks.}
+%    \end{figure}
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Installing Proxmox}
-    \begin{enumerate}
-        \item{I installed "Proxmox VE (Terminal UI)", as I didn't see the need for a
-        GUI.} 
-        \item{Everything can be done from the Proxmox Web UI, from configuring
-        storage to launching VMs and containers.}
-        \item{I had quite a bit of trouble with the initial installation. I'd never
-            touched an enterprise server before.}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
+%\begin{frame}{Installing Proxmox}
+%    \begin{enumerate}
+%        \item{I installed "Proxmox VE (Terminal UI)", as I didn't see the need for a
+%        GUI.} 
+%        \item{Everything can be done from the Proxmox Web UI, from configuring
+%        storage to launching VMs and containers.}
+%        \item{I had quite a bit of trouble with the initial installation. I'd never
+%            touched an enterprise server before.}
+%    \end{enumerate}
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% FRAME 4 (Picture) %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.5\linewidth]{pve_setup.jpeg}
-        \caption{Photo of the server during setup}
-        \label{fig:setup-pic}
-    \end{figure}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% FRAME 4 (Picture) %%%%%%%%%%%%%%%%%%%%
+%\begin{frame}{}
+%    \begin{figure}
+%        \centering
+%        \includegraphics[width=0.5\linewidth]{pve_setup.jpeg}
+%        \caption{Photo of the server during setup}
+%        \label{fig:setup-pic}
+%    \end{figure}
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% FRAME: Deciding on storage %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Deciding on the Type of Storage to Use}
-    I had a hard time deciding what type of storage to use. 
-    \begin{enumerate}
-        \item{I initially started using LVM. But this did not support snapshots or
-            data sharing.}
-        \item{I tried making partitions using `ext4` type filesystems, but found they didn't support VM snapshots either.}
-        \item{I looked into Ceph, since it has native support in Proxmox, but setup
-            looked a little too complex for the timeline of this project.}
-        \item{I decided to use ZFS. Also has native support, with feature support 
-            (snapshots/sharing). I just wanted to get it up and running.}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% FRAME: Deciding on storage %%%%%%%%%%%%%%%%%%%%
+%\begin{frame}{Deciding on the Type of Storage to Use}
+%    I had a hard time deciding what type of storage to use. 
+%    \begin{enumerate}
+%        \item{I initially started using LVM. But this did not support snapshots or
+%            data sharing.}
+%        \item{I tried making partitions using `ext4` type filesystems, but found they didn't support VM snapshots either.}
+%        \item{I looked into Ceph, since it has native support in Proxmox, but setup
+%            looked a little too complex for the timeline of this project.}
+%        \item{I decided to use ZFS. Also has native support, with feature support 
+%            (snapshots/sharing). I just wanted to get it up and running.}
+%    \end{enumerate}
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% FRAME: USING ZFS %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Creating ZFS for Storage}
-    I wiped the two disks I was using for `ext4` filesystems and converted them
-    to a `zfs` pool.  
+%%%%%%%%%%%%%%% FRAME: USING ZFS %%%%%%%%%%%%%%%%%%%%
+%\begin{frame}{Creating ZFS for Storage}
+%    I wiped the two disks I was using for `ext4` filesystems and converted them
+%    to a `zfs` pool.  
 
-    Then I used the Proxmox Web UI to provision the `zfs` pool for virtual
-    machines.  
+%    Then I used the Proxmox Web UI to provision the `zfs` pool for virtual
+%    machines.  
  
-\verb+
+%\verb+
 
-wipefs -a /dev/sdb /dev/sdc;  
+%wipefs -a /dev/sdb /dev/sdc;  
  
-zpool create vmdata /dev/sdb/ /dev/sdc;  
-
- 
+%zpool create vmdata /dev/sdb/ /dev/sdc;  
 
  
-\+
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\+
+%\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% MONITORING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%% FRAME Central VM Setup %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Monitoring, Pt1: Create a Centralized VM}
     \begin{enumerate}
@@ -211,9 +209,121 @@ zpool create vmdata /dev/sdb/ /dev/sdc;
                 \item{Grafana (Visualizations)}
                 \item{Loki (Log Storage)}
             \end{enumerate}
-        \item{I wrote a play that would just run on that VM and install these tools.}
-        \item{I can't automate setting up the Grafana dashboard. (or I just don't
-            know how)}
+        \item{I wrote a series of playbooks that would just run on that VM and install these tools.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME Grafana Playbook %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Grafana Setup Playbook}
+The Grafana plabook was simple. It can be installed with most package managers.  
+
+    Tasks:
+    \begin{enumerate}
+        \item{Pull the Grafana GPG key.} 
+        \item{Add the Grafana repository, signed by the GPG key.}
+        \item{Install using the host OS's package manager.}
+        \item{Add a handler that starts/enables the Grafana-server systemd service.}
+        \item{Use blocks with conditions to detect the OS family to determine where
+            to store the GPG key and which package manager to use.}
+            %whether to use either dnf/yum or apt.}
+        \item{Expose port 3000 if \verb+firewalld\+ is running.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME Provisioning Datasources && dashboards %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Provisioning Data Sources and Dashboards}
+    \begin{enumerate}
+        \item{Default dashboards and datasources can be stored in json format.}
+        \item{Configure the data sources directly in yaml format in
+            \verb+/etc/grafana/provisioning/datasources/\+}
+        \item{Configure the dashboards in json format, using a yaml config to 
+                specify the path to the dashboard files in 
+                \verb+/etc/grafana/provisioning/datasources/\+}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TODO: Add example config for dashboards and data sources
+
+% Data Source Provisioning File
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\linewidth]{grafana_datasource_provisioning_file.png}
+    \caption{Grafana Datasource Provisioning File}
+    \label{fig:enter-label}
+\end{figure}
+
+% Dashboard Provisioning File
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\linewidth]{grafana_dashboard_provisioning_example.png}
+    \caption{Grafana Dashboard Provisioning File}
+    \label{fig:enter-label}
+\end{figure}
+
+%%%%%%%%%%%%%% FRAME Prometheus Playbook %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Prometheus Setup Playbook}
+    Tasks:
+    \begin{enumerate}
+        \item{Pull the tarball from Github.} 
+        \item{Create necessary directories and user account.} 
+        \item{Extract tarball into \verb+/var/lib/prometheus\+} 
+        \item{Copy the binary and service files to their respective directories.} 
+        \item{Create (or copy) some default configuration files.} 
+        \item{Expose port 9090 if accessing externally.} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME Prometheus File-based Service Discovery %%%%%%%%%%%%%%%%%%%% 
+\begin{frame}{Prometheus Service Discovery}
+    Prometheus supports file-based service discovery.  
+    To set it up:
+    \begin{enumerate}
+        \item{Create a default \verb+targets.json\+} 
+        \item{Add a file\_sd\_configs entry in \verb+/etc/prometheus/prometheus.yml\+
+            (Prometheus configuration file)} 
+        \item{Point the file\_sd\_configs to your targets.json file.} 
+        \item{Whenever a change is made in targets.json, Prometheus will detect the
+            change and update accordingly.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%% FRAME Node Exporter Playbook %%%%%%%%%%%%%%%%%%%% 
+\begin{frame}{Node Exporter Playbook}
+    This process was similar to that of Prometheus.  
+
+    Tasks:
+    \begin{enumerate}
+        \item{Create user account for \verb+node\_exporter.\+} 
+        \item{Download and extract the node\_exporter tarball.} 
+        \item{Clone the default config\_files repository for the service files.} 
+        \item{Copy binary to \verb+/usr/sbin\+} 
+        \item{Copy service files to \verb+/etc/systemd/system/\+} 
+        \item{Read targets.json from the Prometheus node and append the new target.} 
+        \item{If firewalld is running, expose port 9100. } 
+        \item{Use systemctl to start/enable node\_exporter.} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME Node Exporter Targets %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Node Exporter Playbook, Pt2}
+    Benefits of using this method:
+    \begin{enumerate}
+        \item{Every time this playbook deploys node\_exporter on a host, it adds 
+            that host to targets.json (/etc/prometheus/target.json).} 
+        \item{Prometheus will detect the change in this file and update.} 
+        \item{This allows for dynamic updates of Prometheus scrape targets without
+            having to restart the Prometheus service.} 
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,16 +334,19 @@ zpool create vmdata /dev/sdb/ /dev/sdc;
 \begin{frame}{}
     \begin{enumerate}
         \item{} 
-        \item{}
-        \item{}
+        \item{} 
+        \item{} 
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \begin{frame}{References}
     \bibliographystyle{apalike}
-        Proxmox docs: https://pve.proxmox.com/wiki/
-        Ansible docs: https://docs.ansible.com/ansible/latest/collections/ansible/builtin
+        Proxmox docs: https://pve.proxmox.com/wiki/  
+        Ansible docs: https://docs.ansible.com/ansible/latest/collections/ansible/builtin  
+        ProLUG Labs on Killercoda: https://killercoda.com/het-tanis/course/Linux-Labs  
+        Prometheus File-based Service Discovery Config https://prometheus.io/docs/prometheus/latest/configuration/configuration/#file_sd_config  
     \bibliography{bib}
 \end{frame}
 
