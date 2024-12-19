@@ -59,17 +59,16 @@ Proxmox Node 2:
 
 ### Overview
 
-
 ---
 
-My final project is to automate the setup of monitoring tools on a node or set of nodes using Ansible. 
+My final project is to automate the setup of monitoring tools on a node or set of nodes using Ansible.  
 I have a central VM set up in my homelab running Ubuntu Server that will host Grafana, Prometheus, and Loki.  
 
 I have an ansible playbook that installs and launches Grafana on the central VM, and generates a link to the login page. 
 
 I've decided on file-based service discovery in `Prometheus` for `node_exporter` running on other nodes.
 
-I plan to automate the process of adding targets to the `/etc/prometheus/targets.json` file every time I use an ansible playbook to deploy `node_exporter` on another system on the network.
+I automated the process of adding targets to the `/etc/prometheus/targets.json` file every time I use an ansible playbook to deploy `node_exporter` on another system on the network.
 This will allow for dynamic updating of `node_exporter` data sources.  
 
 I aim to make this to be universal, so I can configure targets on the fly.
@@ -77,7 +76,7 @@ I aim to make this to be universal, so I can configure targets on the fly.
 ---
 
 I'm going to have a Central VM that hosts Grafana, Loki, and Prometheus. Probably
-also node_exporter and promtail on this node, but I'm not going to worry about that
+also `node_exporter` and promtail on this node, but I'm not going to worry about that
 yet. 
 I'm first going to set up Grafana on the server. Then, I'll set up prometheus, and
 create a `targets.json` that I can append to every time I add a new `node_exporter`
