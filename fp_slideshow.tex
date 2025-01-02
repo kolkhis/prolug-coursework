@@ -89,97 +89,17 @@
 
 %%%% CONTENT FRAMES %%%%
 
-%%%%%%%%%%%%%% FRAME 1 %%%%%%%%%%%%%%%%%%%%
-% FRAME ONE: GOAL
+%%%%%%%%%%%%%% FRAME 1: Project Goals %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Goals}
     \begin{enumerate}
-        \item{Set up a Type 1 hypervisor for running Virtual Machines and
+        \item{Set up a Type 1 hypervisor (Proxmox) for running Virtual Machines and
             Containerized Applications.} 
         \item{Set up monitoring tools for analyzing resource usage and logs. }
-        \item{Automate the setup of monitoring tools on all VMs and Containers using
-            Ansible.}
+        \item{Automate the setup of those monitoring tools on all VMs using Ansible.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%%%%%%%%%%%%%%% FRAME 2 %%%%%%%%%%%%%%%%%%%%
-%% FRAME: Machine Setup
-%\begin{frame}{Getting the Machine Ready}
-%    \begin{enumerate}
-%        \item{I discovered early on that disks in this type of server won't be recognized by installers by default.} 
-%        \item{The server uses a Hardware RAID controller, so all disks are RAID devices by default.}
-%        \item{I opted to use the BIOS/UEFI convert my SSDs to Non-RAID Disks instead of messing with the Hardware RAID Controller.}
-%        \item{This took me a long time to figure out.}
-%    \end{enumerate}
-%    \begin{figure}
-%        \centering
-%        \includegraphics[width=0.5\linewidth]{installer-no-disks-error.png}  
-
-%        \caption{Proxmox installer error: No supported disks.}
-%        \label{fig:Proxmox installer error - no disks.}
-%    \end{figure}
-%\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
-%\begin{frame}{Installing Proxmox}
-%    \begin{enumerate}
-%        \item{I installed "Proxmox VE (Terminal UI)", as I didn't see the need for a
-%        GUI.} 
-%        \item{Everything can be done from the Proxmox Web UI, from configuring
-%        storage to launching VMs and containers.}
-%        \item{I had quite a bit of trouble with the initial installation. I'd never
-%            touched an enterprise server before.}
-%    \end{enumerate}
-%\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%% FRAME 4 (Picture) %%%%%%%%%%%%%%%%%%%%
-%\begin{frame}{}
-%    \begin{figure}
-%        \centering
-%        \includegraphics[width=0.5\linewidth]{pve_setup.jpeg}
-%        \caption{Photo of the server during setup}
-%        \label{fig:setup-pic}
-%    \end{figure}
-%\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%% FRAME: Deciding on storage %%%%%%%%%%%%%%%%%%%%
-%\begin{frame}{Deciding on the Type of Storage to Use}
-%    I had a hard time deciding what type of storage to use. 
-%    \begin{enumerate}
-%        \item{I initially started using LVM. But this did not support snapshots or
-%            data sharing.}
-%        \item{I tried making partitions using `ext4` type filesystems, but found they didn't support VM snapshots either.}
-%        \item{I looked into Ceph, since it has native support in Proxmox, but setup
-%            looked a little too complex for the timeline of this project.}
-%        \item{I decided to use ZFS. Also has native support, with feature support 
-%            (snapshots/sharing). I just wanted to get it up and running.}
-%    \end{enumerate}
-%\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%% FRAME: USING ZFS %%%%%%%%%%%%%%%%%%%%
-%\begin{frame}{Creating ZFS for Storage}
-%    I wiped the two disks I was using for `ext4` filesystems and converted them
-%    to a `zfs` pool.  
-
-%    Then I used the Proxmox Web UI to provision the `zfs` pool for virtual
-%    machines.  
- 
-%\verb+
-
-%wipefs -a /dev/sdb /dev/sdc;  
- 
-%zpool create vmdata /dev/sdb/ /dev/sdc;  
-
- 
-%\+
-%\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% MONITORING %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%% FRAME Central VM Setup %%%%%%%%%%%%%%%%%%%%
@@ -207,28 +127,75 @@
             \begin{enumerate}
                 \item{Prometheus (Metrics TSDB)}
                 \item{Grafana (Visualizations)}
-                \item{Loki (Log Storage)}
+                \item{Node_Exporter (Collecting Metrics)}
             \end{enumerate}
-        \item{I wrote a series of playbooks that would just run on that VM and install these tools.}
+        \item{I wrote a series of playbooks that would run on that VM and install these tools.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME Prometheus and node_exporter %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Prometheus and Node\_Exporter for System Metrics}
+    Promtheus and Node\_Exporter are used for collecting and storing system metrics.
+    \begin{enumerate}
+        \item{Node\_Exporter gathers system metrics and exposes them on an endpoint
+            for Prometheus to scrape.}
+        \item{Promtheus scrapes the metrics from targets in its configuration files and stores them.}
+        \item{This data is then available for Grafana to display.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+
+%%%%%%%%%%%%%% FRAME Loki and Promtail %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Loki and Promtail for Logging}
+    \begin{enumerate}
+        \item{Loki and Promtail go together just like Prometheus and Node\_Exporter.  \\}
+        \item{While Prometheus and Node\_Exporter are for gathering and storing system metrics,
+            Loki and Promtail gather and store system logs.\\}
+        \item{Loki is the TSDB, and Promtail collects the logs and sends them to Loki.\\}
+        \item{This data is then available for Grafana to display.}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME Loki and Promtail (cont) %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Loki and Promtail for Logging (cont.)}
+    The way the data is transferred between Loki/Promtail is different from Prometheus/Node\_Exporter:
+    \begin{enumerate}
+        \item{Prometheus/Node\_Exporter:} 
+        \begin{enumerate}
+            \item{Node\_Exporter makes data available for scraping on the machine it's running on.} 
+            \item{Prometheus (the TSDB) goes and scrapes the logs that Node\_Exporter exposes.} 
+        \end{enumerate}
+        \item{Loki/Promtail:} 
+        \begin{enumerate}
+            \item{Promtail actively gathers logs \textit{and} sends them to Loki.} 
+            \item{Loki accepts the logs from Promtail and stores them.} 
+        \end{enumerate}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 %%%%%%%%%%%%%% FRAME Grafana Playbook %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Grafana Setup Playbook}
-The Grafana plabook was simple. It can be installed with most package managers.  
+The Grafana plabook was simple. It can be installed with most package managers after
+    adding the repository.  
 
     Tasks:
     \begin{enumerate}
         \item{Pull the Grafana GPG key.} 
         \item{Add the Grafana repository, signed by the GPG key.}
         \item{Install using the host OS's package manager.}
-        \item{Add a handler that starts/enables the Grafana-server systemd service.}
+        \item{Add a task that starts/enables the Grafana-server systemd service.}
         \item{Use blocks with conditions to detect the OS family to determine where
             to store the GPG key and which package manager to use.}
             %whether to use either dnf/yum or apt.}
-        \item{Expose port 3000 if \verb+firewalld\+ is running.}
+        \item{Expose port 3000 if firewalld is running.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,15 +206,16 @@ The Grafana plabook was simple. It can be installed with most package managers.
     \begin{enumerate}
         \item{Default dashboards and datasources can be stored in json format.}
         \item{Configure the data sources directly in yaml format in
-            \verb+/etc/grafana/provisioning/datasources/\+}
+            \texttt{/etc/grafana/provisioning/datasources/} }
         \item{Configure the dashboards in json format, using a yaml config to 
                 specify the path to the dashboard files in 
-                \verb+/etc/grafana/provisioning/datasources/\+}
+                \texttt{/etc/grafana/provisioning/datasources/} }
+
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% TODO: Add example config for dashboards and data sources
 
+%%%%%%%%%%%%%% FRAME Provisioning Configuration Screenshots %%%%%%%%%%%%%%%%%%%%
 % Data Source Provisioning File
 \begin{figure}
     \centering
@@ -270,7 +238,7 @@ The Grafana plabook was simple. It can be installed with most package managers.
     \begin{enumerate}
         \item{Pull the tarball from Github.} 
         \item{Create necessary directories and user account.} 
-        \item{Extract tarball into \verb+/var/lib/prometheus\+} 
+        \item{Extract tarball into \texttt{/var/lib/prometheus} } 
         \item{Copy the binary and service files to their respective directories.} 
         \item{Create (or copy) some default configuration files.} 
         \item{Expose port 9090 if accessing externally.} 
@@ -283,17 +251,17 @@ The Grafana plabook was simple. It can be installed with most package managers.
     Prometheus supports file-based service discovery.  
     To set it up:
     \begin{enumerate}
-        \item{Create a default \verb+targets.json\+} 
-        \item{Add a file\_sd\_configs entry in \verb+/etc/prometheus/prometheus.yml\+
+        \item{Create a default \texttt{targets.json}} 
+        \item{Add a \texttt{file\_sd\_configs} entry in \texttt{/etc/prometheus/prometheus.yml}
             (Prometheus configuration file)} 
-        \item{Point the file\_sd\_configs to your targets.json file.} 
+        \item{Point the \texttt{file\_sd\_configs} to your targets.json file.} 
         \item{Whenever a change is made in targets.json, Prometheus will detect the
             change and update accordingly.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+% TODO: Add a screenshot of file_sd_config in prometheus.yml
 
 
 %%%%%%%%%%%%%% FRAME Node Exporter Playbook %%%%%%%%%%%%%%%%%%%% 
@@ -302,11 +270,11 @@ The Grafana plabook was simple. It can be installed with most package managers.
 
     Tasks:
     \begin{enumerate}
-        \item{Create user account for \verb+node\_exporter.\+} 
+        \item{Create user account for \texttt{node\_exporter}.} 
         \item{Download and extract the node\_exporter tarball.} 
         \item{Clone the default config\_files repository for the service files.} 
-        \item{Copy binary to \verb+/usr/sbin\+} 
-        \item{Copy service files to \verb+/etc/systemd/system/\+} 
+        \item{Copy binary to \texttt{/usr/sbin}.} 
+        \item{Copy service files to \texttt{/etc/systemd/system/}. } 
         \item{Read targets.json from the Prometheus node and append the new target.} 
         \item{If firewalld is running, expose port 9100. } 
         \item{Use systemctl to start/enable node\_exporter.} 
@@ -317,7 +285,7 @@ The Grafana plabook was simple. It can be installed with most package managers.
 
 %%%%%%%%%%%%%% FRAME Node Exporter Targets %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Node Exporter Playbook, Pt2}
-    Benefits of using this method:
+    Benefits of using file-based service discovery:
     \begin{enumerate}
         \item{Every time this playbook deploys node\_exporter on a host, it adds 
             that host to targets.json (/etc/prometheus/target.json).} 
@@ -329,16 +297,24 @@ The Grafana plabook was simple. It can be installed with most package managers.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-%%%%%%%%%%%%%% EMPTY FRAME %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
+%%%%%%%%%%%%%% FRAME Appending to Targets.json %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Dynamically Adding Prometheus Targets}
+    In order to append to the list of Prometheus targets, I had to read it in as a
+    Python data structure.  
     \begin{enumerate}
-        \item{} 
-        \item{} 
-        \item{} 
+        \item{Read in the contents of \texttt{targets.json} with
+            \texttt{ansible.builtin.slurp}.  } 
+        \item{Decode the raw data. Slurp reads files in as a base64-encoded string.
+            \texttt{targets\_file\_contents.content | b64decode | from\_json} } 
+        \item{This is now a valid python data structure that can be manipulated. } 
+        \item{Append it to the list like you normally would in python, formatted the
+            way \texttt{json} likes.  }
+              
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 
 \begin{frame}{References}
