@@ -1,5 +1,7 @@
 
 # ProLUG 101 Final Project
+This was done before I switched my final project to deploying a monitoring stack with Ansible.  
+
 
 
 ## Table of Contents
@@ -8,9 +10,15 @@
 * [Set up a New User](#set-up-a-new-user) 
 * [Setting up Storage for the Homelab](#setting-up-storage-for-the-homelab) 
 * [Package Setup](#package-setup) 
+    * [Setting up LVM](#setting-up-lvm) 
+    * [Replacing the Old Disk and Partitioning the New Ones](#replacing-the-old-disk-and-partitioning-the-new-ones) 
+* [Use Web UI to Create Directory and Upload ISOs](#use-web-ui-to-create-directory-and-upload-isos) 
+* [Creating the First VM](#creating-the-first-vm) 
+* [Moving to ZFS](#moving-to-zfs) 
+* [Setting up Monitoring](#setting-up-monitoring) 
 * [Troubleshooting Write-ups](#troubleshooting-write-ups) 
     * [Troubleshooting Logical Volume Management (LVM) Commands](#troubleshooting-logical-volume-management-lvm-commands) 
-        * [Troubleshooting the Disk - Creating the Logical Volume (TS)](#troubleshooting-the-disk---creating-the-logical-volume-ts) 
+    * [Troubleshooting the Disk - Creating the Logical Volume](#troubleshooting-the-disk---creating-the-logical-volume) 
     * [Troubleshooting Installation](#troubleshooting-installation) 
     * [Installation Troubleshooting Steps Taken](#installation-troubleshooting-steps-taken) 
         * [Reconfiguing BIOS (UEFI)](#reconfiguing-bios-uefi) 
@@ -18,6 +26,7 @@
         * [Updating Firmware](#updating-firmware) 
         * [Hardware RAID Controller Device settings](#hardware-raid-controller-device-settings) 
 * [Initial Setup Troubleshooting TL;DR](#initial-setup-troubleshooting-tldr) 
+* [Removing a VM that is Pointing to a Nonexistent Storage](#removing-a-vm-that-is-pointing-to-a-nonexistent-storage) 
 * [Misc](#misc) 
 
 
@@ -117,7 +126,6 @@ Then, as `root`, set a password for the user:
 passwd kolkhis
 ```
 
-
 ---
 
 
@@ -134,11 +142,7 @@ logical volume using the `ext4` filesystem.
 ```bash
 # For pvs/pvdisplay, vgs/vgdisplay, lvs/lvdisplay
 sudo apt install liblinux-lvm-perl
-
 ```
-
-
-
 
 
 
