@@ -1,5 +1,6 @@
 # ProLUG 101 Final Project Monitoring Stack Setup
 
+
 ## Table of Contents
 * [Monitoring Stack](#monitoring-stack) 
     * [Central VM for Monitoring](#central-vm-for-monitoring) 
@@ -13,6 +14,7 @@
 * [Prometheus](#prometheus) 
     * [Prometheus Service Discovery](#prometheus-service-discovery) 
 * [Writing the Playbook](#writing-the-playbook) 
+* [Loki Playbook Debugging](#loki-playbook-debugging) 
 * [Resources](#resources) 
 
 
@@ -41,6 +43,7 @@ Then I'm going to deploy a distributed setup; `node_exporter` and `promtail` wil
 on all the other nodes and send all the data from those nodes to the central VM.  
 
 ### Visualization
+
 A `yaml` visualization of how the monitoring infrastructure will be set up:
 ```yaml
 Central Monitoring VM:
@@ -228,6 +231,96 @@ Maybe I can use `jq` or `jinja2` filters to get it in there correctly.
 
 
 
+## Loki Playbook Debugging
+When running the playbook for loki, I ran into several errors.  
+I was initially using the config from the Killercoda lab. The loki process was coming
+back as `failed` every time. I used `journalctl -xe -u loki` and ran into the error:
+```bash
+Dec 27 11:47:35 desmond loki-linux-amd64[9401]: failed parsing config: /opt/loki/loki-local-config.yaml: yaml: unmarshal errors:
+Dec 27 11:47:35 desmond loki-linux-amd64[9401]:   line 30: field metric_aggregation_enabled not found in type validation.plain
+Dec 27 11:47:35 desmond loki-linux-amd64[9401]:   line 40: field pattern_ingester not found in type loki.ConfigWrapper
+Dec 27 11:47:35 desmond loki-linux-amd64[9401]:   line 47: field encoding not found in type lokifrontend.Config. Use -config.expand-env=true flag if you want to expand environment variables in your config f>
+Dec 27 11:47:35 desmond systemd[1]: loki.service: Main process exited, code=exited, status=1/FAILURE
+```
+
+The error seemed to be in the configuration file. I commented out the lines that were
+specified, including the whole `pattern_ingester` section.  
+This led me to another error, also from `journalctl`:
+
+```bash
+Dec 27 12:09:47 desmond loki-linux-amd64[10526]: level=error ts=2024-12-27T17:09:47.380106871Z caller=main.go:70 msg="validating config" err="CONFIG ERROR: invalid limits_config config: unknown deletion mode: must be one of disabled|filter-only|filter-and-delete"
+Dec 27 11:53:24 desmond systemd[1]: loki.service: Main process exited, code=exited, status=1/FAILUR  110 
+```
+
+I tried using the loki-local-config.yaml at [the official github page](https://github.com/grafana/loki/blob/release-3.3.x/cmd/loki/loki-local-config.yaml) but ran into some new errors.  
+```bash
+  Dec 27 12:19:09 desmond loki-linux-amd64[12035]: failed parsing config: /opt/loki/loki-local-config.yaml: yaml: unmarshal errors:
+  Dec 27 12:19:09 desmond loki-linux-amd64[12035]:   line 44: field enabled not found in type aggregation.Config. Use `-config.expand-env=true` flag if you want to expand environment variables in your config file
+  Dec 27 12:19:09 desmond systemd[1]: loki.service: Main process exited, code=exited, status=1/FAILURE
+```
+I commented out `enabled: true` where the `journalctl` output was pointing:
+```yaml
+pattern_ingester:
+  enabled: true
+  metric_aggregation:
+    #enabled: true
+    loki_address: localhost:3100
+```
+Then the service started correctly.  
+
+## Promtail File-based service discovery
+Promtail, like Prometheus, supports file-based service discovery.  
+It's defined the same way in its configuration file.  
+
+```yaml
+scrape_configs:
+    - job_name: system
+      file_sd_configs: 
+        - files:
+            - /etc/promtail/file_sd/sys_logs.yml
+            - /etc/promtail/file_sd/auth_logs.yml
+    - relabel_configs:
+        - source_labels: [__path__]
+          target_label: path
+```
+
+Then the `system_logs.yml` would look like:
+```yaml
+- targets:
+    - localhost
+  labels:
+    __path__: /var/log/syslog
+    job: system_logs
+```
+
+Then the `auth_logs.yml` would look like:
+```yaml
+- targets:
+    - localhost
+  labels:
+    __path__: /var/log/auth.log
+    job: auth_logs
+```
+
+
+## Debugging Promtail + Loki
+
+After adding Loki as a datasource for grafana and importing a default dashboard,
+there are no logs being shown.  
+I have verified that loki is running and the log ingester is ready:
+```bash
+curl http://192.168.4.53:3100/ready
+# ready
+curl -s $(printf "http://%s:3100/ready\n" "$(hostname -I | tr -d ' ')")
+# ready
+```
+Then I went to the promtail endpoint through the browser, and saw all the jobs and
+targets marked as "ready".  
+
+---
+Turns out Promtail was both collecting logs and sending them to Loki. I was using a dashboard that was not showing the logs collected.  
+
+I imported dashboard `13639`, and all the logs were available to see.  
 
 
 
@@ -235,3 +328,10 @@ Maybe I can use `jq` or `jinja2` filters to get it in there correctly.
 
 [Grafana docs on provisioning data sources](https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources)
 [Grafana Ansible collection](https://github.com/grafana/grafana-ansible-collection)
+
+
+
+
+## TODO
+Ansible Workflows
+
