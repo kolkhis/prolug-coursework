@@ -16,17 +16,70 @@ https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html
 
 1. Make an inventory of the servers, grouped any way you like.
 
+I looked into the ranges mentioned:
+```bash
+nmap -sP 192.168.200.100-254
+```
+Found 3 that responded:
+* 192.168.100.101
+* 192.168.100.102
+* 192.168.100.103
+```bash
+nmap -A 192.168.200.101-103
+```
+* I found that these 3 hosts are running Ubuntu.  
+* `101` and `102` both are exposing HTTP port `80/tcp`.  
+    * They're also exposing `9080/tcp` which is listed as `glrpc` in `/etc/services`.  
+    * Nmap guessed either Golang net/http server or InfluxDB API for these ports, and knowing a bit about the lab I'm assuming it's the latter.   
+    * `9100` is exposed on all 3 of them. Printer port?  
+
+
+Do the same for the other IPs:
+```bash
+nmap -A 192.168.200.25  # shows warewulf (already in /etc/hosts)
+nmap -A 192.168.200.1   # shows a general purpose linux device with SSH open (Ubuntu)
+```
+
+Judging on the output of the `nmap` scans and prior knowledge of the lab,
+here's the inventory file I've put together:
 ```ini
-[rocky_boxes]
+[rocky]
 192.168.200.[50:69]
 
-[]
+[ubuntu]
+192.168.200.[101:103]
+192.168.200.1
 
+[warewulf]
+192.168.200.25
+
+[webservers]
+192.168.200.[101:102]
+
+[influx:children]
+webservers
+
+[all_servers:children]
+rocky
+ubuntu
+warewulf
+webservers
 ```
 
 2. What format did you choose to use for your inventory?
 
+I chose to use `.ini` format, using IP ranges instead of individual hostnames that
+rely on either DNS or `/etc/hosts`. Though, in this case, all of the rocky boxes are
+present in `/etc/hosts`
+
 3. What other things might you include later in your inventory to make it more useful?
+
+I will probably expand the list to include all the hostnames, when they become
+available to me.  
+I could run an ansible ad-hoc command using this inventory file to gather the hostnames to make the inventory file more detailed.  
+```bash
+ansible all_servers -i ./hosts.ini -m 'debug' -a 'msg="{{ ansible_hostname }} = {{ ansible_host }}"'
+```
 
 
 ### Unit 14 Discussion Post 2
@@ -39,13 +92,65 @@ https://killercoda.com/het-tanis/course/Ansible-Labs
 Use this webhook to send your relevant data out to our sandbox.
 https://discord.com/api/webhooks/1317659221604433951/uyKpuq8fNNNSEyCra4n33PakIBk-XtTn1WrwTpHs9BcgkIu7URPV_Gd5HJCRX0_EJVUT
 
+The best way to do this (imo) is to compare checksums of critical files to determine if changes were made, so that any probelms can be narrowed down to specific files. Critical services like `sshd` and `firewalld` should also be checked and compared. Checking for differences in installed packages could also be a good thing to do if all systems are meant to be identical.  
+Ideally you'd want a baseline to test configurations against. E.g., file checksums for critical system files and configuration files.  
+So this really would require 2 playbooks, a playbook to generate a baseline containing our "good" file checksums, and another playbook to check differences between the baseline and current state.  
+
+---
+
+I've been working on this all day. I'll post what I have.  
+
+I ran into an error when trying to test these in the rocky environment. The SSH passwords werent' working because of fingerprints, so I used `ssh-keyscan` to gather the fingerprints and add them to the known hosts file.  
+```
+[root@rocky17 ansible_madness]# hostname -I
+192.168.200.67
+[root@rocky17 ansible_madness]# for host in {51..69}; do if [ ! $host == 67 ]; then ssh-keyscan -H 192.168.200.$host >> ~/.ssh/known_hosts; fi; done
+```
+BUT, the problem was that I didn't have the correct login credentials for these boxes. I'm assuming the only way to connect to these via ssh is through the jumpbox.  
+
+I tried testing these against the Ubuntu boxes, but of course the packages were going to be all out of wack.  
+So, I'm going to leave this here for now and maybe set up my own environment where I can test these properly. 
+I have a playbook to generate a baseline here:
+
+Basically, the premise here... All things being equal, I generate two yaml files formatted exactly the same, with entries containing dictionaries and lists. A `files` dictionary with filenames as keys with sha256 hashes as values, a `services` dictionary containing the name of services as keys, and the state of services as values, and then a list of installed packages. I load them in with slurp, parse them with `b64decode` and `from_yaml`, I then use the `difference` filter to output any changes. Those would be what's reported.
+
+https://github.com/Kolkhis/scripts-playbooks/tree/main/playbooks/drift_report
+
+This playbook is to generate a drift report. I hadn't gotten to the "send data back"
+point, because I couldn't collect the data. But, I'll get there.
+
+---
+
 
 ### Unit 14 Discussion Post 3
 Using ansible module for git, pull down this repo:
 https://github.com/het-tanis/HPC_Deploy.git
+
+```yaml
+- name: Pull down the repo
+  ansible.builtin.git
+    url: https://github.com/het-tanis/HPC_Deploy.git
+    dest: ~/prolug-linux-sysadmin/
+```
+
 1. How is the repo setup?
+
+It has basic playbook that conditionally include roles. 
+There's a directory for both roles and reports.  
+
+
 2. What is in the roles directory?
+
+Roles, with directories in each for tasks, handlers, and templates.  
+In the `tasks` directories, there is a file called `main.yml` that contains all the tasks for that role.
+
+
 3. How are these playbooks called, and how do roles differ from tasks?
+
+These playbooks include roles when conditions are met, which execute the tasks inside each of the roles.  
+When a role is included, the playbook inherits everything inside the role.  
+
+
 
 ## Definitions/Terminology
 - Automation: The act of taking a repetitive task and writing instructions to repeat it automatically, to reduce the need for manual intervention.
@@ -114,24 +219,16 @@ https://github.com/het-tanis/HPC_Deploy.git
 
 ### Terms:
 
-* OpenTelemetry
 * Ansible Execution Environments
 * Ansible Runner
 * Ansible Tower
 * Kubernetes from Scratch
 * RKE2
 * MAAS - Canonical, Metal as a Service
-    Treat your data servers as cloud
+    Treat your data servers as cloud environments
 * PXE booting (Pixie-boot) - Preboot eXecution Environment booting
-* Make (makefile) - used for compiling things, can also run arbitrary commands
-* Just (justfile) - Made for running arbitrary commands.
-* argo
-* kubevirt
-* synology-csi
-* kube-prometheus-stack
 
 ### Useful tools:
-
 - Spyder ide
 
 
@@ -152,6 +249,15 @@ https://github.com/het-tanis/HPC_Deploy.git
 * kargo - Multi-stage continuous promotion with GitOps. https://kargo.io/
 
 ---
+
+* OpenTelemetry
+* Make (makefile) - used for compiling things, can also run arbitrary commands
+* Just (justfile) - Made for running arbitrary commands.
+* argo
+* kubevirt
+* synology-csi
+* kube-prometheus-stack
+
 
 * `dnsmasq`: PXE boot files 
 * `matchbox`: Talos node configs 
