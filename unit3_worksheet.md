@@ -1,15 +1,14 @@
 # ProLUG 101  
 ## Unit 3 Worksheet  
 
-
 ## Table of Contents
 * [Unit 3 Worksheet](#unit-3-worksheet) 
 * [Instructions](#instructions) 
-* [Discussion Questions:](#discussion-questions:) 
+* [Discussion Questions](#discussion-questions) 
     * [Unit 3 Discussion Post 1](#unit-3-discussion-post-1) 
     * [Unit 3 Discussion Post 2](#unit-3-discussion-post-2) 
 * [Definitions and Terminology](#definitions-and-terminology) 
-* [Notes During Lecture/Class:](#notes-during-lecture/class:) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
     * [Links](#links) 
     * [Terms](#terms) 
     * [Useful tools](#useful-tools) 
@@ -21,6 +20,7 @@
     * [LVM Snapshots](#lvm-snapshots) 
     * [Creating a Logical Volume from Raw Disks](#creating-a-logical-volume-from-raw-disks) 
 * [Lab and Assignment](#lab-and-assignment) 
+    * [Digging Deeper](#digging-deeper) 
 * [Reflection Questions](#reflection-questions) 
 
 

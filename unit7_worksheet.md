@@ -1,4 +1,6 @@
 # ProLUG 101
+## Unit 7 Worksheet
+
 
 ## Table of Contents
 * [Unit 7 Worksheet](#unit-7-worksheet) 
@@ -16,7 +18,6 @@
 * [Digging Deeper](#digging-deeper) 
 * [Reflection Questions](#reflection-questions) 
 
-## Unit 7 Worksheet
 
 ## Instructions
 Fill out this sheet as you progress through the lab and discussions. Hold onto all of your work to send to me at the end of the course.

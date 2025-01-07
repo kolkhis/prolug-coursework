@@ -1,6 +1,24 @@
 # ProLUG 101  
-
 ## Unit 12 Worksheet  
+
+## Table of Contents
+* [Unit 12 Worksheet](#unit-12-worksheet) 
+* [Instructions](#instructions) 
+* [Discussion Questions](#discussion-questions) 
+    * [Unit 12 Discussion Post 1](#unit-12-discussion-post-1) 
+        * [First answer for Generating a Report](#first-answer-for-generating-a-report) 
+        * [Second answer for Generating a Report](#second-answer-for-generating-a-report) 
+    * [Unit 12 Discussion Post 2](#unit-12-discussion-post-2) 
+    * [Unit 12 Discussion Post 3](#unit-12-discussion-post-3) 
+* [Definitions/Terminology](#definitionsterminology) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
+    * [Links](#links) 
+    * [Terms](#terms) 
+    * [Useful tools](#useful-tools) 
+* [Lab and Assignment](#lab-and-assignment) 
+* [Digging Deeper (optional)](#digging-deeper-optional) 
+* [Reflection Questions](#reflection-questions) 
+
 
 ## Instructions  
 Fill out this sheet as you progress through the lab and discussions. Hold onto all of your work to  

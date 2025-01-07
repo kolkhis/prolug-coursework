@@ -1,9 +1,8 @@
-
 # ProLUG 101
-Unit 1 Worksheet
-
+## Unit 1 Worksheet
 
 ## Table of Contents
+* [Unit 1 Worksheet](#unit-1-worksheet) 
 * [Instructions](#instructions) 
 * [Discussion Questions](#discussion-questions) 
     * [Unit 1 Discussion Post 1](#unit-1-discussion-post-1) 

@@ -1,7 +1,6 @@
 # ProLUG 101
 ## Unit 6 Worksheet
 
-
 ## Table of Contents
 * [Unit 6 Worksheet](#unit-6-worksheet) 
 * [Instructions](#instructions) 

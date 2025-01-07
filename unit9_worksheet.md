@@ -1,5 +1,21 @@
 # ProLUG 101
 ## Unit 9 Worksheet
+
+## Table of Contents
+* [Unit 9 Worksheet](#unit-9-worksheet) 
+* [Instructions](#instructions) 
+* [Discussion Questions](#discussion-questions) 
+    * [Unit 9 Discussion Post 1](#unit-9-discussion-post-1) 
+    * [Unit 9 Discussion Post 2](#unit-9-discussion-post-2) 
+* [Definitions/Terminology](#definitionsterminology) 
+* [Notes During Lecture/Class](#notes-during-lectureclass) 
+    * [Links](#links) 
+    * [Terms](#terms) 
+    * [Useful tools](#useful-tools) 
+* [Lab and Assignment](#lab-and-assignment) 
+* [Digging Deeper](#digging-deeper) 
+* [Reflection Questions](#reflection-questions) 
+
 ## Instructions
 Fill out this sheet as you progress through the lab and discussions. Hold onto all of your work to send to me at the end of the course.
 

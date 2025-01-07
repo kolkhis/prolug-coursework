@@ -1,16 +1,23 @@
 # ProLUG 101
+
 ## Unit 11 Worksheet
+
 
 ## Table of Contents
 * [Unit 11 Worksheet](#unit-11-worksheet) 
 * [Instructions](#instructions) 
 * [Discussion Questions](#discussion-questions) 
     * [Unit 11 Discussion Post 1](#unit-11-discussion-post-1) 
+    * [Unit 11 Discussion Post 2](#unit-11-discussion-post-2) 
 * [Definitions/Terminology](#definitionsterminology) 
 * [Notes During Lecture/Class](#notes-during-lectureclass) 
+    * [Links](#links) 
+    * [Terms](#terms) 
+    * [Useful tools](#useful-tools) 
 * [Lab and Assignment](#lab-and-assignment) 
 * [Digging Deeper (optional)](#digging-deeper-optional) 
 * [Reflection Questions](#reflection-questions) 
+
 
 
 ## Instructions

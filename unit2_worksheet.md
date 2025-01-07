@@ -1,6 +1,6 @@
-
 # ProLUG 101  
 ## Unit 2 Worksheet  
+
 
 ## Table of Contents
 * [Unit 2 Worksheet](#unit-2-worksheet) 
@@ -16,6 +16,7 @@
 * [Lab and Assignment](#lab-and-assignment) 
 * [Digging Deeper](#digging-deeper) 
 * [Reflection Questions](#reflection-questions) 
+
 
 ## Instructions  
 Fill out this sheet as you progress through the lab and discussions. Turn in the sheet to scott.champine@simple2serious.com for grading and feedback.  
