@@ -1,8 +1,10 @@
+# Homelab Initial Setup Notes
+Just notes documenting my initial setup process for my homelab.  
 
-# ProLUG 101 Final Project
-This was done before I switched my final project to deploying a monitoring stack with Ansible.  
+This file is just kind of a stream-of-consciousness dump where I wrote down issues
+and solutions I tried.  
 
-
+Read at your own peril.  
 
 ## Table of Contents
 * [My Hardware](#my-hardware) 
