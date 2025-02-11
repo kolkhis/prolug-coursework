@@ -499,10 +499,11 @@ This will return an exit code of `0` if the condition evaluates to `true`, or `1
 the condition evaluates to `false`.  
 Using double brackets `[[ ]]` does the same thing, but it is instead a keyword in bash rather than a separate binary.  
 
-## CLI Arguments
+## Positional Parameters (CLI Arguments)
 When passing arguments on the command line to a script or a function, those arguments
 are stored in special variables; `$1`, `$2`, `$3`, etc..
 * `$0` will always be the name of the program.  
+* Any positional parameters greater than `9` require braces: `"${11}"`
 
 The `$@` variable is an array that contains all the command line arguments that were passed to the bash script or function.  
 
