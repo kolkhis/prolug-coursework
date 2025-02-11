@@ -1,10 +1,9 @@
 #!/bin/bash
 
 for file in "${@}"; do
-    sed -i \
-    -e "s/’/'/g" \
-    -e 's/“/"/g' \
-    -e 's/”/"/g' \
-    "$file"
+    printf "Changing quotes in file: %s\n" "$file"
+    sed -i  -e "s/’/'/g" -e 's/“/"/g' -e 's/”/"/g' "$file" || {
+        printf "Failed to reformat quotes in file: %s\n" "$file"
+    }
 done
 
