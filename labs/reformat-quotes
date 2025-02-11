@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for file in "${@}"; do
+    sed -i \
+    -e "s/’/'/g" \
+    -e 's/“/"/g' \
+    -e 's/”/"/g' \
+    "$file"
+done
+
