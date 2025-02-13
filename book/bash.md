@@ -509,8 +509,10 @@ The `$@` variable is an array that contains all the command line arguments that 
 
 ```bash
 my-function() {
-    echo "The first argument: $1"
+    printf "The first argument: %s\n" "$1"
 }
+
+my-function "Hello"
 ```
 
 You can loop over this array with a `for` loop.  
@@ -519,13 +521,6 @@ for arg in "$@"; do
     printf "Argument: %s\n" "$arg"
 done
 ```
-
-* A neat trick for combining all elements of an array into, for instance, CSV:
-  ```bash
-  printf "%s," "$@"
-  ```
-    * This uses `printf` to print each element in the array individually, and use a
-      comma each time an argument is printed.  
 
 
 ## Sourcing Files vs Executing Files
@@ -580,6 +575,8 @@ connor@computer:~$
 ```
 Now the variable is set in the current shell.  
 
+This is why `.bashrc` and other shell runtime config files are sourced, not executed.  
+
 ---
 
 ## Shell Options
@@ -587,17 +584,34 @@ There are a number shell options you can enable to add functionality to bash.
 
 A list of shell options is stored in the `BASHOPTS` environment variable.  
 
-One of them is `globstar` - this allows you to use globbing to recurse through directories.  
-```bash
-ls **
-```
+There are two main builtins you'll use to set shell options:
+* `set`: For POSIX shell options.  
+    * When something is POSIX-Compatible, that means it will work in other shells (like `zsh`, `csh`, `dash`, etc.).  
+* `shopt`: For Bash-specific shell options.  
+Since these are builtins, you'll use `help <cmd>` instead of `man <cmd>` to read their documentation.  
 
-### Enabling Shell Options
+---
+
+Both `set` and `shopt` are able to set and unset options that modify the shell's behavior, but each of them controls a different type of options.  
+| Command           |  Scope            | Purpose
+|-------------------|-------------------|-
+| `set`             |  POSIX-Compatible | Controls shell-wide behavior, including positional parameters and error handling. 
+|  `shopt`          |  Bash-Specific    | Enables or disables Bash-specific features (`extglob`, `globstar`, etc.)
+
+
+
+### Enabling Shell Options (`shopt`)
+Using `shopt`, we can enable bash features.  
+
+* `shopt -s <option>`: Enable (`-s`et) the given `<option>`.  
+* `shopt -u <option>`: Disable (`-u`nset) the given `<option>`.  
+
+
 Let's try using `**` to recursively list all files in current directories and subdirectories.  
 ```bash
 ls **
 ```
-It will show all directories and their contents, but only the first level.  
+This will show all directories and their contents, but only the first level.  
 It won't go down through each one beyond the first level.  
 
 Let's enable `globstar` and try again.  
@@ -606,11 +620,13 @@ shopt -s globstar
 ls **
 ```
 Do you notice a difference?  
-There are a lot of these shell options.  
-Some are single-character shell options (`man://bash /OPTIONS`)
 
-* `help set`
-* `help shopt`
+There are a lot of these shell options.  
+```bash
+help shopt
+man bash   # type '4512G' to go to line 4512, or type '/^SHELL BUILTIN' and scroll to 'shopt'
+```
+
 
 ## Error Handling in Bash
 Error handling in bash can be done with simple `if` statements.  
@@ -625,6 +641,14 @@ fi
 ```
 * `if ! curl`: "If curl does *not* (`!`) exit with `0`".
 
+
+## Formatting Data
+* A neat trick for combining all elements of an array into, for instance, CSV:
+  ```bash
+  printf "%s," "$@"
+  ```
+    * This uses `printf` to print each element in the array individually, and use a
+      comma each time an argument is printed.  
 
 
 <!-- metacharacter -->
