@@ -1,19 +1,9 @@
-# Title
---- 
-## Intro
-1 paragraph or less intro to topic
----
-### Resources / Important Links
-- [This is an external link to genome.gov](https://www.genome.gov/)
-- [This is an external link to genome.gov](https://www.genome.gov/)
-- [This is an external link to genome.gov](https://www.genome.gov/)
---- 
-## Required Materials
-- Rocky 9.3 – ProLUG Lab
-- root or sudo command access
----
-## Begin 
-### Pre-Lab Warm-Up
+ProLUG – Unit 5 Lab – Manage Users
+and Groups
+Required Materials
+Putty or other terminal
+Rocky Server
+Root or sudo command access
 
 Exercises (Warmup to quickly run through your system and practice commands)
 
@@ -49,24 +39,22 @@ We just put the aliases back.
 
 16. `alias ll='ls -l --color=auto'`
 17. `alias ls='ls --color=auto'`
-    * Test with `alias` to see them added and also use `ll` and `ls` to see them work properly.
+test with alias to see them added and also use ll and ls to see them work properly.
 
----
-### Lab🧪
+## LAB
+
 This lab is designed to help you get familiar with the basics of the systems you will be working on.
 
 Some of you will find that you know the basic material but the techniques here allow 
 you to put it together in a more complex fashion.
 
-It is recommended that you type these commands and do not copy and paste them.
-Browsers sometimes like to format characters in a way that doesn't always play nice with Linux.
-
+It is recommended that you type these commands and do not copy and paste them. Word sometimes
+likes to format characters and they don't always play nice with Linux.
 
 #### The Shadow password suite:
 
 There are 4 files that comprise of the shadow password suite. We'll investigate them a bit and look at
-how they secure the system. The four files are `/etc/passwd`, `/etc/group`, `/etc/shadow`, and `/etc/gshadow`.  
-
+how they secure the system. The four files are /etc/passwd, /etc/group, /etc/shadow, /etc/gshadow
 1. Look at each of the files and see if you can determine some basic information about them
    ```bash
    more /etc/passwd
@@ -79,6 +67,8 @@ how they secure the system. The four files are `/etc/passwd`, `/etc/group`, `/et
    ```bash
    more /etc/login.defs
    ```
+
+   ---
    
    Check the file permissions:
    ```bash
@@ -96,10 +86,13 @@ how they secure the system. The four files are `/etc/passwd`, `/etc/group`, `/et
    | Username | Password | User ID (UID) | Group ID (GID) | User Info | Home Directory | Login Shell |
    |----------|----------|---------------|----------------|-----------|----------------|-------------|
    | `puppet` |    `x`   |    `994`      |     `991`      | `Puppet server daemon` | `/opt/puppetlabs/server/data/puppetserver` | `/sbin/nologin` |
+   
+   
+   
     * `cat` or `more` the file to verify these are values you see.  
     * Are there always 7 fields?
 
-3. Anatomy of the `/etc/group` file
+3. Anatomy of the /etc/group file
    `/etc/group` is broken down like this, a `:` (colon) delimited file:  
    
    | Groupname | Password | Group  ID | Group Members
@@ -255,7 +248,6 @@ how they secure the system. The four files are `/etc/passwd`, `/etc/group`, `/et
    cmod 775 /project
    ls –ld /project
    ```
-
    If you do this, you now have a directory `/project` and you've changed the group ownership to `/project`.
    You've also given group `project` users the ability to write into your directory.
    Everyone can still read from your directory.
@@ -270,14 +262,12 @@ how they secure the system. The four files are `/etc/passwd`, `/etc/group`, `/et
    touch user3
    exit
    ```
-
    Anyone not in the `project` group doesn't have permissions to write a file into that directory.
    Now, as the root user:
    ```bash
    chmod 770 /project
    ```
-
-   Check permissions with users:
+   Check permissions with users
    ```bash
    su – user1
    cd /project
@@ -322,8 +312,9 @@ The first character lets you know if the file is a directory, file, or link. In 
 * `---`: For everyone else.
     - What can everyone else do?
 
-Go find some other interesting files or directories and see what you see there.
-Can you identify their characteristics and permissions?  
+Go find some other interesting files or directories and see what you see there. Can you identify their
+characteristics and permissions?
 
 ---
+
 
