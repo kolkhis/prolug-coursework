@@ -19,17 +19,19 @@
 
 
 ## Instructions  
-Fill out this sheet as you progress through the lab and discussions. Turn in the sheet to scott.champine@simple2serious.com for grading and feedback.  
+Fill out this sheet as you progress through the lab and discussions. 
 
 ## Discussion Questions:  
 
-### Unit 1 Discussion Post 1: Think about how week 1 went for you.  
+### Unit 1 Discussion Post 1:
+Think about how week 1 went for you.  
 1.	Do you get everything you needed to done?  
- 
+
 2.	Do you need to allocate more time to the course, and if so, how do you plan to do it?  
- 
+
 3.	How well did you take notes during the lecture? Do you need to improve this?  
  
+
 ### Unit 1 Discussion Post 2: 
 Read a blog, check a search engine, or ask an AI about SELINUX.  
 What is the significance of contexts? What are the significance of labels?  
