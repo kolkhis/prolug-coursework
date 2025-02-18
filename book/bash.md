@@ -1,33 +1,24 @@
-# Bonus Section: Bash
+# Unit 8 Bonus Section: Bash Scripting
 
+> NOTE: This is an **optional** bonus section, meaning that you **DO NOT** need to read this.  
+  This is aimed at people that want to dig deeper into using Bash.  
+
+## Intro
 Bash is a shell that we use on Linux, but it's also a programming language.  
 Every command you execute in the terminal is a line of Bash code.  
 If you've done anything in the terminal on Linux, you've already written bash code.  
 
-Bash scripting is just putting the code we'd run in the terminal into a file.  
-
-## Ideas
-- `set -x` usage
-    * using `set -x` at the beginning of a script enables debugging. I
-    * This will show how every line of code is being interpreted by Bash as it happens. 
-    * This can be very useful when debugging a bash script.
-- `trap` for trapping signals - exiting gracefully
-    * Traps are only effective within the script or function they're defined in.  
-- `set`/`shopt` for shell options
-- `shellcheck`: A tool used to lint and debug shell code.
-    - Can be run on the command line.  
-    - Supports integration with vim.  
-
+Bash scripting is just putting the code we'd run in the terminal into a file that can
+be executed.  
 
 ## Table of Contents
-* [Ideas](#ideas) 
 * [Writing your First Script](#writing-your-first-script) 
     * [The Shebang Line](#the-shebang-line) 
     * [Add Some Code](#add-some-code) 
     * [Run the Script](#run-the-script) 
 * [Compound Commands (Command Grouping)](#compound-commands-command-grouping) 
     * [Example: Short Circuit Logic with Command Grouping](#example-short-circuit-logic-with-command-grouping) 
-    * [Subshells](#subshells) 
+* [Subshells](#subshells) 
 * [Scripts run in Subshells](#scripts-run-in-subshells) 
     * [Writing a Function](#writing-a-function) 
 * [Reloading configuration](#reloading-configuration) 
@@ -35,18 +26,16 @@ Bash scripting is just putting the code we'd run in the terminal into a file.
     * [Environment Variables](#environment-variables) 
     * [Defining Variables](#defining-variables) 
     * [Accessing Variables](#accessing-variables) 
-    * [Accessing Arrays](#accessing-arrays) 
-    * [Parameter Expansion](#parameter-expansion) 
 * [Conditional Logic](#conditional-logic) 
     * [if-statements](#if-statements) 
     * [Using the `!` operator](#using-the--operator) 
     * [Testing Multiple Conditions at Once](#testing-multiple-conditions-at-once) 
-    * [Short Circuit Logic](#short-circuit-logic) 
     * [True and False with Exit Codes in Bash](#true-and-false-with-exit-codes-in-bash) 
-* [CLI Arguments](#cli-arguments) 
+* [Positional Parameters (CLI Arguments)](#positional-parameters-cli-arguments) 
+    * [Parsing Command Line Arguments](#parsing-command-line-arguments) 
 * [Sourcing Files vs Executing Files](#sourcing-files-vs-executing-files) 
-* [Shell Options](#shell-options) 
-    * [Enabling Shell Options](#enabling-shell-options) 
+* [Error Handling in Bash](#error-handling-in-bash) 
+    * [Error Handling with Custom Functions](#error-handling-with-custom-functions) 
 
 
 ## Writing your First Script
@@ -86,7 +75,6 @@ Then add this line:
 #!/bin/bash
 ```
 Save the file with `:w`.  
-
 Now, when this file is executed, it will use the given binary (`/bin/bash`).  
 
 ### Add Some Code
@@ -100,8 +88,7 @@ printf "Hello, admin.\n"
 Both of these commands, `echo` and `printf`, output text to the terminal.  
 People argue about this too, but again, use whichever resonates more with you.  
 * `echo`: Easy to use and all shells have some version of it.  
-* `printf`: Matches the `printf` of most other programming languages, so it's good to
-  learn if you want to learn other languages.  
+* `printf`: Matches the `printf` of most other programming languages, so it's good to learn if you want to learn other languages.  
 
 Save the file and exit with `:wq`.  
 
@@ -130,20 +117,7 @@ Using paretheses will spawn a subshell, which may not always be what you want.
 Putting commands inside of braces `{ ... }` will not spawn a subshell. Any commands
 inside this command group will be executed in the current shell context.  
 
-Why is this important? Say you want to group commands that affect variables.  
-If you use a subshell to assign variables, the variable won't perist after the
-rest of the subshell execution.  
-```bash
-# Create an empty variable
-declare MY_VAR
-( MY_VAR="Hello"; printf "%s\n" "$MY_VAR"; )
-# output: Hello
-printf "%s\n" "$MY_VAR"
-# No output 
-```
-
-Since using braces `{ ... }` does not spawn a subshell, any changes made inside that
-grouping will persist even after the group is done executing.  
+Any changes made inside a `{ ... }` grouping will persist even after the command group is done executing.  
 ```bash
 declare MY_VAR
 { MY_VAR="Hello"; printf "%s\n" "$MY_VAR"; }
@@ -165,19 +139,8 @@ Sat Jan 31 16:16:09 EST 2025
 Systems acting normal!
 ```
 
----
-
-Command grouping with `{ ... }` is exactly what a [function](#writing-a-function) does. A function just
-gives the group of commands a name.  
-
-In short:
-* Use braces `{ ... }` if you need to capture the output or if you need variables
-  to persist to the parent shell.  
-* Use parentheses `( ... )` if you do *not* need the output of the commands and do
-  *not* need variable changes to persist to the parent shell.  
-
-
 Command grouping is also very useful for conditionals with [short-circuit logic](#short-circuit-logic).  
+
 
 ### Example: Short Circuit Logic with Command Grouping
 This example is using [command grouping](#compound-commands-command-grouping) with [short
@@ -237,14 +200,13 @@ The script's subshell inherits all the exported variables from the current envir
 
 Because scripts run in subshells, using commands like `cd` don't work the same way as
 if it were run from the command line. It only affects the subshell.  
-
+ 
 If you want to use `cd` inside a script, put it in a function.  
-
+ 
 A function won't spawn an additional subshell when it's run.  
 
 ### Writing a Function
 You can define functions inside your `~/.bashrc` file or inside a script.   
-
 
 In your `.bashrc`:
 ```bash
@@ -343,53 +305,16 @@ You can also use braces around the variable name, which adds some really cool fu
 echo "${MY_VAR}"
 ```
 
-Using braces like this will allow you to perform [**parameter expansions**](#parameter-expansion), and if the variable is an array, it will allow you to access the array's elements.  
+Using braces like this will allow you to perform **parameter expansions** (`man bash` and search for `Parameter Expansion`), and if the variable is an array, it will allow you to access the array's elements.  
 
-### Accessing Arrays
-If your variable is an array, you need to use braces to access the values.  
-
-```bash
-echo "${MY_ARRAY[0]}"  # Output a single value
-echo "${MY_ARRAY[@]}"  # Output all values separately
-echo "${MY_ARRAY[*]}"  # Combine all values into one string and output that string
-```
-
-
-
-### Parameter Expansion
-Parameter expansion is a way to modify the value of a variable at the same time that
-you access it.  
-Some common uses for parameter expansion:
-```bash
-echo "${#MY_VAR}"               # output the length of the variable
-echo "${MY_VAR:="some value"}"  # Assign a default value to the variable if it's not set
-echo "${MY_VAR:-"some value"}"  # Use (but don't assign) a default value for the variable if it's not set
-echo "${MY_VAR//old/new}"       # Perform a substitution on the variable (line an in-line sed)
-echo "${MY_VAR%old/new}"        # perform a substitution on the variable
-```
-
-* There are a lot of options for parameter expansions.  
-    * Use `man bash` and type `/parameter expansion` to search for the section on it.  
-
-One expansion that's particularly useful is the walrus operator `:=`.  
-This is a great way to define variables if they're not set, without overwriting them if they are.  
-```bash
-: "${MY_VAR:="goodbye"}"
-```
-* This sets the `MY_VAR` variable to `goodbye` if it's not currently set, but does
-  not overwrite it.  
-
-A good trick to avoid getting `shellcheck` warnings is to use the `:` (colon) command
-and passing the assignment as an argument.  
-The `:` command is simply a dummy command. It does nothing and returns `0`, which evaluates to `true` in bash.  
 
 ## Conditional Logic
 Bash, like any other programming language, has conditional logic support.  
 
-
 When using conditional logic, the expression you specify always evaluates to
 either `true` or `false`, which, unlike other languages, are `0` and `1` in 
 bash, respectively (also see [True and False with Exit Codes in Bash](#true-and-false-with-exit-codes-in-bash)).  
+
 
 ### if-statements
 * `if`/`elif`/`else`: The most basic way to do conditional logic in bash.  
@@ -414,39 +339,30 @@ You can use the `!` (NOT) operator to test if a condition is false:
 if [[ ! -n $MY_VAR ]]; then
     printf "MY_VAR is an empty string!\n"
 fi
-```
-
----
-
-This can also be done in-line (on a single line) by using semicolons:
-```bash
-if [[ -n $MY_VAR ]]; then printf "MY_VAR is not empty!\n"; fi
-```
-This is generally how you will do an if-statement from the command line.  
-
----
-
-### Using the `!` operator
-You can use the `!` (not) operator to check if the condition is false instead.  
-```bash
-if [[ ! -n $MY_VAR ]]; then
+# or
+if ! [[ -n $MY_VAR ]]; then
     printf "MY_VAR is an empty string!\n"
 fi
 ```
 
 ---
 
-
-Another useful conditional expression is `-f`, which checks to see if a file exists.  
+This can also be done on a single line by using semicolons:
 ```bash
-if [[ -f ~/somefile ]]; then
-    printf "File exists!\n"
-elif [[ -f ~/someotherfile ]]; then
-    printf "~/somefile doesn't exist, but ~/someotherfile does exist!\n"
-else
-    printf "None of the files exist!"
-fi
+if [[ -n $MY_VAR ]]; then printf "MY_VAR is not empty!\n"; fi
 ```
+This is generally how you will do an if-statement from the command line.  
+
+Alternatively, you can omit the `if` and use a type of "short-circuit logic" using
+the `&&` operator:
+```bash
+[[ -n $MY_VAR ]] && printf "MY_VAR is not empty!\n"
+```
+This checks the first condition `-n $MY_VAR` and only executes the `printf` if true.  
+If you want to test multiple conditions with this method, you need to use [**command grouping**](#compound-commands-command-grouping).  
+
+---
+
 
 ### Testing Multiple Conditions at Once
 You can test multiple conditions at one time in a single if-statement.  
@@ -471,11 +387,6 @@ fi
 ```
 * This code is executed if EITHER `~/somefile` exists, OR (`||`) `MY_VAR` is non-zero.  
 
-### Short Circuit Logic
-Because Bash evalutates conditions in order, left to right, you can use what some
-refer to as "short circuit logic".  
-This is a conditional statement that doesn't employ a full `if` statement.  
-
 
 ### True and False with Exit Codes in Bash
 One thing to consider when using bash is that `true` and `false` work a bit differently than other programming languages.  
@@ -499,9 +410,9 @@ This will return an exit code of `0` if the condition evaluates to `true`, or `1
 the condition evaluates to `false`.  
 Using double brackets `[[ ]]` does the same thing, but it is instead a keyword in bash rather than a separate binary.  
 
+
 ## Positional Parameters (CLI Arguments)
-When passing arguments on the command line to a script or a function, those arguments
-are stored in special variables; `$1`, `$2`, `$3`, etc..
+Accessing positional parameters is important for any good bash script.  
 * `$0` will always be the name of the program.  
 * Any positional parameters greater than `9` require braces: `"${11}"`
 
@@ -522,6 +433,39 @@ for arg in "$@"; do
 done
 ```
 
+### Parsing Command Line Arguments
+If you're writing a robust script that takes flags/options (e.g., `--help`), you'll need to parse those.
+You can use the `getopts` builtin (`help getopts`) or do a simple `while` loop with the `shift` keyword. 
+
+Below is a small script that will take the `-v` option to define a variable internally.
+```bash
+#!/bin/bash
+
+while [[ -n $1 ]]; do
+    case $1 in
+        -h|--help)
+            printf "This is the help message.\n"
+            shift;
+            ;;
+        -v|--variable)
+            shift;  # Shift $1 to the next argument
+            [[ -n $1 ]] && USER_VAR=$1
+            printf "Assigned USER_VAR to: %s\n" "$USER_VAR"
+            shift;
+            ;;
+    esac
+done
+
+if [[ -n $USER_VAR ]]; then
+    printf "User variable: %s\n" "$USER_VAR"
+else
+    printf "No variable was passed.\n"
+fi
+```
+We can then invoke this script like this:
+```bash
+./script -v "My variable's value"
+```
 
 ## Sourcing Files vs Executing Files
 Sourcing a file in bash (using either `source` or `.`) will run all the bash code
@@ -579,55 +523,6 @@ This is why `.bashrc` and other shell runtime config files are sourced, not exec
 
 ---
 
-## Shell Options
-There are a number shell options you can enable to add functionality to bash.  
-
-A list of shell options is stored in the `BASHOPTS` environment variable.  
-
-There are two main builtins you'll use to set shell options:
-* `set`: For POSIX shell options.  
-    * When something is POSIX-Compatible, that means it will work in other shells (like `zsh`, `csh`, `dash`, etc.).  
-* `shopt`: For Bash-specific shell options.  
-Since these are builtins, you'll use `help <cmd>` instead of `man <cmd>` to read their documentation.  
-
----
-
-Both `set` and `shopt` are able to set and unset options that modify the shell's behavior, but each of them controls a different type of options.  
-| Command           |  Scope            | Purpose
-|-------------------|-------------------|-
-| `set`             |  POSIX-Compatible | Controls shell-wide behavior, including positional parameters and error handling. 
-|  `shopt`          |  Bash-Specific    | Enables or disables Bash-specific features (`extglob`, `globstar`, etc.)
-
-
-
-### Enabling Shell Options (`shopt`)
-Using `shopt`, we can enable bash features.  
-
-* `shopt -s <option>`: Enable (`-s`et) the given `<option>`.  
-* `shopt -u <option>`: Disable (`-u`nset) the given `<option>`.  
-
-
-Let's try using `**` to recursively list all files in current directories and subdirectories.  
-```bash
-ls **
-```
-This will show all directories and their contents, but only the first level.  
-It won't go down through each one beyond the first level.  
-
-Let's enable `globstar` and try again.  
-```bash
-shopt -s globstar
-ls **
-```
-Do you notice a difference?  
-
-There are a lot of these shell options.  
-```bash
-help shopt
-man bash   # type '4512G' to go to line 4512, or type '/^SHELL BUILTIN' and scroll to 'shopt'
-```
-
-
 ## Error Handling in Bash
 Error handling in bash can be done with simple `if` statements.  
 
@@ -637,24 +532,43 @@ not exit with a `0` exit code.
 ```bash
 if ! curl -O https://example.com/file.txt; then
     printf "There was an error downloading the file!\n"
+else
+    printf "Downloaded file.txt!\n"
 fi
 ```
 * `if ! curl`: "If curl does *not* (`!`) exit with `0`".
 
+---
 
-## Formatting Data
-* A neat trick for combining all elements of an array into, for instance, CSV:
-  ```bash
-  printf "%s," "$@"
-  ```
-    * This uses `printf` to print each element in the array individually, and use a
-      comma each time an argument is printed.  
+Another way to handle errors is with [command grouping](#compound-commands-command-grouping).  
+```bash
+{
+    curl -O example.com/file.txt && printf "Downloaded file.txt!\n"
+} || {
+    printf "Error occurred while downloading file.txt!\n" && exit 1
+}
+```
+This uses two command groups, separated with the OR (`||`).  
+If any command in the first group fails, the second group will be executed.  
 
+### Error Handling with Custom Functions
+When writing functions, use the `return` keyword for handling errors.  
+```bash
+download-file() {
+    if ! curl -O https://example.com/somefile.txt; then
+        return 1
+    else
+        return 0
+    fi
+}
+```
+* If the `curl` command fails, the function will return `1`.  
+* If the `curl` command succeeds, `0` will be returned.  
 
-<!-- metacharacter -->
-<!--       A character that, when unquoted, separates words.  One of the following: -->
-<!--       |  & ; ( ) < > space tab newline -->
-<!-- control operator -->
-<!--       A token that performs a control function.  It is one of the following symbols: -->
-<!--       || & && ; ;; ;& ;;& ( ) | |& <newline> -->
+Using this methodology, we can handle errors with our own functions:
+```bash
+if ! download-file; then
+    printf "Failed to download file!\n"
+fi
+```
 
