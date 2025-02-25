@@ -4,14 +4,25 @@
   This is aimed at people that want to dig deeper into using Bash.  
 
 ## Intro
-Bash is a shell that we use on Linux, but it's also a programming language.  
+
+### What is Bash?
+Bash (Bourne Again SHell) is a shell that we use on Linux, but it's also a programming language.  
 Every command you execute in the terminal is a line of Bash code.  
 If you've done anything in the terminal on Linux, you've already written bash code.  
 
-Bash scripting is just putting the code we'd run in the terminal into a file that can
-be executed.  
+Bash scripting is just putting the code we'd run in the terminal into a file that can be executed.  
+
+### Why does bash matter?
+Bash is the default shell on most major Linux distributions, including Debian-based operating systems (Ubuntu, Mint), RedHat-based operating systems (RHEL, Fedora), and other distributions like Arch Linux.  
+You will encounter this shell in most spaces you'll work in as a Linux system administrator.  
+
+
+
 
 ## Table of Contents
+* [Intro](#intro) 
+    * [What is Bash?](#what-is-bash) 
+    * [Why does bash matter?](#why-does-bash-matter) 
 * [Writing your First Script](#writing-your-first-script) 
     * [The Shebang Line](#the-shebang-line) 
     * [Add Some Code](#add-some-code) 
@@ -28,7 +39,6 @@ be executed.
     * [Accessing Variables](#accessing-variables) 
 * [Conditional Logic](#conditional-logic) 
     * [if-statements](#if-statements) 
-    * [Using the `!` operator](#using-the--operator) 
     * [Testing Multiple Conditions at Once](#testing-multiple-conditions-at-once) 
     * [True and False with Exit Codes in Bash](#true-and-false-with-exit-codes-in-bash) 
 * [Positional Parameters (CLI Arguments)](#positional-parameters-cli-arguments) 
@@ -36,6 +46,10 @@ be executed.
 * [Sourcing Files vs Executing Files](#sourcing-files-vs-executing-files) 
 * [Error Handling in Bash](#error-handling-in-bash) 
     * [Error Handling with Custom Functions](#error-handling-with-custom-functions) 
+* [Debugging Bash Scripts](#debugging-bash-scripts) 
+* [Test what you've learned](#test-what-youve-learned) 
+
+
 
 
 ## Writing your First Script
@@ -277,7 +291,21 @@ export MY_VAR="some value"
 ```
 This will make the variable accessible to subshells and other processes on the system.  
 
-However, if you export variables inside a script that you've executed, those variables will not be available to the parent shell (your instance of bash).  
+However, if you export variables inside a script that you've executed, those variables **will not** be available to the **parent shell** (your instance of bash).  
+Likewise, exporting variables **will not** make them available to the **parent**
+shell.  
+
+For example:
+```bash
+export MY_VAR="hello"     # Available in this shell and subshells
+bash -c 'echo "$MY_VAR"'  # Prints "hello"
+echo "$MY_VAR"            # Still "hello" in the original shell
+
+# BUT, if we export it with a new value in a subshell:
+bash -c 'export MY_VAR="world"'
+echo "$MY_VAR"  # Still "hello" because exports don't propagate *upward*
+```
+
 
 You would need `source` the file if you need to access variables that are `export`ed inside the script.  
 
@@ -392,23 +420,24 @@ fi
 One thing to consider when using bash is that `true` and `false` work a bit differently than other programming languages.  
 
 In most languages, `1` is `true` and `0` is `false`. In bash, this is the opposite.  
-This is because bash conditionals generally operate on "exit codes" (somtimes called
-"return codes") rather than actual `true` or `false` statements.  
+Bash conditionals operate on "exit codes" (or "return codes") rather than actual `true` or `false` statements.  
 Every single program that runs on a Linux machine has an exit code.  
 A zero (`0`) exit code in Linux means the program ran successfully, with zero errors.  
 Anything above `0` means there was some sort of problem with execution.  
 
 ```bash
-MY_VAR="Hello, admin."
-if [[ -n $MY_VAR ]]; then
-    printf "%s\n" "$MY_VAR"
-fi
+touch ./somefile     # Creating a file
+[[ -f ./somefile ]]  # This will return 0 (success)
 ```
+
+---
+
 When testing conditions in bash with either single brackets `[ ]`, you're using the
-`/bin/test` program.  
-This will return an exit code of `0` if the condition evaluates to `true`, or `1` if
+`/bin/test` program (see `man [`).  
+
+This program will return an exit code of `0` if the condition evaluates to `true`, or `1` if
 the condition evaluates to `false`.  
-Using double brackets `[[ ]]` does the same thing, but it is instead a keyword in bash rather than a separate binary.  
+Using double brackets `[[ ]]` does the same thing, but it is instead a keyword/builtin in bash rather than a separate binary (see `help [[`).  
 
 
 ## Positional Parameters (CLI Arguments)
@@ -553,6 +582,7 @@ If any command in the first group fails, the second group will be executed.
 
 ### Error Handling with Custom Functions
 When writing functions, use the `return` keyword for handling errors.  
+Any non-zero return code between 1 and 256 can be used to indicate a failed function.  
 ```bash
 download-file() {
     if ! curl -O https://example.com/somefile.txt; then
@@ -571,4 +601,35 @@ if ! download-file; then
     printf "Failed to download file!\n"
 fi
 ```
+
+## Debugging Bash Scripts
+When writing Bash scripts, it can be difficult to narrow down where problems are.  
+Luckily, we have some tools that we can use to help us debug those problems.  
+* `set -x`: Put this at the beginning of your script to print out each line of code
+  before executing it. This is one of the go-to tools for debugging bash code.  
+
+* `set -e`: This will cause the script to exit if **any** command fails.  
+
+Below is a script that implements these debugging techniques.
+```bash
+#!/bin/bash
+set -xe  # Enable debugging and exit on failure
+
+mkdir /tmp/mydir
+cd /tmp/mydir
+rm -rf /tmp/mydir
+```
+
+
+## Test what you've learned
+
+If you want to try your hand at putting some of these concepts into practice, write a
+bash script.  
+
+Choose something you would normally do manually (e.g., installing a program without a
+package manager) and write a script to do it for you, using functions and error
+handling.  
+If you run into any problems or have any questions, feel free to ask in the ProLUG discord!
+
+Happy scripting!  
 
