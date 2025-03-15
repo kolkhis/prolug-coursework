@@ -21,7 +21,7 @@ Fill out this sheet as you progress through the lab and discussions. Hold onto a
 
 ## Discussion Questions:
 
-### Unit 9 Discussion Post 1
+#### Unit 9 Discussion Post 1
 It’s a slow day in the NOC and you have heard that a new system of container deployments are being used by your developers. Do some reading about containers, docker, and podman.
 1.	What resources helped you answer this?
 
@@ -32,7 +32,7 @@ It’s a slow day in the NOC and you have heard that a new system of container d
 4.	What seems to be some obstacles to container deployment?
 
 
-### Unit 9 Discussion Post 2
+#### Unit 9 Discussion Post 2
 You get your first ticket about a problem with containers. One of the engineers is trying to move his container up to the Dev environment shared server. He sends you over this information about the command he’s trying to run.
 
 ```plaintext
@@ -86,7 +86,7 @@ tcp     LISTEN   0        4096                    *:8080                   *:*  
 Unit 9 containers and k3s
 ```http
 # Run scenario and play with K3s
-https://killercoda.com/k3s/scenario/intro   
+https://killercoda.com/k3s/scenario/intro
 ```
 
 Continue working on your project from the Project Guide

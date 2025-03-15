@@ -85,15 +85,15 @@ Begin working on your project from the Project Guide
 You will research, design, deploy, and document a system that improves your administration of Linux systems in some way.
 
 ## Digging Deeper
-1.	Read https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html
+1. Read https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_01.html
 https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_02.html
 https://tldp.org/LDP/Bash-Beginners-Guide/html/sect_07_03.html
 What did you learn about capabilities of bash that can help you in your scripting?
 
-2.	If you want to dig more into truth tables and logic, this is a good start: https://en.wikipedia.org/wiki/Truth_table
+2. If you want to dig more into truth tables and logic, this is a good start: https://en.wikipedia.org/wiki/Truth_table
 
 ## Reflection Questions
-1.	What questions do you still have about this week?
+1. What questions do you still have about this week?
 
-2.	Just knowing a lot about scripting doesn’t help much against actually doing it in a practical sense. What things are you doing currently at work or in a lab that you can apply some of this logic to?
+2. Just knowing a lot about scripting doesn’t help much against actually doing it in a practical sense. What things are you doing currently at work or in a lab that you can apply some of this logic to?
 
