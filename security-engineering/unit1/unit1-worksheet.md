@@ -92,8 +92,33 @@ incident from happening, but if they're not also enforced by another type of con
 Find a STIG or compliance requirement that you do not agree is necessary for a server or service build.
 
 1. What is the STIG or compliance requirement trying to do?
+
+Apache 2.4 STIG `SV-33028r2_rule`: A web site must not contain a `robots.txt` file.
+
+This is trying to stop a website from having a `robots.txt` file, which contains
+instructions on what type of behavior is and is not allowed on that website by bots
+(typically web scraping).  
+
+This rule is in place due to the possibility of an attacker using the file to
+determine the directory/file index for a site -- i.e., accidentally disclosing
+potentially sensitive URLs or directories.
+
 2. What category and type of control is it?
+
+This is a technical/preventative control.
+
 3. Defend why you think it is not necessary. (What type of defenses do you think you could present?)
+
+This is definitely not necessary. This rule is overly cautious, ESPECIALLY for
+public-facing websites. The `robots.txt` file isn't a security mechanism, it's a
+voluntary protocol designed for SEO and crawler etiquette, not access control. It's a
+communication tool, not a defense system. Malicious actors are already going to
+ignore these instructions, so the file offers the attacker no real leverage against 
+the website that they wouldn't be able to get through other means.
+
+This rule also hurts legitimate use cases, when a site owner does not want his/her
+data to be mined indiscriminately. Well behaved bots written by non-malicious devs
+will honor the instructions set forth in this file.
 
 <div class="warning">
 Submit your input by following the link below.
