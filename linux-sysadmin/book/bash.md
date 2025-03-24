@@ -1,10 +1,6 @@
-# Unit 8 Bonus Section: Bash Scripting
-
-> NOTE: This is an **optional** bonus section, meaning that you **DO NOT** need to read this.  
-  This is aimed at people that want to dig deeper into using Bash.  
+# Things you Should Know about Bash Programming
 
 ## Intro
-
 ### What is Bash?
 Bash (Bourne Again SHell) is a shell that we use on Linux, but it's also a programming language.  
 Every command you execute in the terminal is a line of Bash code.  
@@ -12,54 +8,21 @@ If you've done anything in the terminal on Linux, you've already written bash co
 
 Bash scripting is just putting the code we'd run in the terminal into a file that can be executed.  
 
+
 ### Why does bash matter?
 Bash is the default shell on most major Linux distributions, including Debian-based operating systems (Ubuntu, Mint), RedHat-based operating systems (RHEL, Fedora), and other distributions like Arch Linux.  
 You will encounter this shell in most spaces you'll work in as a Linux system administrator.  
 
 
-
-
-## Table of Contents
-* [Intro](#intro) 
-    * [What is Bash?](#what-is-bash) 
-    * [Why does bash matter?](#why-does-bash-matter) 
-* [Writing your First Script](#writing-your-first-script) 
-    * [The Shebang Line](#the-shebang-line) 
-    * [Add Some Code](#add-some-code) 
-    * [Run the Script](#run-the-script) 
-* [Compound Commands (Command Grouping)](#compound-commands-command-grouping) 
-    * [Example: Short Circuit Logic with Command Grouping](#example-short-circuit-logic-with-command-grouping) 
-* [Subshells](#subshells) 
-* [Scripts run in Subshells](#scripts-run-in-subshells) 
-    * [Writing a Function](#writing-a-function) 
-* [Reloading configuration](#reloading-configuration) 
-* [Variables](#variables) 
-    * [Environment Variables](#environment-variables) 
-    * [Defining Variables](#defining-variables) 
-    * [Accessing Variables](#accessing-variables) 
-* [Conditional Logic](#conditional-logic) 
-    * [if-statements](#if-statements) 
-    * [Testing Multiple Conditions at Once](#testing-multiple-conditions-at-once) 
-    * [True and False with Exit Codes in Bash](#true-and-false-with-exit-codes-in-bash) 
-* [Positional Parameters (CLI Arguments)](#positional-parameters-cli-arguments) 
-    * [Parsing Command Line Arguments](#parsing-command-line-arguments) 
-* [Sourcing Files vs Executing Files](#sourcing-files-vs-executing-files) 
-* [Error Handling in Bash](#error-handling-in-bash) 
-    * [Error Handling with Custom Functions](#error-handling-with-custom-functions) 
-* [Debugging Bash Scripts](#debugging-bash-scripts) 
-* [Test what you've learned](#test-what-youve-learned) 
-
-
-
-
-## Writing your First Script
+## The Basics
+### Writing your First Script
 Let's create a new file to make into a Bash script.  
 ```bash
-touch first-script
+$ touch first-script
 ```
 If you want, you can also use a `.sh` file extension.  
 ```bash
-touch first-script.sh
+$ touch first-script.sh
 ```
 
 There's no functional difference between the two.  
@@ -67,12 +30,13 @@ People argue about this, but just use whatever one resonates more with you.
 
 The next step is to make this file executable.  
 ```bash
-chmod u+x first-script
+$ chmod u+x first-script
 # or, use octal notation
-chmod 755 first-script
+$ chmod 755 first-script
 ```
 Once this is done, we'll be able to directly execute this file.  
 But, for now it doesn't have anything in it.  
+
 
 ### The Shebang Line
 
@@ -82,7 +46,7 @@ In this case, we're using `bash` itself.
 
 Open the file with `vi`:
 ```bash
-vi first-script
+$ vi first-script
 ```
 Then add this line:
 ```bash
@@ -90,6 +54,12 @@ Then add this line:
 ```
 Save the file with `:w`.  
 Now, when this file is executed, it will use the given binary (`/bin/bash`).  
+
+Some users may choose to use `/usr/bin/env bash` instead of `/bin/bash`. This is
+typically for portability reasons, but this does leave your script open to injection
+attacks.<!--  The `/usr/bin/env` program takes --> 
+For example, if your `PATH` variable 
+
 
 ### Add Some Code
 Let's add some Bash code for the script to run.  
@@ -106,6 +76,7 @@ People argue about this too, but again, use whichever resonates more with you.
 
 Save the file and exit with `:wq`.  
 
+
 ### Run the Script
 Now the script is ready to run.  
 ```bash
@@ -119,6 +90,7 @@ You should see the output:
 Hello, admin.
 Hello, admin.
 ```
+
 
 ## Compound Commands (Command Grouping)
 Compound commands are groups of commands to be run together, and then share the same output.  
@@ -181,7 +153,6 @@ fi
 ```
 
 
-
 ## Subshells
 
 A subshell is another instance of bash that spawns as the child of the current shell.  
@@ -208,8 +179,9 @@ FILES=(ls ~)  # Bash thinks you're trying to define an array.
       
 Subshells can be used as [compound commands](#compound-commands-command-grouping).  
 
+
 ## Scripts run in Subshells
-Every time you execute a script, it spawns a subshell from the current environment.  
+Every time you execute a script, it spawns a [subshell](#subshells) from the current environment.  
 The script's subshell inherits all the exported variables from the current environment.  
 
 Because scripts run in subshells, using commands like `cd` don't work the same way as
@@ -218,6 +190,7 @@ if it were run from the command line. It only affects the subshell.
 If you want to use `cd` inside a script, put it in a function.  
  
 A function won't spawn an additional subshell when it's run.  
+
 
 ### Writing a Function
 You can define functions inside your `~/.bashrc` file or inside a script.   
@@ -249,6 +222,9 @@ There are a few ways you can reload your `.bashrc` file.
 1. `source`: Use the `source` (or `.`) command to source the file.  
     ```bash
     source ~/.bashrc
+    ```
+    Using a dot `.` will do the same thing.
+    ```bash
     . ~/.bashrc
     ```
     * Also see [sourcing files vs executing files](#sourcing-files-vs-executing-files)
@@ -264,13 +240,18 @@ Variables in bash are usually either just strings or numbers.
 Variables can also be arrays, which are a collection of other variables.  
 There are also associative arrays, also called dictionaries, which have key/value pairs.  
 
+
 ### Environment Variables
 Environment variables are variables set by the shell (or you as a user in your `.bashrc`).  
 They are made available to any process on the system.  
-<!-- Each user can have their own set of environment variables. -->  
 
-* `SHELLOPTS`: Set by `shopt`?
-* `BASHOPTS`: Set by `set`?
+You can see most of your current shell's environment variables with a few different commands:
+* The `env` command will show just environment variables.  
+* The `set` command (without any arguments) will show environment variables and functions.  
+* The `declare -p` command will show all environment variables and how they were assigned.  
+
+
+
 
 ### Defining Variables
 Variables in bash are defined with the `=` operator.
@@ -305,9 +286,30 @@ echo "$MY_VAR"            # Still "hello" in the original shell
 bash -c 'export MY_VAR="world"'
 echo "$MY_VAR"  # Still "hello" because exports don't propagate *upward*
 ```
-
-
 You would need `source` the file if you need to access variables that are `export`ed inside the script.  
+
+---
+Using `declare` to declare variables is a good practice, but it's not necessary for
+the variable to work.  
+
+You can specify what the type of your variable will be when using `declare`.  
+
+It's preferred to do this at the top of your script.  
+```bash
+declare -a MY_ARR  # This will create an array variable called MY_ARR
+declare -i MY_INT  # Declare an integer type variable
+```
+You can also use `-x` to export the variables while declaring them.  
+```bash
+declare -xi MY_INT    # Both declare and export the variable MY_INT
+```
+This is especially useful if you're using subshells in your script that need access
+to the variable.  
+
+When declaring variables, you can also assign them a value in the same line.  
+```bash
+declare -xi MY_INT=1  # Declare, export, and assign the variable MY_INT
+```
 
 ### Accessing Variables
 You can access a variable by using the `$` operator.  
@@ -432,12 +434,23 @@ touch ./somefile     # Creating a file
 
 ---
 
-When testing conditions in bash with either single brackets `[ ]`, you're using the
+When testing conditions in bash with either single brackets (`[ ... ]`), you're using the
 `/bin/test` program (see `man [`).  
 
 This program will return an exit code of `0` if the condition evaluates to `true`, or `1` if
 the condition evaluates to `false`.  
 Using double brackets `[[ ]]` does the same thing, but it is instead a keyword/builtin in bash rather than a separate binary (see `help [[`).  
+
+### Double Brackets vs Single Brackets
+Which do you use for conditionals, single or double brackets?
+
+* Use double brackets `[[ ... ]]` whenever possible.  
+    - Prevents word splitting (e.g., spaces in variables).
+    - Supports regular expression matching (e.g., `[[ $var =~ regex ]]`)
+    - Allows `&&` and `||` inside the brackets.  
+* Use single brackets `[ ... ]` when you need a **POSIX-compliant** script.
+    - If you need to run a script in shells other than Bash, use single brackets.  
+    - When using single brackets, remember to quote all your variables.  
 
 
 ## Positional Parameters (CLI Arguments)
@@ -493,7 +506,7 @@ fi
 ```
 We can then invoke this script like this:
 ```bash
-./script -v "My variable's value"
+$ ./script -v "My variable's value"
 ```
 
 ## Sourcing Files vs Executing Files
@@ -580,6 +593,28 @@ Another way to handle errors is with [command grouping](#compound-commands-comma
 This uses two command groups, separated with the OR (`||`).  
 If any command in the first group fails, the second group will be executed.  
 
+
+### Utilizing `trap` for Better Error Handling
+
+Shells use `signals` when running interactively (see `man bash` and search `SIGNALS`).  
+These signals are important for both error handling and cleanup operations.  
+
+An example of a signal would be using `Ctrl+C` to stop a program.  
+That `Ctrl+C` is sending a signal called `SIGINT` (signal interrupt) to the shell.  
+
+You can use the `trap` builtin to determine how your script should behave when it
+encounters one of these signals.  
+
+```bash
+trap 'printf "You hit ctrl+c!\n"; exit 1' SIGINT
+```
+Using this, you will trap the `SIGINT` signal, and the commands specified will be run.  
+In this case, when the script interrupted with `Ctrl+C`, it will print `"You hit ctrl+c!"` and exit with an exit code of 1.  
+
+There's a lot to dig into with signals, like handling multiple signals, chaining `trap` commands, and using `EXIT` traps for cleanup.  
+You can read more [here](https://www.howtogeek.com/814925/linux-signals-bash/) if you want to learn more.  
+
+
 ### Error Handling with Custom Functions
 When writing functions, use the `return` keyword for handling errors.  
 Any non-zero return code between 1 and 256 can be used to indicate a failed function.  
@@ -618,6 +653,31 @@ set -xe  # Enable debugging and exit on failure
 mkdir /tmp/mydir
 cd /tmp/mydir
 rm -rf /tmp/mydir
+```
+This script will print out what the commands are doing as they do it, and exit if any
+of the commands fail.  
+
+---
+
+It's important to mention that `set -e` won't exit if any commands fail in an `if` statement.  
+
+Below is an example that uses the `false` function, which always returns a failing
+exit code.  
+```bash
+#!/bin/bash
+set -e
+false
+printf "This won't be reached.\n"
+```
+
+However, this will not cause the script to exit:
+```bash
+#!/bin/bash
+set -e
+if false; then
+    printf "This still runs.\n"
+fi
+printf "This will be reached.\n"
 ```
 
 
