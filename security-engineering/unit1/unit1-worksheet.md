@@ -1,12 +1,4 @@
-<head>
-    <style> .flex-container { display: flex; align-items: center; gap: 20px; } </style>
-</head>
-<div class="flex-container">
-        <img src="https://github.com/ProfessionalLinuxUsersGroup/img/blob/main/Assets/Logos/ProLUG_Round_Transparent_LOGO.png?raw=true" width="64" height="64">
-    <p>
-        <h1>Unit 1 Worksheet - Linux Fundamentals and Systems Editing Tools</h1>
-    </p>
-</div>
+# Unit 1 Worksheet - Linux Fundamentals and Systems Editing Tools
 
 Welcome to Unit 1 of the Professional Linux Users Group (ProLUG) Systems Administration Course.
 With this worksheet students will explore the foundations of Linux and its many constituent parts.
@@ -47,19 +39,52 @@ answers. This is only required if you want the certification.
 
 The first question of this course is, "What is Security?"
 
+A: Security, in relation to computers, is the process of maintaining controlled access to both a system and the data on that system.
+
 1. Describe the CIA Triad.
+
+Confidentiality, Integrity, and Availability. These are three things that define the
+backbone of data security.
+- Confidentiality: Making sure that only authorized users have access to data.
+- Integrity: Making sure that the data remains in the state it must be in - it should be intact and untouched.
+- Availability: Making sure that the data is accessible when it's needed.
+
+Prioritizing one of these over the others can lead to complications. For instance,
+making data *too* avilable could potentially compromise the confidentiality of the
+data.
+The CIA security triad is a concept that requires balance.
+
 2. What is the relationship between Authority, Will, and Force as they relate to security?
 
-Authority is inherent. 
-Will is the intent to do something.
-Force (technical control) is the control that can suppress will.  
 
-Will can overrule authority in the absence of force. Force is what enforces rules.  
+**Authority** can impose rules, like "do not connect to this machine." But if a user has
+the **will** to connect to that machine, unless there is a **force** (some sort of 
+technical control) stopping them, then they will be able to connect, despite the rules imposed by the Authority. Will can overrule authority in the absence of force. Force is what enforces rules.  
 
 
 3. What are the types of controls and how do they relate to the above question?
 
-(Types of controls are well documented in Sec+ and CISSP)
+Controls can be categorized into types, the types define the type of action taken.
+* Categories:
+    * Technical: Controls implemented via hardware or software (e.g., firewalls).
+    * Managerial: Rules or policies set by authority figures.
+    * Operational: Day to day processes and practices that support security (training, incident response, audits, etc.).
+    * Physical: Controls that protect physical access to systems.
+* Controls:
+    * Preventative: Controls that prevent incidents from occurring.
+    * Deterrent: Controls that discourage/deter an attacker.
+    * Detective: Controls that identify/detect when something goes wrong.
+    * Corrective: Controls that fix/restore systems after an incident occurs.
+    * Compensating: Alternate/fallback controls that are used when the primary
+      control doesn't work.
+    * Directive: Controls that provide guidelines/instructions.
+
+These types of controls relate to the previous question in that many of these can
+related to Authority, Will, and Force directly. 
+For instance, a managerial directive control can set forth policies that prevent an
+incident from happening, but if they're not also enforced by another type of control
+(physical or technical), then those controls will not work 100% of the time.
+
 
 
 #### Discussion Post #2
