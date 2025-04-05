@@ -45,47 +45,45 @@ A: Security, in relation to computers, is the process of maintaining controlled 
 
 Confidentiality, Integrity, and Availability. These are three things that define the
 backbone of data security.
+
 - Confidentiality: Making sure that only authorized users have access to data.
 - Integrity: Making sure that the data remains in the state it must be in - it should be intact and untouched.
 - Availability: Making sure that the data is accessible when it's needed.
 
 Prioritizing one of these over the others can lead to complications. For instance,
-making data *too* avilable could potentially compromise the confidentiality of the
+making data _too_ avilable could potentially compromise the confidentiality of the
 data.
 The CIA security triad is a concept that requires balance.
 
 2. What is the relationship between Authority, Will, and Force as they relate to security?
 
-
 **Authority** can impose rules, like "do not connect to this machine." But if a user has
-the **will** to connect to that machine, unless there is a **force** (some sort of 
-technical control) stopping them, then they will be able to connect, despite the rules imposed by the Authority. Will can overrule authority in the absence of force. Force is what enforces rules.  
-
+the **will** to connect to that machine, unless there is a **force** (some sort of
+technical control) stopping them, then they will be able to connect, despite the rules imposed by the Authority. Will can overrule authority in the absence of force. Force is what enforces rules.
 
 3. What are the types of controls and how do they relate to the above question?
 
 Controls can be categorized into types, the types define the type of action taken.
-* Categories:
-    * Technical: Controls implemented via hardware or software (e.g., firewalls).
-    * Managerial: Rules or policies set by authority figures.
-    * Operational: Day to day processes and practices that support security (training, incident response, audits, etc.).
-    * Physical: Controls that protect physical access to systems.
-* Controls:
-    * Preventative: Controls that prevent incidents from occurring.
-    * Deterrent: Controls that discourage/deter an attacker.
-    * Detective: Controls that identify/detect when something goes wrong.
-    * Corrective: Controls that fix/restore systems after an incident occurs.
-    * Compensating: Alternate/fallback controls that are used when the primary
-      control doesn't work.
-    * Directive: Controls that provide guidelines/instructions.
+
+- Categories:
+  - Technical: Controls implemented via hardware or software (e.g., firewalls).
+  - Managerial: Rules or policies set by authority figures.
+  - Operational: Day to day processes and practices that support security (training, incident response, audits, etc.).
+  - Physical: Controls that protect physical access to systems.
+- Controls:
+  - Preventative: Controls that prevent incidents from occurring.
+  - Deterrent: Controls that discourage/deter an attacker.
+  - Detective: Controls that identify/detect when something goes wrong.
+  - Corrective: Controls that fix/restore systems after an incident occurs.
+  - Compensating: Alternate/fallback controls that are used when the primary
+    control doesn't work.
+  - Directive: Controls that provide guidelines/instructions.
 
 These types of controls relate to the previous question in that many of these can
-related to Authority, Will, and Force directly. 
+related to Authority, Will, and Force directly.
 For instance, a managerial directive control can set forth policies that prevent an
 incident from happening, but if they're not also enforced by another type of control
 (physical or technical), then those controls will not work 100% of the time.
-
-
 
 #### Discussion Post #2
 
@@ -97,7 +95,7 @@ Apache 2.4 STIG `SV-33028r2_rule`: A web site must not contain a `robots.txt` fi
 
 This is trying to stop a website from having a `robots.txt` file, which contains
 instructions on what type of behavior is and is not allowed on that website by bots
-(typically web scraping).  
+(typically web scraping).
 
 This rule is in place due to the possibility of an attacker using the file to
 determine the directory/file index for a site -- i.e., accidentally disclosing
@@ -113,7 +111,7 @@ This is definitely not necessary. This rule is overly cautious, ESPECIALLY for
 public-facing websites. The `robots.txt` file isn't a security mechanism, it's a
 voluntary protocol designed for SEO and crawler etiquette, not access control. It's a
 communication tool, not a defense system. Malicious actors are already going to
-ignore these instructions, so the file offers the attacker no real leverage against 
+ignore these instructions, so the file offers the attacker no real leverage against
 the website that they wouldn't be able to get through other means.
 
 This rule also hurts legitimate use cases, when a site owner does not want his/her
@@ -133,46 +131,81 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
 
 ---
 
-* CIA Triad: Confidentiality, Integrity, Availability
-    - Confidentiality
-    - Integrity: More than just protection from attackers
-    - Availability: Is the system there when I need it to be?
+- CIA Triad: Confidentiality, Integrity, Availability
 
-* Regulatory Compliance: 
+  - Confidentiality
+  - Integrity: More than just protection from attackers
+  - Availability: Is the system there when I need it to be?
 
-* HIPAA: Health Insurance Portability and Accountability Act.
-    - A security standard -- set of security rules designed to protect sensitive
-      patient health info (ensure the privacy and security of that info).  
-    - Has different types of safeguards that define security practices:
-        - Administrative safeguards
-        - Physical safeguards
-        - Technical safeguards
+- Regulatory Compliance:
 
-* Industry Standards: 
- 
-* PCI/DSS: 
- 
-* Security Frameworks: 
- 
-* CIS: 
- 
-* STIG: 
+- HIPAA: Health Insurance Portability and Accountability Act.
 
-## Digging Deeper
+  - A security standard -- set of security rules designed to protect sensitive
+    patient health info (ensure the privacy and security of that info).
+  - Has different types of safeguards that define security practices:
+    - Administrative safeguards
+    - Physical safeguards
+    - Technical safeguards
+
+- Industry Standards:
+
+- PCI/DSS:
+
+- Security Frameworks:
+
+- CIS:
+
+- STIG:
+
+## Digging Deeper (Optional)
 
 ---
 
 1. Research a risk management framework. https://csrc.nist.gov/projects/risk-management/about-rmf
 
    - What are the areas of concern for risk management?
+     - RMF lays out a 7-step process to integrate security/privacy into the "system
+       devlopment lifecycle" (SDLC).
+       The areas of concern listed:
+       - Categorizing the system. Define what kind of data is processed and the
+         sensitivity level of that data (CIA).
+       - Selecting baseline security controls from NIST SP 800-53. Then tailor them
+         to fit your environment.
+       - Actually implementing the controls (configure systems, policies,
+         procedures).
+       - Assessing the implementation -- verifying if controls are correctly
+         implemented and effective. This can include testing, auditing, or vuln scans.
+       - Authorizing the system -- a formal decision by management/Authorizing
+         Official (AO) that risk is acceptable for operations.
+       - Monitoring the controls continuously in order to consisitently re-asses the controls
+         and their effectiveness.
+       - Preparing to establish a "risk-aware" culture.
 
 2. Research the difference between quantitative and qualitative risks.
 
    - Why might you use one or the other?
+     - Quantitative risk uses statistics, formulas, basically hard numbers to
+       estimate risk.
+       - Best to use this when you have solid historical data (historical hosts,
+         probability stats).
+     - Qualitative risk uses subjective/categorical values (e.g., high/medium/low)
+       based on expert judgement.
+       - Use this when hard data is in short supply and expert opinion is the
+         best tool you have at your disposal, or if you need to quickly triage
+         risks. Or if you're communicating with non-technical people.
 
 3. Research ALE, SLE, and ARO.
    - What are these terms in relation to?
+     - These are quantitative risk analysis metrics.
+     - ALE: Annualized loss expectancy.
+       - Estimated yearly cost of a risk.
+     - SLE: Single loss expectancy.
+       - Estimated cost of a single incident.
+     - ARO: Annualized rate of occurrance.
+       - Estimated frequency of an incident per year.
    - How do these help in the risk discussion?
+     - This helps to show how
 
 ## Reflection Questions
 
@@ -182,8 +215,8 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
 
 2. How are you going to use what you’ve learned in your current role?
 
-
 Resources:
+
 - https://www.hhs.gov/hipaa/for-professionals/security/laws-regulations/index.html
 
 Fix text:
@@ -193,16 +226,15 @@ GRANT USAGE ON *.* TO 'mariadb.sys'@'localhost' WITH MAX_USER_CONNECTIONS 1;
 ```
 
 - CONTROLS
-    * Categories
-        * Technical
-        * Managerial
-        * Operational
-        * Physical
-    * Controls:
-        * Preventative
-        * Deterrent
-        * Detective
-        * Corrective
-        * Compensating
-        * Directive
-        
+  - Categories
+    - Technical
+    - Managerial
+    - Operational
+    - Physical
+  - Controls:
+    - Preventative
+    - Deterrent
+    - Detective
+    - Corrective
+    - Compensating
+    - Directive
