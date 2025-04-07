@@ -85,8 +85,56 @@ or similar blogs on DNS and host file configurations.
 
 1. What is the significance of the `nsswitch.conf` file?
 
+> The `/etc/nsswitch.conf` file is responsible for determining the order in which
+> sources are used to resolve names and look up information, such as:
+> - Hostname resolution
+> - Users and groups information (`passwd`, `group`)
+> - Authentication mechanisms
+> - Network service entries, etc  
+> The file acts as a priority list for where the system should look first, second,
+> third, and so on.  
+> 
+> Example from a rocky linux box:
+> ```ini
+> passwd:     files sss systemd
+> group:      files sss systemd
+> netgroup:   sss files
+> automount:  sss files
+> services:   sss files
+> ```
+> Each entry follows the same kind of procedure:
+> - `passwd:   files sss systemd`
+>     - `files` Says to look in `/etc/passwd` for user account info first
+>     - `sss`: Then query the SSSD (System Security Services Daemon), typically used with LDAP or FreeIPA
+>     - `systemd`: Finally check the systemd user database (for runtime or transient user accounts)
+> 
+> This file is significant in that a misconfigured `nsswitch.conf` can cause a lot of 
+> damage. If not properly configured, it could lead to slow lookups, offline failures 
+> (like if DNS is unreachable and there's no local fallback), or incorrect name resolutions. 
+> Because name resolution is used inm almost every system call (`ssh`, `ping`, `yum`,
+> etc.), a misconfigured `nsswitch.conf` can lead to a lot of issues.
+
+
 2. What are security problems associated with DNS and common exploits? (May have
    to look into some more blogs or posts for this)
+
+> DNS is a foundational network service, which makes it critical to network security.
+> Some common DNS security problems include:
+> - DNS spoofing (cache poisoning): Injecting false DNS records into a DNS resolver's 
+>   cache to return a bad response, usually to redirect users to malicious domains (like phishing sites).  
+> - DNS amplification attacks: A form of DDoS that comes from small requests
+>   to publicly available DNS servers with a spoofed source IPs to target open DNS 
+>   resolvers. The response is much *larger* than the initial request (amplified).  
+>   - Potential mitigation for this is to disable open recursive resolvers, use rate limiting, and response filtering  
+> - DNS tunneling: Data exfiltration via DNS. An attacker would encode data into DNS
+>   queries and use them to exfiltrate data.  
+> - NXDOMAIN Attacks: Sending queries for non-existent domains to the DNS server,
+>   causing server overload and potential DoS.  
+> - DNS Hijacking: Diverting DNS query traffic to a malicious DNS server to lead users
+>   to malicious websites.  
+> - Typosquatting and homograph attacks: When you come across similar looking domain names (`goog1e.com`). Not necessarily a DNS thing but it seems related.  
+
+
 
 <div class="warning">
 Submit your input by following the link below.
