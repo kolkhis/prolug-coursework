@@ -149,7 +149,35 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
 
 ---
 
-* `sysctl`: A tool used to control kernel modules.
+* `sysctl`: A tool used to manage kernel runtime parameters.
+    - Check on all the kernel runtime parameters with `-a`:
+      ```bash
+      sysctl -a
+      # Filter for ipv4
+      sysctl -a | grep -i 'ipv4'
+      ```
+    - Search for specific settings by passing names directly.
+      ```bash
+      sysctl net.ipv4
+      ```
+      This will query the `/proc/sys` directory for subdirectories with these names.  
+      E.g., `net.ipv4` will look for `/proc/sys/net/ipv4/` and show all settings in
+      there.  
+    - Adding or changing runtime rules can be done directly.  
+      ```bash
+      sysctl net.ipv4.ip_forward=0 # disable ipv4 forwarding
+      ```
+      But this change won't persist, it will only affect the runtime configuration.  
+      Permanent changes should be added in `/etc/sysctl.d/99-somefile.conf`.  
+    - If adding permanent changes to `/etc/sysctl.d`, you need to reload kernel
+      runtime parameters before the new ones take effect.  
+      ```bash
+      sysctl --system  # applies all files under /etc/sysctl.d/
+      ```
+      Or, to only apply a single file:
+      ```bash
+      sysctl -p /etc/sysctl.d/99-somefile.conf  # -p (--load) only applies this file
+      ```
 
 * `nsswitch.conf`: The `/etc/nsswitch.conf` file is is the configuration file for the Name Switch Service.
     - The Name Switch Service specifies the order in which name service databases are 
@@ -159,17 +187,22 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
     - <https://www.man7.org/linux/man-pages/man5/nsswitch.conf.5.html>
     - The first column in this file is the database name.  
     - The next columns specify service specifications.
-        - `files`, `db`, or `nis`
-        - Optional actions to perform is a result is obtained from the previous service.
+        - `files`, `db`, `systemd`, `sss`, or `nis`
+        - Optional actions to perform if a result is obtained from the previous service.
     <!-- TODO: Break down each column of each line in this file -->
 
 * DNS: Domain Name System - Resolves human-friendly domain names into IP addresses.  
-    - The "phonebook of the internet"
-    - 
+    - The "phonebook of the internet".
 
-* OpenSCAP:
+* OpenSCAP: A collection of open source tools for implementing and enforcing SCAP standards.  
+    - SCAP (Security Content Automation Protocol) is a US standard that comes from
+      NIST (National Institute of Standards and Technology).  
 
-* CIS Benchmarks:
+* CIS Benchmarks: Security guidelines and best practices for securing a system from
+  the Center for Internet Security (CIS).  
+    - These benchmarks provide recommendations for system hardening and are a widely 
+      recognized industry standard.  
+    - Used by businesses and government organizations to assess/improve their security posture.  
 
 * `ss`/`netstat`: Tools on Linux systems for monitoring network activity on the system.
     - `ss` is mainly for finding out what ports are open, and what services are using
@@ -178,9 +211,15 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
       among other things.  
 
 * `tcpdump`: Tool used to monitor packets on a network interface. 
-    -
+    - Used to inspect traffic on a network interface.
+    - You can write (`-w`) the output to a file for logging, or read (`-r`) packet info from a file.  
+    - Packets can be filtered by an expression (as specified in `man 7 pcap-filter`).  
 
-* `ngrep`:
+* `ngrep`: (Network Grep) Network layer grep tool.  
+    - Allows for extended regex matches against data payloads in packets.  
+    - Supports TCP, UDP, and ICMP (ethernet). 
+    - Supports PPP, SLIP, FDDI, and null interfaces.  
+    - Understands bpf filter logic just like packet sniffing tools (e.g., `tcpdump`, `snoop`).  
 
 ## Digging Deeper
 
