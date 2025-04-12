@@ -105,6 +105,11 @@ ss -ntulp | grep 3306
 
   Can you remediate this finding?
   ![image](https://github.com/user-attachments/assets/a9410577-7250-421c-acdf-00cc7f54a3f0)
+  ```sql
+  GRANT USAGE ON *.* TO 'mariadb.sys'@'localhost' WITH MAX_USER_CONNECTIONS 1;
+  GRANT USAGE ON *.* TO 'root'@'localhost' WITH MAX_USER_CONNECTIONS 1;
+  GRANT USAGE ON *.* TO 'mysql'@'localhost' WITH MAX_USER_CONNECTIONS 1;
+  ```
 
 - Check and remediate `v-253677 STIG`
   - What is the problem?
@@ -130,7 +135,7 @@ ss -ntulp | grep 3306
       ```conf
       server_audit_output_type = 'syslog'
       ```
-
+        - MariaDB Audit Plugin (log rotation)
   - What type of control is being implemented?
     - This is a preventative control (prevents disk saturation)
   - Is it set properly on your system?
@@ -164,4 +169,5 @@ ss -ntulp | grep 3306
       ```
       Since the organization (ProLUG) has not deemed this port insecure (at least to
       my knowledge), this is "Not a Finding".
+
 
