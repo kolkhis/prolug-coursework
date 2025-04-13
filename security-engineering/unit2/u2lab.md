@@ -140,7 +140,7 @@ Filter by ipv4 and see how many STIGs you have.
 * What is the fix?  
     - Enable the `net.ipv4.tcp_syncookies` kernel parameter.
 * What type of control is being implemented?  
-    - This is a technical preventative control. 
+    - This is a technical preventative control.  
 * Is it set properly on your system?  
     - Yes: `net.ipv4.tcp_syncookies = 1`
 
@@ -152,7 +152,7 @@ sysctl -a | grep -i ipv4 | grep -i syncookies
 
 * Can you remediate this finding?  
     * In this case it’s already correctly set.  
-    * But if we needed to, we would set that value in /etc/sysctl.d/00-remediate.conf  
+    * But if we needed to, we would set that value in `/etc/sysctl.d/00-remediate.conf`  
     * And then reload sysctl with `sysctl --system`
 
 #### Check and remediate V-257958 STIG
@@ -168,7 +168,6 @@ sysctl -a | grep -i ipv4 | grep -i syncookies
     - Technical preventative control (prevents potential MITM attacks). 
 * Is it set properly on your system?
     - No. `net.ipv4.conf.all.accept_redirects = 1`
-
 
 <img src="./assets/downloads/u2/image7.png"></img>
 
@@ -225,6 +224,7 @@ sysctl -a | grep -i ipv4 | grep -i syncookies
 <img src="./assets/downloads/u2/image8.jpeg"></img>
 
 * What do these STIGS appear to be trying to do? What types of controls are they?
+
 These STIGs are trying both make sure `firewalld` is present and enabled, as well
 as to lock down the firewall by employing a few different techniques:
 * Configure with a deny-all/allow-by-exception policy.
