@@ -56,3 +56,24 @@ We always have to report up our compliance
 
 - Allow users to get in only if they've been vetted and given access via AD
     - Like a keybox when buying a house
+
+## Lab Notes
+Slappasswd (using `testpassword`)
+
+`testpassword`
+{SSHA}R/3YAUnuHv00Q2T69ieaxb7CNz/1YnO8
+
+Error on setdomain.ldif:
+```
+[root@hammer5 ~]# ldapmodify -Y EXTERNAL -H ldapi:/// -f setdomain.ldif
+SASL/EXTERNAL authentication started
+SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
+SASL SSF: 0
+ldapmodify: invalid format (line 5) entry: "olcDatabase={1}monitor,cn=config"
+```
+
+`testuser1234`
+{SSHA}8qMroMTkLOBD/b0YqMLknliW4mHK5Kx6
+
+
+

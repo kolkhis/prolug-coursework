@@ -275,7 +275,7 @@ dn: olcDatabase={1}monitor,cn=config
 changetype: modify
 replace: olcAccess
 olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
-read by dn.base="cn=Manager,dc=prolug,dc=lan" read by * none
+  read by dn.base="cn=Manager,dc=prolug,dc=lan" read by * none
 
 dn: olcDatabase={2}mdb,cn=config
 changetype: modify
@@ -296,7 +296,7 @@ dn: olcDatabase={2}mdb,cn=config
 changetype: modify
 add: olcAccess
 olcAccess: {0}to attrs=userPassword,shadowLastChange by
-dn="cn=Manager,dc=prolug,dc=lan" write by anonymous auth by self write by * none
+  dn="cn=Manager,dc=prolug,dc=lan" write by anonymous auth by self write by * none
 olcAccess: {1}to dn.base="" by * read
 olcAccess: {2}to * by dn="cn=Manager,dc=prolug,dc=lan" write by * read
 ```
@@ -543,3 +543,10 @@ Output:
 uid=15000(testuser) gid=15000 groups=15000
 
 </blockquote>
+
+
+I did it!
+```
+[root@hammer5 ~]# id testuser
+uid=15000(testuser) gid=15000(testuser) groups=15000(testuser)
+```
