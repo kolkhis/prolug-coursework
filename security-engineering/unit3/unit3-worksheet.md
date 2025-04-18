@@ -237,7 +237,11 @@ We always have to report up our compliance
 ---
 
 1. What questions do you still have about this week?
-if OpenLDAP isn't used on RHEL 9 anymore, what's used instead?
+
+If OpenLDAP isn't used on RHEL 9 anymore, what's used instead? Are windows servers a
+necessary evil for hosting an AD auth system?
 
 2. How are you going to use what you've learned in your current role?
+
+I will put these skills on my resume.
 
