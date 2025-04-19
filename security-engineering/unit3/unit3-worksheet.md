@@ -54,7 +54,7 @@ Read the guide from Rocky Linux here: <https://docs.rockylinux.org/guides/securi
    Post it here and give us a quick synopsis. (Bonus arbitrary points if you find one of 
    our ProLUG members blogs on the subject.)
 
-https://michaelpesa.com/posts/creating-custom-authselect-profiles/
+<https://michaelpesa.com/posts/creating-custom-authselect-profiles/>
 
 Quick synopsis: 
 - `authselect` is a new tool (or was in RHEL 8) that replaced `authconfig`. The
