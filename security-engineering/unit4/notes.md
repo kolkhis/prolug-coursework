@@ -71,11 +71,18 @@ leverage cgroups and namespaces for more isolation.
   IO) of a group of processes.  
 
 
+- You don't HAVE to put a jail at `/var/chroot`. You can put it anywhere. 
+    - There are things that need to be executable (e.g., can't use `noexec` filesystems)
+        - TODO: Remember how to check for noexec
+
+
+
 ## misc
 Put "zero-trust" on your resume.  
 
 * gvisor
 * PAW - Privileged Access Workstation
+* Most the apps on your phone are jailed. They think they're the only ones there.  
 
 ## Let's build it
 
@@ -116,5 +123,81 @@ Create the jail
     * /dev/zero
     * /dev/random
     * /dev/urandom
+
+`ldd` - list the libs needed for a program
+`mknod` - "make node" - makes block devices
+
+```bash
+mkdir /var/chroot
+mkdir -p /var/chroot/{bin,lib64,dev,etc,home,usr/bin,lib/x86_64-linux-gnu}
+ls -l /var/chroot
+cp /usr/bin/bash /var/chroot/bin/bash
+
+for package in $(ldd /bin/bash | awk '{print $(NF -1)}'); do
+    cp $package /var/chroot/$package
+done
+mknod -m 666 /var/chroot/dev/null c 1 3
+mknod -m 666 /var/chroot/dev/tty c 5 0
+mknod -m 666 /var/chroot/dev/zero c 1 5
+mknod -m 666 /var/chroot/dev/null c 1 3
+mknod -m 666 /var/chroot/dev/null c 1 3
+mknod -m 666 /var/chroot/dev/null c 1 3
+```
+
+## Building a Bastion
+- Add basic framework to the jail so you can populate it with functionality
+- Change your root to /var/chroot and see what functionality you have
+
+1. Set up the chroot jail.
+2. Create a user
+
+```bash
+useradd -m freeuser
+passwd freeuser
+```
+
+Create jaileduser on node01
+```bash
+ssh node01
+useradd -m jaileduser
+passwd jaileduser
+```
+
+Jail the use's ssh with a `bastion.sh` script:
+```bash
+#!/bin/bash
+
+# Input a number
+read -n 2 -t 20 -p "Make your selection from the items below
+You have 20 seconds
+
+1. Connect to controlplane as freeuser.
+2. Exit
+" input
+
+case $input in
+    1)
+        echo "You are being sent to Rocky1"
+        /usr/bin/ssh freeuser@controlplane
+        exit 0;
+        ;;
+    2)
+        echo "You are leaving now."
+        exit 0;
+        ;;
+    *)
+        echo "You have not entered a valid input"
+        exit 0;
+        ;;
+esac
+
+exit 0;
+```
+
+
+After traversing a bastion, using `exit` will not put you back into the bastion??
+
+
+Block Outbound Port 22 
 
 
