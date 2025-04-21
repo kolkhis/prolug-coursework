@@ -1,6 +1,6 @@
 # Discord Course Discussion Tracker Bot  
 
-A Discord bot that will ease the burden of keeping track of who is 
+A Discord bot that will ease the burden of keeping track of who is participating in discussion posts.
 
 Language: Python  
 Framework: `discord.py`
