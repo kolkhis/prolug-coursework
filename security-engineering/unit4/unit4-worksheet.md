@@ -140,12 +140,18 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
 
 ---
 
-- Air-gapped: A system that is almost completely isolated from the network (no
-  network interfaces connected to the internet).  
-    - Truly full isolation is not possible since we still need ingress and egress.  
+- Air-gapped: A system that is almost completely isolated from the network, either
+  physically or logically.
+    - Usually has no active network interfaces connected to the internet, or strict
+      firewall rules block all traffic.  
+    - Full isolation ("truly" air-gapping) is rare since we still need some minimal ingress and egress.  
+    - Used in high-security environments to prevent remote compromise
 
-- Bastion: A DMZ (demilitarized zone) in which the user is jailed, and only given the
-  necessary tools needed to get to where they need to go.  
+- Bastion: A hardened intermediary system that acts as a secure gateway between 
+  trusted and untrusted networks.  
+    - Usually in a DMZ (demilitarized zone) in which the user is jailed, and only given the
+      necessary tools needed to get to where they need to go.  
+    - Usually used to manage SSH access to sensitive servers.  
 
 - Jailed process: A process that is isolated from the rest of the machine.  
     - Usually can not interact with the base system as it is.  
@@ -157,17 +163,25 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
     - E.g., Allowing inbound SSH connections.  
 
 - Egress: Exit points.
-    - E.g., Allowing outbound SSH connections.  
+    - E.g., Allowing outbound SSH connections, DNS queries, HTTP requests, etc.  
 
-- Exfiltration: The act of extracting data from a machine.  
+- Exfiltration: The act of extracting data from a machine without authorization.  
+    - Associated with breaches or malware.  
+    - Can happen via network transfers, removable storage, or covert channels.  
 
-- Cgroups: Control groups.
+- Cgroups: Control groups. A linux kernel feature used to limit and measure resource
+  usage by processes.  
+    - Can control CPU, memory, I/O, etc.
+    - These are usually used in containers, or to prevent rogue processes from taking
+      down a system.  
 
-- Namespaces: 
-    - Mount: 
-    - PID: 
-    - IPC: 
-    - UTS: 
+- Namespaces: A set of linux kernel features that logically isolate system resources
+  for processes/containers
+    - Mount: `mnt`: Isolates the filesystem view. Processes have a separate root filesystem.  
+    - PID: `pid`: Isolates the process ID "number space". PIDs are only visible
+      within the namespace.  
+    - IPC: `ipc`: Isolates inter-process communication (message queues, semaphores, shared memory)
+    - UTS: `uts`: Isolates system identifiers (hostname, domain name)
 
 ## Digging Deeper
 
@@ -200,7 +214,19 @@ The discussion posts are done in Discord threads. Click the 'Threads' icon on th
 ---
 
 1. Does it matter if the user knows that they are jailed? Why or why not?
+- The user should probably not know they're jailed.  
+    The point of a jail is to prevent unauthorized activity. If the user knows
+    they're in a jail and have malicious intentions, then they should not already be
+    equipped with the knowledge that they're jailed. If they know, they may start
+    looking for ways to break out of the jail immediately. If they don't know they're
+    in a jail, or what type of jail, they may just think the system is configured
+    differently than it is. Maybe this stance is more "security through obscurity",
+    but I think it's a valid view.  
 
 2. What questions do you still have about this week?
+    - What other types of jails are often used in enterprise environments?
 
 3. How are you going to use what you’ve learned in your current role?
+    - I will put together a project for my homelab to implement user jailing with a
+      bastion host and put that on my resume.  
+
