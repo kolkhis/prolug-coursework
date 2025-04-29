@@ -497,7 +497,7 @@ Output:
 <blockquote>
 
 BASE dc=prolug,dc=lan  
-URI ldap://ldap.ldap.lan/
+URI  ldap://ldap.ldap.lan/
 
 </blockquote>
 
