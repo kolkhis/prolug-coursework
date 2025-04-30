@@ -353,9 +353,9 @@ run their own repo on their network.
 
        
      1. What are the prechecks doing? What other ones might you add?
-        - The precheck seems to just be grouping the hosts based on their OS and
+        - The prechecks seem to be grouping the hosts based on their OS and
           major version. Like creating a group for "Rocky 9" boxes (`Rocky9`).  
-        - This is also checking the local `fact` files for the `rebooting` key. If
+        - They're also checking the local `fact` files for the `rebooting` key. If
           it's there, it will also group by this flag, and the host is added to a
           `rebooting` group.
         - One other precheck I might add could be to check available disk space
@@ -364,11 +364,11 @@ run their own repo on their network.
           `versionlock` on DNF.  
 
      2. What does the reboot task do, and how does it check for reboot to be needed?
-        - It checks if a reboot is needed by using `neetrestart -b` (debian-based)
+        - It checks if a reboot is needed by using `needrestart -b` (Debian-based)
           and `needs-restarting -r` (RedHat-based) and registers the output to a
-          variable. Then a fact is set, `reboot_required`, to either true or false
+          variable. Then a fact is set, `reboot_required`, to either `true` or `false`
           depending on the output.  
-          If the `reboot_required` and `rebooting` is set to `true`, it will reboot.  
+          If `reboot_required` and `rebooting` are both set to `true`, it will reboot.  
 
 ## Digging Deeper challenge (not required for finishing lab)
 
@@ -383,3 +383,4 @@ run their own repo on their network.
 
 3. Make a pull request to improve the enterprise patching tool that you just used. Write up, for the
    group, why you need that change and how it improves the efficacy of the patching.
+
