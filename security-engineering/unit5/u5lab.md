@@ -124,7 +124,6 @@ run their own repo on their network.
           But the permissions still allow for `r` and `x` on these directories, so
           it's not set up properly on the system.  
 
-
    - How do you think SELINUX will help implement this control in an enforcing state? Or
      will it not affect it?
         - SELinux compliments file permissions, which can help implement this
@@ -154,6 +153,8 @@ run their own repo on their network.
    touch /etc/yum.repos.d/rocky9.repo
    vi /etc/yum.repos.d/rocky9.repo
    ```
+    * `df -h` output: `/dev/loop0                 11G   11G     0 100% /mnt`
+   <!-- Make child dir in /mnt before mounting -- bad practice to mount directly to /mnt (can't mount anything else) -->
 
    Add the repo configuration:
 
@@ -186,6 +187,7 @@ run their own repo on their network.
    chmod 644 /etc/yum.repos.d/rocky9.repo
    dnf clean all
    ```
+   <!-- Performs  cleanup  of temporary files kept for repositories. -->
    <!-- [root@hammer6 yum.repos.d]# dnf clean all -->
    <!-- 43 files removed -->
 
@@ -223,7 +225,7 @@ run their own repo on their network.
         - Much less than AppStream. Only 1002 packages.  
           ```bash
           [root@hammer6 yum.repos.d]# dnf --disablerepo="*" --enablerepo="BaseOS" list available | wc -l
-          1002
+          # 1002
           ```
 
    ```bash
