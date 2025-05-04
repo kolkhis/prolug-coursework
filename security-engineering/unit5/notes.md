@@ -31,6 +31,7 @@ How do we configure our repos?
 How does enterprise patching differ from one-off patching of systems?
 
 What is a lifecycle in engineering and how does it relate to patching?
+- Moving through dev, test, QA, prod, etc.  
 
 
 ---
@@ -82,4 +83,29 @@ Could also take the other iso (Mellanox) and put it on the system, and use the c
 dnf whatprovides createrepo
 ```
 This builds an XML file for the repo so that DNF/YUM know what packages are in it.  
+
+---
+
+HTTP is a common method of serving local repositories.  
+It's usually also locked down with HTTPS (via TLS).  
+
+---
+Control is important because OUR names are on it.  
+
+We guarantee with our good name that the thing will do engineering stuff like we say.  
+We're also betting our weekend on it.  
+
+---
+
+Why do we create a repo locally?
+- So that we can be completely airgapped in THAT sense from a network.  
+
+---
+
+There are tools like `pulp` that will do this for you.  
+
+---
+
+
+
 
