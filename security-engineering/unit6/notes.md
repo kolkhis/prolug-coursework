@@ -177,6 +177,7 @@ Libraries in programming languages
  - Go libraries ( regexp, encoding/json)
 
 ---
+
 When to use:
 * Large log volume
 * Complex log format
@@ -188,3 +189,11 @@ When to use:
 ---
 
 You can write out custom logs in kafka and set up a job to get it picked up by promtail
+
+---
+
+Kafka doesn't have its own visualization. But it can feed right into kibana or loki. 
+
+---
+
+
