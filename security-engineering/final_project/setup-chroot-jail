@@ -1,0 +1,139 @@
+#!/bin/bash
+
+declare CHROOT_DIR='/var/chroot'
+declare JAILED_USER='juvie'
+
+declare BASTION_HOST_IP='192.168.4.80'
+
+
+declare -a BINARIES
+BINARIES=("bash" "rbash" "ssh")
+
+declare -a SYSFILES=(
+    "/etc/passwd"
+    "/etc/group"
+    "/etc/nsswitch.conf"
+    "/etc/hosts"
+)
+
+declare -a SPECIAL_FILES=(
+    "/dev/null "
+    "/dev/tty" 
+    "/dev/zero"
+    "/dev/random"
+    "/dev/urandom"
+)
+
+
+
+
+declare VERBOSE=0
+while [[ -n $1 ]]; do
+    case $1 in
+        -v|--verbose)
+            VERBOSE=1
+            shift;
+            ;;
+        -h|--help)
+            # TODO: Add help text
+            :
+            ;;
+    esac
+done
+
+debug() {
+    [[ -n $VERBOSE ]] && printf "[\033[33m DEBUG \033[0m]: %s\n" "$@"
+}
+
+setup-chroot-dir() {
+    
+    printf "Setting up chroot jail environment.\n"
+
+    printf "Setting up directory structure.\n"
+
+    mkdir -p ${CHROOT_DIR}/{bin,lib,dev,etc,home,usr/bin,lib/x86_64-linux-gnu} || {
+        printf >&2 "Failed to create directory tree for chroot jail!\n"
+    }
+
+    for SYSFILE in "${SYSFILES[@]}"; do
+        printf "Copying system file: %s\n" "$SYSFILE"
+        if [[ ! -d  "${CHROOT_DIR}/$(dirname "$SYSFILE")" ]]; then
+            printf "Creating directory for %s at %s\n" "$SYSFILE" "$CHROOT_DIR/$(basename "$SYSFILE")"
+            mkdir -p "$(dirname "$SYSFILE")" || {
+                printf >&2 "Failed to make directory for %s at %s\n" "$SYSFILE" "$(dirname "$SYSFILE")"
+            }
+        fi
+
+        printf "Copying system file %s to %s\n" "$SYSFILE" "${CHROOT_DIR}/$SYSFILE"
+        cp "$SYSFILE" "$CHROOT_DIR/$SYSFILE"
+    done
+
+    for BINARY in "${BINARIES[@]}"; do
+        debug "Binary: %s\n" "${BINARY}"
+        BIN_PATH=$(which "$BINARY")
+        cp "$BIN_PATH" "${CHROOT_DIR}/${BIN_PATH}"
+
+        # Gather Link Libraries for the binary
+        local -a BIN_LLIBS
+        IFS=$'\n' read -r -d '' -a BIN_LLIBS < <(ldd "$BIN_PATH" |
+            perl -ne 'print $1 . "\n" if s/^[^\/]*(\/.*)\(.*$/\1/')
+            # grep -o '/[^ ]*'
+
+        debug "LLIB for %s: %s\n" "$BINARY" "${BIN_LLIBS[@]}"
+        for LLIB in "${BIN_LLIBS[@]}"; do
+            cp "${LLIB}" "${CHROOT_DIR}/${LLIB}"
+        done
+
+    done
+
+    # [[ ! -d /var/chroot ]] && sudo mkdir -p /var/chroot
+    if ! [[ -d /var/chroot ]]; then
+        printf "Directory not found.\n"
+        printf "Creating the chroot directory (%s)\n" "${CHROOT_DIR}"
+        sudo mkdir "${CHROOT_DIR}" || {
+            printf >&2 "Failed to create chroot directory: %s\n" "${CHROOT_DIR}"
+        }
+    fi
+
+    # Create special files
+    printf "Making character special files.\n"
+    for SPECIAL_FILE in "${SPECIAL_FILES[@]}"; do
+        if [[ ! -c "$CHROOT_DIR/$SPECIAL_FILE" ]]; then
+            local -a MAJOR_MINOR=()
+            read -r -d '' -a MAJOR_MINOR < <(
+                stat "$SPECIAL_FILE" | grep -i 'device type' | awk '{printf $(NF)"\n"}' | tr ',' ' '
+            )
+            mknod -m 666 "${CHROOT_DIR}/${SPECIAL_FILE}" c "${MAJOR_MINOR[@]}" || { 
+                printf >&2 "Failed to create character special file: %s\n" "$SPECIAL_FILE";
+            }
+        else
+            printf "Character special file already exists: %s\n" "$CHROOT_DIR/$SPECIAL_FILE"
+        fi
+    done
+
+    printf "Copying Name Switch Service (NSS) files.\n"
+    cp -r /lib/x86_64-linux-gnu/*nss* /var/chroot/lib/x86_64-linux-gnu || {
+        printf >&2 "Failed to copy name switch service files!\n"
+    }
+
+}
+
+setup-jailed-user() {
+    if [[ $(hostname -I | awk '{print $1}' | tr -d ' ') != "$BASTION_HOST_IP" ]]; then
+        printf >&2 "Your localhost is not the targeted bastion host.\n" && return 1
+    fi
+    useradd -m "${JAILED_USER}" || {
+        printf >&2 "Failed to add jailed user account!\n" && return 1
+    }
+    printf "User account %s succussfully added.\n" "$JAILED_USER"
+    local PASSWORD=
+    read -r -p "Enter password for user account: " PASSWORD
+
+    
+
+}
+
+setup-chroot-dir || {
+    printf >&2 "Failed to set up chroot directory!\n"
+}
+
