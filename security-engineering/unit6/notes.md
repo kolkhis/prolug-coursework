@@ -190,10 +190,83 @@ When to use:
 
 You can write out custom logs in kafka and set up a job to get it picked up by promtail
 
----
-
 Kafka doesn't have its own visualization. But it can feed right into kibana or loki. 
 
 ---
+
+## Notes from Lab
+
+Enable rsyslog for recieving, then enable sending on other nodes.  
+```bash
+TODO: put stuff
+```
+
+---
+`vi /etc/rsyslog.d/30-remote.conf`
+
+Weird rsyslog rule syntax:
+```plaintext
+$template RemoteLogs,"/var/log/%HOSTNAME%/messages.log"
+if ($fromhost-ip != "127.0.0.1") then ?RemoteLogs
+& stop
+```
+
+
+Set up a directory for each node in `/var/log/${HOSTNAME}/messages.log`
+
+
+---
+
+
+
+
+## rsyslog 
+`/etc/rsyslog.d/90-remote.conf`
+```???
+# template(name="PerHostPerApp" type="string"
+         string="/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log")
+# catch-all rule: every message, any priority/facility
+.    ?PerHostPerApp        # the “?” routes to a named template
+```
+
+| Piece                  | Meaning                                                                                                           |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `template(name="...")` | Defines a reusable format or file path.                                                                           |
+| `type="string"`        | Says the template is just a literal string (not JSON, etc.).                                                      |
+| `%HOSTNAME%`           | Built-in property replacer → value of the sending host.                                                           |
+| `%PROGRAMNAME%`        | Same for the process/app that emitted the log line.                                                               |
+| `?PerHostPerApp`       | Action: *write* the message using that template path. (`?` means write to file; `@@` would be TCP forward, etc.). |
+
+
+
+
+
+
+
+
+
+
+Message queues 
+Drop msg in a queue 
+Containers can pick up off queue  
+
+So instead of sending straight to destination host, a queue can be used.  
+
+https://kafka.apache.org/uses
+
+Message broker is not limited to just logs -- it can queue any sort of information.  
+
+
+`kafkacat` is a separate tool.  
+
+
+## TODO:
+https://killercoda.com/het-tanis/course/Kubernetes-Labs/Kafka-deployment-in-kubernetes
+
+
+
+
+
+
 
 
