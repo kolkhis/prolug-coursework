@@ -139,14 +139,16 @@ or another of these tools may be the right choice in their organization or not.
 
      - Does the flow make sense in the context of this diagram?
         - Yeah, it seems to be working in the way pictured. 
-            1. Uses kcat to write out to kafka (running in k8s pod on node01). 
+            1. Uses `kcat` to write out to Kafka (running in k8s pod on node01 with
+               exposed NodePort 31000). 
             2. Using promtail to pick up the messages from kafka (node01:31000) with
-               the "topic" System_Logs (kafka's way of labeling)
+               the "topic" System_Logs (kafka's way of labeling).  
             3. Promtail pushes those up to loki, when is then displayed by grafana
-          
+
    <!-- TODO: -->
    - Can you find any configurations or blogs that describe why you might want to use this architecture or
      how it has been used in the industry?  
+        - 
 
 ### (OPTIONAL) Cloud-Native Logging services
 
