@@ -257,7 +257,7 @@ https://kafka.apache.org/uses
 Message broker is not limited to just logs -- it can queue any sort of information.  
 
 
-`kafkacat` is a separate tool.  
+`kafkacat` is a separate tool that writes out to kafka.  
 
 
 ## TODO:
@@ -267,6 +267,10 @@ https://killercoda.com/het-tanis/course/Kubernetes-Labs/Kafka-deployment-in-kube
 
 
 
+Five Why's in Analysis:
+* Ask why 5 times.
+* By the time you get to the 5th "why", you're probably at the root cause.  
 
-
+Kafka is not typically run in a kubernetes cluster.  
+Kafka is usually run on dedicated hardware or VM.  
 
