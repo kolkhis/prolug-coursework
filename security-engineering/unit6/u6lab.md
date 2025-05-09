@@ -143,18 +143,30 @@ or another of these tools may be the right choice in their organization or not.
                exposed NodePort 31000). 
             2. Using promtail to pick up the messages from kafka (node01:31000) with
                the "topic" System_Logs (kafka's way of labeling).  
-            3. Promtail pushes those up to loki, when is then displayed by grafana
+            3. Promtail pushes those up to loki, when is then displayed by grafana  
 
-   <!-- TODO: -->
    - Can you find any configurations or blogs that describe why you might want to use this architecture or
      how it has been used in the industry?  
-        - 
+        - Kafka is described as a scalable middleware between log producers and log
+          ingesters. Kafka can ingest logs from all types of sources (applications,
+          servers, databases, etc.) and process, store, and analyze them in real
+          time.  
+        - Many big companies use Kafka in their production environments.  
+            - Netflix uses kafka to aggregate logs from streaming infrastructure.  
+              Kafka log aggregation here helps ensure HA and optimize performance, and
+              gives the ability to troubleshoot in real time.  
+            - Slack also uses kafka to aggregate logs from microservices and
+              databases.  
+            - Azure uses Kafka for monitoring cloud services.  
+        - <https://www.redpanda.com/guides/kafka-use-cases-log-aggregation>
+        - <https://www.crowdstrike.com/en-us/guides/kafka-logging/>
 
 ### (OPTIONAL) Cloud-Native Logging services
 
-1. OPTIONAL: Setup VPC flow logs in your AWS environment: <https://catalog.workshops.aws/well-architected-security/en-US/3-detection/40-vpc-flow-logs-analysis-dashboard/1-enable-vpc-flow-logs>
+1. OPTIONAL: Setup VPC flow logs in your AWS environment:
+<https://catalog.workshops.aws/well-architected-security/en-US/3-detection/40-vpc-flow-logs-analysis-dashboard/1-enable-vpc-flow-logs>
 
-2. OPTIONAL: Even if not completing these labs, why might it be useful to understand the fields of a VPC flow log even if you’re not setting up logging in AWS environments (but your organization does use AWS)? https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html
+2. OPTIONAL: Even if not completing these labs, why might it be useful to understand the fields of a VPC flow log even if you’re not setting up logging in AWS environments (but your organization does use AWS)? <https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html>
 
 ## Digging Deeper challenge (not required for finishing lab)
 
