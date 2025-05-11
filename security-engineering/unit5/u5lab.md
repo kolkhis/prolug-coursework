@@ -126,10 +126,12 @@ run their own repo on their network.
 
    - How do you think SELINUX will help implement this control in an enforcing state? Or
      will it not affect it?
+
         - SELinux compliments file permissions, which can help implement this
           control. It uses a MAC (mandatory access control) list to determine who has
           access to what on the system, so a properly set SELinux context for the
           relevant files can help implement this STIG. 
+
         - However, the fact that the STIG requires no shell access for non-admin
           accounts, SELinux won't enforce this STIG without a major system overhaul.  
 
@@ -245,7 +247,8 @@ run their own repo on their network.
 
      2. How can you tell they're from different repos?
         - It shows the repository when listing the packages it wants to install.
-          
+
+
 4. Share out the local repository for your internal systems (tested on just this one system)
 
    ```bash
