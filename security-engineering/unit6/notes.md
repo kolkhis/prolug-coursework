@@ -246,24 +246,19 @@ Set up a directory for each node in `/var/log/${HOSTNAME}/messages.log`
 
 
 
-Message queues 
-Drop msg in a queue 
-Containers can pick up off queue  
+* Message queues:
+    1. Drop msg in a queue 
+    2. Containers (or other services) can pick those messages up from that message queue  
+    * So instead of sending straight to destination host, a queue can be used.  
 
-So instead of sending straight to destination host, a queue can be used.  
+Kafka is a message broker that works with a message queue (or event bus).  
+* The message broker is not limited to just logs -- it can queue any sort of information.  
 
-https://kafka.apache.org/uses
-
-Message broker is not limited to just logs -- it can queue any sort of information.  
-
-
-`kafkacat` is a separate tool that writes out to kafka.  
+<https://kafka.apache.org/uses>
 
 
-## TODO:
-https://killercoda.com/het-tanis/course/Kubernetes-Labs/Kafka-deployment-in-kubernetes
 
-
+`kafkacat` is a separate tool that writes out to kafka (invoked as `kcat`).  
 
 
 
@@ -273,4 +268,7 @@ Five Why's in Analysis:
 
 Kafka is not typically run in a kubernetes cluster.  
 Kafka is usually run on dedicated hardware or VM.  
+
+## TODO:
+<https://killercoda.com/het-tanis/course/Kubernetes-Labs/Kafka-deployment-in-kubernetes>
 

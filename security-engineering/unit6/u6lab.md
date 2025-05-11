@@ -35,35 +35,33 @@ or another of these tools may be the right choice in their organization or not.
 ### Rsyslog forwarding and collection
 
 1. Consider this architecture, where all modern Linux systems have built in rsyslog capabilities.  
-   One of them can be set to “catch” or aggregate all logs and then any number of 
+   One of them can be set to “catch” or aggregate all logs and then any number of
    servers can send over to them.
 
-  <img src='./assets/images/u6/image1.jpg'></img>
+<img src='./assets/images/u6/image1.jpg'></img>
 
 2. Complete the lab: <https://killercoda.com/het-tanis/course/Linux-Labs/206-setting-up-rsyslog>
 
 <!-- node01 (sending logs): -->
 <!-- udp   UNCONN 0      0                                 0.0.0.0:52564      0.0.0.0:*    users:(("rsyslogd",pid=19079,fd=7)) -->
 
+- Why do we split out the logs in this lab? Why don’t we just aggregate them to one place?
 
-   - Why do we split out the logs in this lab? Why don’t we just aggregate them to one place?
-        - Good question. They're technically being aggregated.
-        - We're splitting out the logs so that we can tell where the logs are coming
-          from.  
-          Each node is getting its own directory in `/var/log`, making it easy to
-          search and identify logs from a given node.  
-          We're excluding the localhost node because the default location is fine for
-          that.  
+  - Good question. They're technically being aggregated.
+  - We're splitting out the logs so that we can tell where the logs are coming from.  
+    Each node is getting its own directory in `/var/log`, making it easy to
+    search and identify logs from a given node.  
+    We're excluding the localhost node because the default location is fine for that.
 
-     - What do we split them out by?
-        - We split them by hostname.  
-     - How does that template configuration work?
-        - It defines a rule that if it's receiving logs from a remote node, it will
-          log to a specific directory named after that hostname in `/var/log`.  
-          If it's the localhost, it will log to the default location.  
+  - What do we split them out by?
+    - We split them by hostname.
+  - How does that template configuration work?
+    - It defines a rule that if it's receiving logs from a remote node, it will
+      log to a specific directory named after that hostname in `/var/log`.  
+      If it's the localhost, it will log to the default location.
 
-   - Are we securing this communication in any way, or do we still need to configure that?
-        - We do not seem to be securing the communication.  
+- Are we securing this communication in any way, or do we still need to configure that?
+  - We do not seem to be securing the communication.
 
 3. We will revisit this lab in Unit 10, with security involved via certificates, so make sure you are comfortable
    with the base components you are configuring.
@@ -75,10 +73,11 @@ or another of these tools may be the right choice in their organization or not.
 2. Complete the lab here: <https://killercoda.com/het-tanis/course/Linux-Labs/102-monitoring-linux-logs>
 
    - Does the lab work correctly, and do you understand the data flow?
-        - Yes, it works correctly. The dataflow is:
-          ```plaintext
-          Promtail (collects) -> Loki (stores) -> Grafana (visualizes)
-          ```
+
+     - Yes, it works correctly. The dataflow is:
+       ```plaintext
+       Promtail (collects) -> Loki (stores) -> Grafana (visualizes)
+       ```
 
    - While still in the lab
 
@@ -89,11 +88,12 @@ or another of these tools may be the right choice in their organization or not.
      - Refresh your Grafana and change the app to lab_logging
 
      - Can you see it in your Grafana?
-        - Yup. Scott is too awesome!  
+       - Yup. Scott is too awesome!
 
    <img src='./assets/images/u6/image2.jpg'></img>
 
    - Can you modify the file loki-write.py to say something related to your name?
+
      ```python
      msg = 'On server {host} detected error - Kolkhis says scott works too hard'.format(host=host)
      ```
@@ -111,16 +111,15 @@ or another of these tools may be the right choice in their organization or not.
      Yes.
 
      Output the actual messages:
+
      ```bash
      curl -G -s "http://localhost:3100/loki/api/v1/query_range"  \
          --data-urlencode 'query={job="lab_logging"}'  \
          --data-urlencode 'step=300' | jq
      ```
 
-
 3. We will revisit this lab in Unit 10, with security involved via certificates, so make sure you are
    comfortable with the base components you are configuring.
-
 
 ### Message Queues (Event Bus) for log aggregation and propagation
 
@@ -135,38 +134,48 @@ or another of these tools may be the right choice in their organization or not.
 3. Complete the killercoda lab found here: <https://killercoda.com/het-tanis/course/Linux-Labs/108-kafka-to-loki-logging>
 
    - Did you get it all to work?
-        - Yes!
 
-     - Does the flow make sense in the context of this diagram?
-        - Yeah, it seems to be working in the way pictured. 
-            1. Uses `kcat` to write out to Kafka (running in k8s pod on node01 with
-               exposed NodePort 31000). 
-            2. Using promtail to pick up the messages from kafka (node01:31000) with
-               the "topic" System_Logs (kafka's way of labeling).  
-            3. Promtail pushes those up to loki, when is then displayed by grafana  
+     - Yes!
+
+   - Does the flow make sense in the context of this diagram?
+
+     - Yeah, it seems to be working in the way pictured.
+
+       1. Uses `kcat` to write out to Kafka (running in k8s pod on node01 with
+          exposed NodePort 31000).
+
+       2. Using promtail to pick up the messages from kafka (node01:31000) with
+          the "topic" System_Logs (kafka's way of labeling).
+
+       3. Promtail pushes those up to loki, when is then displayed by grafana
 
    - Can you find any configurations or blogs that describe why you might want to use this architecture or
-     how it has been used in the industry?  
-        - Kafka is described as a scalable middleware between log producers and log
-          ingesters. Kafka can ingest logs from all types of sources (applications,
-          servers, databases, etc.) and process, store, and analyze them in real
-          time.  
-        - Many big companies use Kafka in their production environments.  
-            - Netflix uses kafka to aggregate logs from streaming infrastructure.  
-              Kafka log aggregation here helps ensure HA and optimize performance, and
-              gives the ability to troubleshoot in real time.  
-            - Slack also uses kafka to aggregate logs from microservices and
-              databases.  
-            - Azure uses Kafka for monitoring cloud services.  
-        - <https://www.redpanda.com/guides/kafka-use-cases-log-aggregation>
-        - <https://www.crowdstrike.com/en-us/guides/kafka-logging/>
+     how it has been used in the industry?
+
+     - Kafka is described as a scalable middleware between log producers and log
+       ingesters. Kafka can ingest logs from all types of sources (applications,
+       servers, databases, etc.) and process, store, and analyze them in real
+       time.
+
+     - Many big companies use Kafka in their production environments.
+
+       - Netflix uses kafka to aggregate logs from streaming infrastructure.  
+         Kafka log aggregation here helps ensure HA and optimize performance, and
+         gives the ability to troubleshoot in real time.
+       - Slack also uses kafka to aggregate logs from microservices and databases.
+       - Azure uses Kafka for monitoring cloud services.
+     - <https://www.redpanda.com/guides/kafka-use-cases-log-aggregation>
+     - <https://www.crowdstrike.com/en-us/guides/kafka-logging/>
 
 ### (OPTIONAL) Cloud-Native Logging services
 
 1. OPTIONAL: Setup VPC flow logs in your AWS environment:
-<https://catalog.workshops.aws/well-architected-security/en-US/3-detection/40-vpc-flow-logs-analysis-dashboard/1-enable-vpc-flow-logs>
+   <https://catalog.workshops.aws/well-architected-security/en-US/3-detection/40-vpc-flow-logs-analysis-dashboard/1-enable-vpc-flow-logs>
 
-2. OPTIONAL: Even if not completing these labs, why might it be useful to understand the fields of a VPC flow log even if you’re not setting up logging in AWS environments (but your organization does use AWS)? <https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html>
+2. OPTIONAL: Even if not completing these labs, why might it be useful to understand 
+   the fields of a VPC flow log even if you’re not setting up logging in AWS 
+   environments (but your organization does use AWS)? 
+   <https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records-examples.html>
 
 ## Digging Deeper challenge (not required for finishing lab)
 
