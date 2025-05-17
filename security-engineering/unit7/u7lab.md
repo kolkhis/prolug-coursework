@@ -52,7 +52,7 @@ These labs focus on pulling metric information and then visualizing that data qu
           ```
 
    - What other questions do you have about this lab, and how might you go figure them out?
-        - TODO: Question about the IP -- how is that determined? I think it is the
+        - Question about the IP -- how is that determined? I think it is the
           Kubernetes running under the hood assigning the IPs, since `10.x.x.x` is
           indicative of a kubernetes CNI.  
 
