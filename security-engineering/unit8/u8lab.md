@@ -74,8 +74,39 @@ These labs focus on configuration drift tracking and remediation.
 5. What is the configuration of cron found in `/etc/cron.daily/dailyaidecheck`?
 
    - What does this attempt to do?
+        > - It makes sure the script `/usr/share/aide/bin/dailyaidecheck` exists and is
+          executable, and then runs that script via `capsh` if `capsh` is available. If `capsh` 
+          is not available, it's run with just regular `bash`.  
+
    - What checks are there before execution?
+        > - It checks if the `/run/systemd/system` directory exists. It also checks if `capsh` is available.  
+        > - The script is run using `capsh` if it's there, and uses bash if `capsh`
+          isn't available.  
+        - The check:
+          ```bash
+          if command -v capsh > /dev/null; then
+              capsh --caps="cap_dac_read_search,cap_audit_write+eip cap_setpcap,cap_setuid,cap_setgid+ep" \
+                  --keep=1 --user=_aide \
+                  --addamb=cap_dac_read_search,cap_audit_write -- \
+                  -c "${SCRIPT} --crondaily"
+          else
+            "${SCRIPT}" --crondaily
+          ```
+
    - Read the man for `capsh`, what is it used for?
+        > - `capsh`: Capability Shell wrapper. It's used for testing capability and
+        >   environment creation. It's a more fine-grained alternative to the
+        >   "all-or-nothing" root permissions model.    
+        > 
+        >   Capabilities allow programs to perform privileged operations without
+        >   becoming full root.  
+        >   You can use `capsh` to drop root privileges, set capabilities, or run as
+        >   another user with just the necessary permissions to do what you need to
+        >   do.  
+        >   
+        >   In this instance, it's running the `dailyaidecheck` script with just enough 
+        >   permissions for the `_aide` user to perform the actions it needs to perform.  
+
 
 6. Set up aide according to the default configuration
 
@@ -83,14 +114,14 @@ These labs focus on configuration drift tracking and remediation.
    time aide -i -c /etc/aide/aide.conf
    ```
    - How long did that take?
-        > - 4 minutes nad 14 seconds
+        > - 4 minutes and 14 seconds
         ```bash
         real    4m14.839s
         user    3m30.362s
         sys     0m8.712s
         ```
      - How much time was wall clock v. system/user time?
-        > - User time was 44 seconds less than wall clock time. System time was only 8 seconds
+        > - User time was 44 seconds less than wall clock time. System time was only 8 seconds.  
 
      - Why might you want to know this on your systems?
      - What do you notice about the output?
