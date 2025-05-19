@@ -34,11 +34,31 @@ These labs focus on configuration drift tracking and remediation.
 2. Set a filter for “change management”.
 
    - How many STIGs do you see?
+        - I see 9 STIGs that contain "change managment" in the RHEL 9 STIGs.  
 
 3. Review the wording, what is meant by a robust change management process?
+   ```txt
+   If RHEL 9 allowed any user to make changes to software libraries, then those changes 
+   might be implemented without undergoing the appropriate testing and approvals that 
+   are part of a robust change management process.
+   ```
+   > - I think "robust change management process" here means that the process for
+   > implementing changes should be part of a larger process -- with version
+   > control, peer review, 
+
    - Do you think this can be applied in just one STIG? Why or why not?
+        > - Probably not. Implementing a robust change management process isn't just
+        >   turning on a service or modifying kernel runtime parameters. It's an
+        >   organization-level task that requires everyone to be on the same page
+        >   about how configuration and change is implemented, modified, and
+        >   deployed.    
    - What type of control is being implemented with change management in these STIGS?
+        > - These are, I believe, technical preventative controls. They all deal with
+        >   ensuring files have the correct permissions. Most of them deal with
+        >   making critical system files root-owned.  
      - Is it different across the STIGs or all the same?
+        > - The type of control seems to be the same across all change management
+        >   STIGs.  
 
 ### Monitoring configuration drift with Aide
 
@@ -49,34 +69,41 @@ These labs focus on configuration drift tracking and remediation.
    ```bash
    apt -y install aide
    ```
-   - What is being put in the path /etc/aide/aide.conf.d/ ?
-        - Configuration files for AIDE (for different services)
+   - What is being put in the path `/etc/aide/aide.conf.d/`?  
+        > - Configuration files for AIDE for different services.  
+        > - These configuration files contain patterns. The patterns specify paths for
+        >   files that should be hashed and stored in the AIDE database. These file
+        >   hashes will be checked for changes when AIDE runs an integrity check.  
+        > - The AIDE configuration also has some special syntax in the configuration
+        >   files that allows for conditional logic.  
      - How many files are in there?
-        - 213 files.
+        > - 213 files.  
 
 3. Check your version of aide
 
    ```bash
    aide -v
    ```
+   > AIDE 0.18.6  
 
 4. Read the man page (first page).
 
    - What does aide try to do, and how does it do it?
 
+        > - Stands for Advanced Intrusion Detection Environment.
         > - It attempts to verify file integrity.
-          It does this by using a database to store file hashes, then checking the
-          current hashes of the file against the hashes stored in its database. 
-        > - Stands for Advanced Intrusion Detection Environment. It checks the integrity of the
-          files by hashing all of the files, and then keeping a database of all the hashes for 
-          those files.  
+        >   It does this by using a database to store file hashes for files specified
+        >   in its config files. Then, when running a check, AIDE is checking the current hashes 
+        >   of the file against the hashes stored in its database. If changes are
+        >   detected, they will be reported to the user when running the check.  
+
 
 5. What is the configuration of cron found in `/etc/cron.daily/dailyaidecheck`?
 
    - What does this attempt to do?
         > - It makes sure the script `/usr/share/aide/bin/dailyaidecheck` exists and is
-          executable, and then runs that script via `capsh` if `capsh` is available. If `capsh` 
-          is not available, it's run with just regular `bash`.  
+            executable, and then runs that script via `capsh` if `capsh` is available. If `capsh` 
+            is not available, it's run with just regular `bash`.  
 
    - What checks are there before execution?
         > - It checks if the `/run/systemd/system` directory exists. It also checks if `capsh` is available.  
@@ -90,7 +117,7 @@ These labs focus on configuration drift tracking and remediation.
                   --addamb=cap_dac_read_search,cap_audit_write -- \
                   -c "${SCRIPT} --crondaily"
           else
-            "${SCRIPT}" --crondaily
+            "${SCRIPT}" --crondaily # execute the script directly without capsh
           ```
 
    - Read the man for `capsh`, what is it used for?
@@ -120,24 +147,44 @@ These labs focus on configuration drift tracking and remediation.
         user    3m30.362s
         sys     0m8.712s
         ```
-     - How much time was wall clock v. system/user time?
+     - How much time was wall clock v. system/user time?  
         > - User time was 44 seconds less than wall clock time. System time was only 8 seconds.  
 
-     - Why might you want to know this on your systems?
-     - What do you notice about the output?
-       1. What do you need to go read about?
+     - Why might you want to know this on your systems?  
+        > - If we're installing AIDE on more than one system, or if we're doing it
+        >   more than once, it is definitely a good thing to know. How long it will
+        >   take to set up, and the amount of resources it uses. If we know what to
+        >   expect with that, we can plan accordingly. This could also be a cloud
+        >   consideration. How much compute time will be used if we're installing
+        >   this on an EC2 instance, for instance? 
+
+     - What do you notice about the output?  
+        > - The output contains the new database written to
+        >   `/var/lib/aide/aide.db.new`, which prevents potentially overwriting a
+        >   pre-existing aide database.  
+        > - The output also contains multiple hashes for the new database file.  
+        >     - It contains MD5, SHA{1,256,512}, RMD160, TIGER, CRC32[B],
+        >       HAVAL, WHIRLPOON, and GOST hashes. 
+        >     - We can store these hashes to store the state of the new database.
+        >       Then we can use those hashes to detect any changes made to the
+        >       database. Sort of like snapshots, except we can't roll back with just
+        >       hashes.  
+
+       1. What do you need to go read about?  
+            > - RMD160, TIGER, CRC32, CRC32B, HAVAL, WHIRLPOOL, and GOST hashes. I've
+            >   never heard of these ones before.  
 
 ![Image 2](./assets/images/u8/image2.jpeg)
 
 (Mine took 5 minutes 8 seconds to run on the lab system)
 
-7. Set the database up properly
+7. Set the database up properly  
 
    ```bash
    cp /var/lib/aide/aide.db.new /var/lib/aide/aide.db
    ```
 
-8. Test aide by making files in a tracked directory
+8. Test aide by making files in a tracked directory  
 
    ```bash
    mkdir /root/prolug
