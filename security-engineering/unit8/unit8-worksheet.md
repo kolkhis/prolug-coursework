@@ -51,12 +51,58 @@ Review the SRE guide to treating configurations as code. Read as
 much as you like, but focus down on the “Practical Advice” section:
 <https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html#treat_configuration_as_code>
 
-- What are the best practices that you can use in your configuration management adherence?
-    - TODO: 
+
+- What are the best practices that you can use in your configuration management adherence?  
+    > - Some of the best practices are:  
+    >     - Version control. Have your configuration stored under version control (Git)
+    >       in a repository.  
+    >     - Peer review (if applicable). If your config is going to be used in a
+    >       production environment, place some importance on reviewing changes made to
+    >       your configuration.  
+    >     - Provide actionable error messages in your CaC.  
+    >     - Make sure you know where everything is coming from (provenance).  
+    >         - Avoid duplicating functionality by assigning specific things to specific tasks.  
+    >     - Don't check in (store) your secrets in your configuration.  
+    >         - Never put the secrets into version control or embed secrets into the source code itself.  
+    >         - Use a centralized secret management system instead.  
+    >             - Or, use encryption in conjuction with a key management system (e.g., Cloud KMS).  
+    >         - Limit access to secrets. Rule of least privilege. Only give services
+    >           access if they need it to function.  
+    >             - Never grant **humans** access to the secrets. If a human needs access, create dedicated credentials for them to use instead.  
+    >     - Create clear, unambiguous policies that apply to particular
+    >       builds/deployments.  
+
 
 - What are the security threats and how can you mitigate them?
+    > - An old version of code is deployed with known vulnerabilities. Mitigate by
+    >   setting the deployment policy to require the code to have undergone a
+    >   vulnerbility scan within a set number of days.  
+
+    > - The Continuous Integration (CI) system is misconfigured to allow requests to build from any
+    >   source repository (untrusted/misconfigured/malicious). Mitigate by having
+    >   the CI generate binary provenance (the source of truth for its repository)
+    >   and repository verification before deployment.  
+
+    > - An attacker uploads a malicious build script to the Continuous Integration (CI) 
+    >   system that allows them to exfiltrate the signing key, allowing them to
+    >   hijack the pipeline.  Mitigate by using signed configs. Tightly control
+    >   access to CI systems and validate script integrity at runtime (e.g., with
+    >   checksums).  
 
     - Why might it be good to know this as you design a CMDB or CI/CD pipeline?
+    
+        > - Understanding these threats and best practices is important when building
+        >   systems in general. 
+        > - If you treat config as a first-class asset (just as important as the
+        >   code), tracking it in the CMDB (as a configuration item, yet another CI
+        >   acronym) will give you traceability and accountability for changess.  
+        > - In CI/CD pipelines, config becomes code, so all the rules of secure
+        >   software engineering apply to the config as well.  
+        > - If your CMDB tracks baselines and state, and your CI/CD system can
+        >   enforce and remediate drift, then you have a closed-loop system for
+        >   managing infrstructure safely *and* predictably.  
+        >       - Closed-loop meaning it can self-correct or self-enforce its
+        >         intended state based on realtime observations.  
 
 ## Definitions/Terminology
 
@@ -164,6 +210,7 @@ much as you like, but focus down on the “Practical Advice” section:
 ## Notes During Lecture/Class:
 
 ### Links:
+<https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html#practical_advice>
 - https://google.github.io/building-secure-and-reliable-systems/raw/ch14.html#treat_configuration_as_code
 - https://en.wikipedia.org/wiki/Configuration_management
 - https://www.sans.org/information-security-policy/
@@ -181,7 +228,7 @@ Unit8-Configuration-drift-remediation - To be completed outside of lecture time.
 
 ## Digging Deeper
 
-1. Review more of the SRE books from Google: https://sre.google/books/ to try to find 
+1. Review more of the SRE books from Google: <https://sre.google/books/> to try to find 
    more useful change management practices and policies.
 
 
