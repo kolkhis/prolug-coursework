@@ -4,6 +4,16 @@ To improve security, the system will be air-gapped.
 This will be done with a bastion node that contains a user account that is jailed to
 a chrooted environment.  
 
+
+## Table of Contents
+* [Overview](#overview) 
+* [Building a Chroot Jail](#building-a-chroot-jail) 
+    * [Create Special Files](#create-special-files) 
+    * [Copy Name Switch Service Files](#copy-name-switch-service-files) 
+* [High Level Steps](#high-level-steps) 
+* [Enhancements (TODO)](#enhancements-todo) 
+* [Resources](#resources) 
+
 ## Overview
 
 There will be 1 node with a jailed user.
@@ -51,8 +61,14 @@ Tools used:
 
 On the proposed jumpbox, use a chrooted environment in which to jail users.  
 
+### Create the Directory Structure
+
 `/var/chroot` is a good location, it's out of the way and won't be interfered with.  
 
+If we wanted to make multiple chroot environments on the same host for multiple user
+accounts, we could name the chroot directories accordingly (`/var/chroot_user1`, `/var/chroot_user2`, etc.).  
+
+For now, we'll only do one.  
 ```bash
 mkdir /var/chroot
 ```
@@ -76,8 +92,9 @@ mkdir -p /var/chroot/{bin,lib64,dev,etc,home,usr/bin,lib/x86_64-linux-gnu}
 ls -l /var/chroot   # verify
 ```
 
-
 ---
+
+### Copy over Binaries
 
 Then we can copy over some binaries.  
 
@@ -85,21 +102,31 @@ Then we can copy over some binaries.
 cp /usr/bin/bash /var/chroot/bin/bash
 ```
 
-The binary won't be able to work by itself.  
-Binaries usually have linked libraries that they use as dependencies.  
+Now, the binary won't be able to work by itself.  
+Binaries typically have linked libraries that they use as dependencies.  
 
-We can get a list of those linked libraries with `ldd`.  
+We can get a list of those linked libraries by using the `ldd` program.  
 
 ```bash
 ldd /bin/bash
 ```
-Copy them over:
+This shows all the linked libraries that `bash` depends on in order to function
+properly.  
+
+Copy them over to the chroot environment.  
+
+Extract them however you want.  
 <!-- ldd /bin/bash | perl -pe 's/.*?(\/.*?)\(.*?\)$/\1/' # filter the paths -->
 <!-- ldd /bin/bash | perl -pe 's/.*?(\/.*?)\(.*/$1/' -->
 <!-- ldd /bin/bash | sed -E 's/^[^\/]*(\/.*)\(.*$/\1/' -->
 ```bash
-# extract only paths
+# extract only paths with perl
 for LLIB in $(ldd /bin/bash | perl -ne 'print $1 . "\n" if s/^[^\/]*(\/.*)\(.*$/\1/'); do
+    cp $LLIB /var/chroot/$LLIB
+done 
+
+# Using grep -o ('-o'nly print match)
+for LLIB in $(ldd /bin/bash | grep -o '/[^ ]*'); do
     cp $LLIB /var/chroot/$LLIB
 done 
 
@@ -109,7 +136,24 @@ for LLIB in $(ldd /bin/bash | awk '{print $(NF -1)}'); do
 done
 ```
 
+#### Doing it Right
+Let's do this for all the binaries we want to give them.  
+
+Give the jailed user some binaries.  
+Of course, we'll need the linked libraries for those binaries as well.  
+```bash
+for binary in "bash" "ssh" "curl"; do 
+    cp "/usr/bin/$binary" "/var/chroot/usr/bin/$binary"
+    for lib in $(ldd "$binary" | grep -o '/[^ ]*'); do
+        cp "$lib" "/var/chroot$lib"
+    done
+done
+```
+
+
 ---
+
+### Copy over Required System Files
 
 Certain system files also need to be present to get the expected functionality.  
 
@@ -126,13 +170,6 @@ done
 ```
 
 Now those base files are in the jail. 
-
-Give the jailed user some binaries.  
-```bash
-for binary in "bash" "ssh" "curl"; do 
-    cp "/usr/bin/$binary" "/var/chroot/usr/bin/$binary"
-done
-```
 
 ### Create Special Files
 A functional shell expects to have certain system files.  
@@ -153,6 +190,96 @@ The chroot jail needs the NSS files in order to have network functionality.
 
 ```bash
 cp -r /lib/x86_64-linux-gnu/*nss* /var/chroot/lib/x86_64-linux-gnu/
+```
+
+### Create the User Account
+
+We'll need an actual user account to put in jail.  
+Let's make one called `jaileduser`, and give him a password `testpass`.  
+```bash
+useradd -m jaileduser
+printf "testpass\ntestpass\n" | sudo passwd jaileduser
+```
+
+Now, we'll need to add some rules in `/etc/ssh/sshd_config` to dump him in the jailed
+environment when he connects.  
+
+```bash
+sudo vi /etc/ssh/sshd_config
+```
+
+Add the lines:
+```bash
+Match User jaileduser
+ChrootDirectory /var/chroot
+```
+
+Then restart the SSH service.  
+```bash
+sudo systemctl restart ssh
+```
+
+
+#### Create a Custom Shell
+
+Now we can create a custom shell for the jailed user. This is just going to be a bash
+script.  
+
+An example:
+```bash
+#!/bin/bash
+declare INPUT
+read -r -n 2 -t 20 -p "Welcome!
+Select one of the following:
+1. Connect to DestinationHost
+2. Exit
+> " INPUT
+case $INPUT in
+  1)
+      printf "Going to DestinationHost.\n"
+      ssh freeuser@destinationhost
+      exit 0
+      ;;
+  2)
+      printf "Leaving now.\n"
+      exit 0
+      ;;
+  *)
+      printf "Unknown input. Goodbye.\n"
+      exit 0
+      ;;
+esac
+exit 0
+```
+
+Make sure it's executable.  
+```bash
+chmod 755 bastion.sh
+```
+
+Once that's made, copy (or hardlink) it over to `/var/chroot/bin/bastion.sh`.  
+```bash
+ln ./bastion.sh /var/chroot/bin/bastion.sh
+# or
+cp ./bastion.sh /var/chroot/bin/bastion.sh
+```
+
+---
+
+Now, set the script as the user's shell in `/etc/passwd`.  
+```bash
+sudo vi /etc/passwd
+```
+Then change the line.  
+```bash
+jaileduser:x:1001:1001::/home/jaileduser:/bin/sh
+# change to:
+jaileduser:x:1001:1001::/home/jaileduser:/bin/bastion.sh
+```
+
+Alternatively, you can use `sed` to accomplish this.  
+```bash
+sudo sed -i '/jaileduser/s,/bin/sh,/bin/bastion.sh,' /etc/passwd
 ```
 
 
