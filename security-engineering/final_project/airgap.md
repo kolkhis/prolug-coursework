@@ -8,11 +8,18 @@ a chrooted environment.
 ## Table of Contents
 * [Overview](#overview) 
 * [Building a Chroot Jail](#building-a-chroot-jail) 
+    * [Create the Directory Structure](#create-the-directory-structure) 
+    * [Copy over Binaries (and Linked Libraries)](#copy-over-binaries-and-linked-libraries) 
+        * [Copy all of the Binaries](#copy-all-of-the-binaries) 
+    * [Copy over Required System Files](#copy-over-required-system-files) 
     * [Create Special Files](#create-special-files) 
     * [Copy Name Switch Service Files](#copy-name-switch-service-files) 
+    * [Create the User Account](#create-the-user-account) 
+        * [Create a Custom Shell](#create-a-custom-shell) 
 * [High Level Steps](#high-level-steps) 
 * [Enhancements (TODO)](#enhancements-todo) 
 * [Resources](#resources) 
+
 
 ## Overview
 
@@ -94,10 +101,11 @@ ls -l /var/chroot   # verify
 
 ---
 
-### Copy over Binaries
+### Copy over Binaries (and Linked Libraries)
 
 Then we can copy over some binaries.  
 
+Let's start with one, bash.  
 ```bash
 cp /usr/bin/bash /var/chroot/bin/bash
 ```
@@ -136,14 +144,18 @@ for LLIB in $(ldd /bin/bash | awk '{print $(NF -1)}'); do
 done
 ```
 
-#### Doing it Right
-Let's do this for all the binaries we want to give them.  
+#### Copy all of the Binaries
 
-Give the jailed user some binaries.  
+Let's do that for all the binaries we want to give them.  
+
+Give the jailed user their binaries.  
 Of course, we'll need the linked libraries for those binaries as well.  
+
+We can do this by looping over what we want to give them.  
 ```bash
-for binary in "bash" "ssh" "curl"; do 
-    cp "/usr/bin/$binary" "/var/chroot/usr/bin/$binary"
+for binary in {bash,ssh,curl}; do 
+    path=$(which $binary)
+    cp "$path" "/var/chroot$path"
     for lib in $(ldd "$binary" | grep -o '/[^ ]*'); do
         cp "$lib" "/var/chroot$lib"
     done
@@ -423,21 +435,38 @@ ssh jaileduser@bastion
         - `man logger`
         - `man rsyslog`
 
-* Add more Defense-in-Depth
+* [ ] Support multiple destinations
+    * [ ] Read from an SSH config file for destinations. Dynamically generate prompt for user
+          based on that.
+        - Parse `~/.ssh/config` file and print out shortnames? Hostnames? User@Hostname?
 
+* Add more defense-in-depth
     * [ ] `Seccomp` or `AppArmor`/`SELinux`: You could optionally add AppArmor/SELinux 
       restrictions on the jailed shell or rbash.
     * [ ] `iptables`/`nftables` rule to restrict the jailed user to only be able to SSH out 
       to certain IPs (destination hosts).
     * [ ] Read-only bind mounts for even more restricted jail environments (advanced).
-        <!-- - TODO: Look more into this. What is a 'bind mount'? -->
+      ```bash
+      # Example
+      mount --bind /bin /var/chroot/bin
+      mount -o remount,bind,ro /bin /var/chroot/bin
+      mount -o remount,bind,ro,nosuid,nodev,noexec /bin /var/chroot/bin
+      ```
+        - Combine with `nosuid`, `nodev`, and `noexec` for even more lockdown:
+          ```bash
+          mount --bind /bin /var/chroot/bin
+          mount -o remount,bind,ro,nosuid,nodev,noexec /bin /var/chroot/bin
+          ```
 
-* Make jail setup script idempotent
+* [ ] Make jail setup script idempotent
 
     * [x] Before copying libraries and binaries, check stat on the destination path and skip 
       if already present.
 
     * [ ] Use `install -Dm755` for cleaner binary copying with permission setting in one go.
+
+* [ ] Automate the whole setup with Ansible (great for portfolio).
+    - Create ansible role for this.  
 
 ---
 
