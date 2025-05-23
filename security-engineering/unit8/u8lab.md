@@ -214,12 +214,44 @@ These labs focus on configuration drift tracking and remediation.
 
 1. Complete the lab here: 
    <https://killercoda.com/het-tanis/course/Ansible-Labs/16-Ansible-Web-Server-Env-Deploy>
+    ```
+    controlplane:~$ cat /answers/*.conf
+    <VirtualHost *:8080>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html_dev
+
+        ErrorLog ${APACHE_LOG_DIR}/dev_error.log
+        CustomLog ${APACHE_LOG_DIR}/dev_access.log combined
+
+    </VirtualHost><VirtualHost *:8082>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html_qa
+
+        ErrorLog ${APACHE_LOG_DIR}/qa_error.log
+        CustomLog ${APACHE_LOG_DIR}/qa_access.log combined
+
+    </VirtualHost><VirtualHost *:8081>
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/html_test
+
+        ErrorLog ${APACHE_LOG_DIR}/test_error.log
+        CustomLog ${APACHE_LOG_DIR}/test_access.log combined
+
+    </VirtualHost>
+    ```
+    - Second variant needs the vars `deploy` (`present` or `absent`), `env` (`dev`, `test`, `qa`),
+      and `port` (`8080`, `8081`, `8082`)
 
 2. When you finish ensure that you see broken output for 8081, as required.
 
    ```bash
    curl node01:8080
    ```
+    - Output:
+      ```plaintext
+      controlplane:~$ curl node01:8081
+      curl: (7) Failed to connect to node01 port 8081 after 2 ms: Couldn't connect to server
+      ```
 
 3. One of the dev teams figured out they could modify the test and qa environments because a
    previous engineer left them in the sudoers file. You can address that separately with 
@@ -227,17 +259,39 @@ These labs focus on configuration drift tracking and remediation.
    Run your original deployment command to see if it sets the environment back properly.
 
    ```bash
-   ansible-playbook -i /root/hosts/root/web_environment.yaml
+   ansible-playbook -i /root/hosts /root/web_environment.yaml
    ```
 
 ![Image 4](./assets/images/u8/image4.png)
 
 - Did this force the system back into a working configuration?
-  - If it worked, would it always work, or could they the system need to be
+    > - yes, it did force the system back to a working config.  
+
+  - If it worked, would it always work, or would they (the systems) need to be
     manually intervened?
+    > - It *should* always work (the original playbook) without manual intervention.  
+    >   Since we're installing and configuring Apache from scratch every time, it
+    >   should not need any manual intervention unless the network is misconfigured
+    >   (e.g., firewall rules are blocking connections). 
+
   - What is your test? (hint: `curl` 8080 8081 and 8082 from previous commands)
+    ```bash
+    curl node01:808{0,1,2}
+    ```
 - Could this cause potential problems in the environment?
+    > - If the environment is just being used for this singular purpose (serving the
+    >   web application), and is being bootstrapped for a first-time deployment, no.  
+    > - If the environment is further configured after the initial deployment, then
+    >   this could potentially overwrite some of the configurations that were made,
+    >   which could definitely cause problems. Another example of how configuration
+    >   drift can cause problems.  
+
   - If so, is that problem based on technology or operational practices? Why?
+    > - Operational practices. This would be other people messing with the
+    >   configuration of an environment whos deployment and configuration is automated.  
+    >   Without letting everyone know of changes before making them, other teams
+    >   could potentially make breaking changes. So this would be an operational
+    >   problem.  
 
 ### Digging Deeper challenge (not required for finishing lab)
 
