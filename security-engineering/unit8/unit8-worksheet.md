@@ -16,35 +16,35 @@ Read about configuration management here:
 <https://en.wikipedia.org/wiki/Configuration_management>
 
 * What overlap of terms and concepts do you see from this week’s meeting?
-    - CM (configuration management) itself. Tracking, auditing, and controlling
-      systme configuration throughout its lifecycle.  
-    - System lifecycles: The article emphasizes that CM is applied from planning
-      through disposal (decommissioning), which mirrors the lifecycle model we
-      discussed in the meeting.  
-    - Integrity: Stresses the importance of ensuring systems remain in their intended
-      state, and to detect when drift has occurred.  
-    - Baselines: The article talks about defining approved configurations (baselines)
-      and ensuring future changes are managed against those baselines. This directly
-      aligns with out focus on drift detection and remediation.  
+    > - CM (configuration management) itself. Tracking, auditing, and controlling
+    >   systme configuration throughout its lifecycle.  
+    > - System lifecycles: The article emphasizes that CM is applied from planning
+    >   through disposal (decommissioning), which mirrors the lifecycle model we
+    >   discussed in the meeting.  
+    > - Integrity: Stresses the importance of ensuring systems remain in their intended
+    >   state, and to detect when drift has occurred.  
+    > - Baselines: The article talks about defining approved configurations (baselines)
+    >   and ensuring future changes are managed against those baselines. This directly
+    >   aligns with out focus on drift detection and remediation.  
 
 * What are some of the standards and guidelines organizations involved with
   configuration management?  
-    - ISO: International Organization for Standardization.    
-        - ISO/IEC 20000 (security CM requirements)  
-        - ISO 27001 (IT service management)  
-    - ANSI: American National Standards Institute  
-    - ANSI/EIA-649: A dedicated standard for Configuration Management principles.  
-        * This one is widely referenced in enterprise and defense environments.  
-    - IEEE: Institute of Electrical and Electronics Engineers  
-        - IEEE 828: Standard for software configuration management plans.    
+    > - ISO: International Organization for Standardization.    
+    >     - ISO/IEC 20000 (security CM requirements)  
+    >     - ISO 27001 (IT service management)  
+    > - ANSI: American National Standards Institute  
+    > - ANSI/EIA-649: A dedicated standard for Configuration Management principles.  
+    >     * This one is widely referenced in enterprise and defense environments.  
+    > - IEEE: Institute of Electrical and Electronics Engineers  
+    >     - IEEE 828: Standard for software configuration management plans.    
 
     1. Do you recognize them from other IT activities?
-        - Yes. Many of these show up across tech in general.  
-        - ANSI is one that stands out to me right away. ANSI escape sequences are
-          supported in all terminals across the board (that I know of, anyway).  
-        - ISO 27001 is a common one I've seen in documents I've found related to the security engineering course.  
-            - This one is described as an "industry agnostic" standard, and is
-              designed to apply to businesses of all types.  
+        > - Yes. Many of these show up across tech in general.  
+        > - ANSI is one that stands out to me right away. ANSI escape sequences are
+        >   supported in all terminals across the board (that I know of, anyway).  
+        > - ISO 27001 is a common one I've seen in documents I've found related to the security engineering course.  
+        >     - This one is described as an "industry agnostic" standard, and is
+        >       designed to apply to businesses of all types.  
 
 ### Unit 8 Discussion Post 2:
 Review the SRE guide to treating configurations as code. Read as
