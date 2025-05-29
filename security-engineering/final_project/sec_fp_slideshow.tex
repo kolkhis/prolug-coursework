@@ -1,0 +1,321 @@
+\documentclass[14pt,compress,usenames,dvipsnames,aspectratio=169]{beamer}
+%\usetheme{Singapore}
+\useoutertheme{shadow}
+\usetheme{CambridgeUS}
+\definecolor{mygreen}{RGB}{150, 255, 210}%186}
+\definecolor{leftblue}{RGB}{230,255,255}
+\definecolor{rightblue}{RGB}{111,195,223}
+\definecolor{lefttron}{RGB}{19,44,65}
+\definecolor{myblack}{RGB}{27,27,27}
+\definecolor{mypurple}{RGB}{205,87,255}
+
+\usecolortheme{owl}
+
+% \setbeamercolor{section in head/foot}{fg = white,bg=black}
+\setbeamercolor{title}{fg=mygreen,bg=black}
+\setbeamercolor{titlelike}{fg=yellow,bg=black}
+\setbeamercolor{item}{fg=mygreen}
+\setbeamercolor{block title}{fg=white,bg=myblack!200}
+\setbeamercolor{block body}{bg=normal text.bg!80}
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\setbeamertemplate{headline}{}
+\setbeamertemplate{footline}[frame number]
+\setbeamercolor{normal text}{fg=white,bg=myblack}%!89.9}
+
+%Gradient
+\setbeamercolor{frametitle}{fg=orange,bg=black}
+\setbeamercolor{frametitle right}{fg=white,bg=gray}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{shadowtext}
+\usepackage{multicol}
+\usepackage[makeroom]{cancel}
+
+\usepackage{listings} % For code blocks
+
+%\graphicspath{{./figures/},
+%}
+
+%\AtBeginSection{\frame{\sectionpage}}
+
+\usepackage{natbib}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage{bibentry}
+\usepackage{animate}
+\usepackage{varwidth}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+
+%%%%%%%%% TITLE SLIDE %%%%%%%%%
+\title{\textbf{Automated Setup of an Air-Gapped Network with a Bastion Host}}
+\author{Using Proxmox on a Dell PowerEdge R730}
+
+\date{}  % Get rid of date
+
+\usefonttheme{professionalfonts}
+
+\usepackage{mydefs}
+
+\setbeamercovered{transparent} 
+\setbeamertemplate{navigation symbols}{} 
+\titlegraphic{
+\begin{center}
+\vspace*{-30pt}
+
+\vspace*{10pt}
+    \text{by Connor W. (Kolkhis)}
+\end{center}
+}
+%%%%%%%%% END TITLE SLIDE %%%%%%%%%
+
+
+
+\begin{document}
+
+\setbeamercovered{invisible}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+
+%%%% CONTENT FRAMES %%%%
+
+%%%%%%%%%%%%%% FRAME 1: Project Goals %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Goals}
+    \begin{enumerate}
+        \item{} 
+        \item{}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 2 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Disclaimer}
+    \begin{enumerate}
+        \item{} 
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%--------------------------- The meat ------------------------------%
+
+
+%%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+            \begin{enumerate}
+                \item{}
+                \item{}
+                \item{}
+            \end{enumerate}
+
+        \item{}
+            \begin{enumerate}
+                \item{}
+                \item{}
+            \end{enumerate}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 4 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\linewidth]{monitoring_stack_viz.png}
+        \caption{Monitoring Schema}
+        \label{fig:enter-label}
+    \end{figure} 
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%% FRAME 5 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{}
+        \item{}
+        \item{}
+        \item{}
+            %whether to use either dnf/yum or apt.}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 6 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{}
+        \item{}
+        \item{}
+ 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 7 %%%%%%%%%%%%%%%%%%%%
+% Data Source Provisioning File
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\linewidth]{grafana_datasource_provisioning_file.png}
+    \caption{Grafana Datasource Provisioning File}
+    \label{fig:enter-label}
+\end{figure}
+ 
+% Dashboard Provisioning File
+\begin{figure}
+    \centering
+    \includegraphics[width=0.55\linewidth]{grafana_dashboard_provisioning_example.png}
+    \caption{Grafana Dashboard Provisioning File}
+    \label{fig:enter-label}
+\end{figure}
+
+
+%%%%%%%%%%%%%% FRAME 8 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{} 
+        \item{} 
+        \item{} 
+        \item{} 
+        \item{} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME 9 %%%%%%%%%%%%%%%%%%%% 
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{} 
+        \item{} 
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 10 %%%%%%%%%%%%%%%%%%%% 
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{} 
+        \item{} 
+        \item{} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 11 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{} 
+        \item{} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 12 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{} 
+        \item{}
+        \item{} 
+        \item{}
+              
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 13 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{}
+        \item{}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%% FRAME 14 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{}
+        \item{}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%% FRAME 15 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{}
+        \item{}
+        \item{}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 16 %%%%%%%%%%%%%%%%%%%%
+\begin{}{}
+    \begin{enumerate}
+        \item{} 
+        \item{} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{frame}{References}
+    \bibliographystyle{apalike}
+    % TODO
+    \bibliography{bib}
+\end{frame}
+
+\begin{frame}{Questions?}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.4\linewidth]{kolkhis_github_qr.png}
+        \caption{Kolkhis on GitHub}
+        \label{}
+    \end{figure}
+\end{frame}
+\end{document}
