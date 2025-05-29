@@ -3,12 +3,18 @@
 # export PATH=/bin:/usr/bin
 declare -i VERBOSE
 
+declare REMOTE_USER
 declare DEFAULT_USER='kolkhis'
 
-declare REMOTE_USER
+
+# TODO(perf): Make destination(s) an array 
+#   - Associative array?
+#       [hostname]=192.168.4.11
+
 declare DESTINATION=192.168.4.11
 declare ENDPOINT
 
+declare LOGFILE='/var/log/bastion.log'
 declare PROMPT_STRING="
 Welcome!
 Select one of the following:
@@ -44,7 +50,7 @@ Select one of the following:
 # fi
 
 
-debug(){
+debug() {
     [[ $VERBOSE -gt 0 ]] && printf "[\x1b[33mDEBUG\x1b[0m]: %s\n" "$*"
 }
 
@@ -52,13 +58,20 @@ err() {
     printf "[ \033[31mERROR\033[0m ]: " 
 }
 
+log-entry() {
+    [[ $# -gt 0 ]] && printf "[%s]: %s\n" "$(date +%D-%T)" "$*" >> "$LOGFILE"
+}
+
 go-to-destination() {
+    log-entry "User attempting to connect to ${REMOTE_USER:-$DEFAULT_USER}@$DESTINATION"
     if ! ping -c 1 "$DESTINATION"; then
         err; printf "Destination host is unresponsive!\n" && return 1
+        log-entry "Server unreachable: $DESTINATION"
     fi
 
     ssh "${REMOTE_USER:-$DEFAULT_USER}@${DESTINATION}" || {
         err; printf "Failed to SSH to %s as %s!\n" "$DESTINATION" "${REMOTE_USER:-$DEFAULT_USER}"
+        log-entry "SSH command failed for ${REMOTE_USER}@${DESTINATION}"
         return 1
     }
     return 0
@@ -80,11 +93,25 @@ get-user-input(){
                 ;;
             2)
                 read -r -p "Enter SSH destination (user@ip): " ENDPOINT
+
+                # POSIX-comliant:
+                # REMOTE_USER="$(printf "%s" "$ENDPOINT" | cut -d '@' -f 1)"
+                # DESTINATION="$(printf "%s" "$ENDPOINT" | cut -d '@' -f 2)"
+
                 REMOTE_USER="${ENDPOINT%%@*}"
                 DESTINATION="${ENDPOINT##*@}"
-                debug "Going to '$DESTINATION' as '$USER'"
+
+                # TODO(perf): Check if user was specified, along with @. If not, use
+                # default user and handle @
+                [[ $REMOTE_USER == "$DESTINATION" ]] &&
+                    printf "No user given. Using %s.\n" "${REMOTE_USER:=$DEFAULT_USER}"
+
+                debug "Going to '$DESTINATION' as '$REMOTE_USER'"
+                log-entry "Custom location provided: ${REMOTE_USER}@${DESTINATION}"
                 go-to-destination || {
-                    printf "Failed to connect!\n" && return 1
+                    printf "Failed to connect!\n"
+                    log-entry "Call to go-to-destination failed with ${REMOTE_USER}@${DESTINATION}"
+                    return 1
                 }
                 return 0
                 ;;
@@ -94,12 +121,14 @@ get-user-input(){
                 ;;
             [^0-9])
                 printf "You can only enter numbers.\n"
+                debug "User entered invalid input: $INPUT"
                 return 1
                 ;;
             *)
                 printf "Unknown input. Goodbye.\n"
                 return 1
                 ;;
+
         esac
 
     fi
@@ -126,7 +155,10 @@ done
 
 get-user-input || {
     printf "Failed to connect!" # && continue
+    log-entry "Failed connection to ${REMOTE_USER}@${DESTINATION}"
 }
+
+log-entry "Exiting bastion program."
 
 exit 0
 
