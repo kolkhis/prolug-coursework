@@ -4,6 +4,7 @@
 
 
 
+
 | Slide # | Topic
 | ------- | -------
 | 1       | Title / Name
@@ -17,7 +18,7 @@
 | 9       | Special Files in `/dev`
 | 10      | SSH Match Rules in `sshd_config`
 | 11      | Custom Shell Script: Flow and Input Handling
-| 12      | Scripting Automation (your Bash script)
+| 12      | Scripting Automation (the Bash scripts)
 | 13      | Tests Performed: What Works, What Fails
 | 14      | Security Challenges & Mitigations
 | 15      | What You Learned
@@ -26,4 +27,22 @@
 | 18      | Screenshots or Demo GIFs
 | 19      | Resources & Acknowledgements
 | 20      | Questions
+
+---
+
+Other ideas:
+
+- Setting up chroot jail
+    - Adding the required files
+        - Adding binaires and their linked libraries
+            - What are linked libraries and why are they needed?
+        - Adding character special files
+            - What are special files and why are they needed?
+        - Adding other system files
+    - Creating the user account
+    - Setting the SSH rule for the user account
+        - What are `Match` blocks?
+- Automating the process
+
+
 
