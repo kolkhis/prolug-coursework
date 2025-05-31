@@ -4,13 +4,15 @@
 # Generate a list of destinations for bastion.sh
 # Destination list based on a SSH config file (to be provided separately)
 
+# TODO(feat): Allow use of an ansible inventory file (.ini, .yaml)
+
 
 declare SSH_CONFIG_FILE
 declare INPUT_FILE
 declare OUTPUT_FILE='./destinations.txt'
 declare VERBOSE=1
-
 declare -a DESTINATIONS
+
 
 debug() {
     (( VERBOSE )) || return 1
@@ -52,13 +54,9 @@ parse-args(){
                 printf "Using SSH config file: %s\n" "$SSH_CONFIG_FILE"
                 shift;
                 ;;
-            -q|--quiet)
-                VERBOSE=0
-                shift;
+            -q|--quiet) VERBOSE=0; shift;
                 ;;
-            -v|--verbose)
-                VERBOSE=1
-                shift;
+            -v|--verbose) VERBOSE=1; shift;
                 ;;
             -h|--help)
                 printf "Usage: ./generate-destinations [-c SSH_CONFIG_FILE] [-o|--output-file FILE] [--verbose] [--quiet] \n"
@@ -74,6 +72,10 @@ parse-args(){
     return 0
 }
 
+parse-ansible-inventory(){
+    : "Reserved for future functionality."
+}
+
 parse-input-file() {
     : "This function is reserved for extending functionality in the future."
     : "Will allow for a custom input format."
@@ -84,7 +86,7 @@ parse-ssh-config(){
     # Each line is parsed, validated to have internal IP and SSH-ready
 
     [[ -z $SSH_CONFIG_FILE || ! -f $SSH_CONFIG_FILE ]] && return 1
-    
+
     local -a ENTRIES=()
     mapfile -t ENTRIES < <(
         awk '/^Host/ {printf "%s ", $2} /User/ {printf "%s@", $2} /Hostname/ {printf "%s\n", $2}' "$SSH_CONFIG_FILE"
@@ -121,11 +123,8 @@ main() {
         err "Failed to parse SSH config file!" && exit 1
     }
 
-    output-destinations > "$OUTPUT_FILE"
+    output-destinations | sudo tee "$OUTPUT_FILE"
 }
+
 main "$@"
-
-
-
-
 
