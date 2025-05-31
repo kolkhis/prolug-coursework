@@ -43,8 +43,6 @@ Complete the lab: <https://killercoda.com/het-tanis/course/Linux-Labs/212-public
 
 <!-- TODO: PR to fix `cat authorized_key`, add exit when necessary -->
 
-<!-- 1. Complete the lab here: <https://killercoda.com/het-tanis/course/Linux-Labs/110-fail2ban-with-metric-alerting> -->
-
 
 
 ## Digging Deeper challenge (not required for finishing lab)
@@ -61,8 +59,4 @@ Complete the lab: <https://killercoda.com/het-tanis/course/Linux-Labs/212-public
     - How does that align with your understanding of zero-trust? if you haven't read about zero-trust, start here.  
         - <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf>
 
-
-prolug
-my-bucket
-NR0o_PPCEKRJxlwjT-E0LSV5puC9tUZTbEaZq09i7tLLa4PlnXnISgsIpu42Dq-Ca9xR8BAWFrXOoDnCOK26Vw==
 
