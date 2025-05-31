@@ -22,27 +22,47 @@ These labs focus on pulling metric information and then visualizing that data qu
 
 1. Review pages 41-48 of <https://spiffe.io/pdf/Solving-the-bottom-turtle-SPIFFE-SPIRE-Book.pdf>
     - Does the diagram on page 44 make sense to you for what you did with a certificate authority in this lab?
+        > - Not really. We only had 1 CA (controlnode), and one service that was
+        >   authenticated through the CA. We did not have any intermediate CAs.  
 
 ### SSH – Public and Private key pairs
 
 Complete the lab: <https://killercoda.com/het-tanis/course/Linux-Labs/212-public-private-keys-with-ssh>
 
-1. Complete the lab here: <https://killercoda.com/het-tanis/course/Linux-Labs/110-fail2ban-with-metric-alerting>
+- What is the significance of the permission settings that you saw on the generated
+ public and private key pairs?
 
-   - What is the significance of they permission settings that you saw on the generated
-public and private key pairs?
+    > - Public key had 644 permissions, the private key had 600 perms. 
+    >   The significane of this is that only the owner can view and modify the
+    >   private key, whereas anyone can view the public key (but only the owner
+    >   can modify it) -- This is important in keeping eyes off of the private key.  
+        ```plaintext
+        -rw-------  1 root root  411 May 30 23:42 ProLUG
+        -rw-r--r--  1 root root   99 May 30 23:47 ProLUG.pub
+        ```
+
+<!-- TODO: PR to fix `cat authorized_key`, add exit when necessary -->
+
+<!-- 1. Complete the lab here: <https://killercoda.com/het-tanis/course/Linux-Labs/110-fail2ban-with-metric-alerting> -->
+
+
 
 ## Digging Deeper challenge (not required for finishing lab)
 
 1. Complete the following labs and see if they reinforce any of your understanding of certificates with
-the use of Kubernetes.
+   the use of Kubernetes.
 
     - <https://killercoda.com/killer-shell-cks/scenario/certificate-signing-requests-sign-manually>
 
     - <https://killercoda.com/killer-shell-cks/scenario/certificate-signing-requests-sign-k8s>
 
 2. Read the rest of <https://spiffe.io/pdf/Solving-the-bottom-turtle-SPIFFE-SPIRE-Book.pdf>
-    
-    - How does that align with your understanding of zero-trust? if you haven't read about zero-trust, start here:
 
-    - <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf>
+    - How does that align with your understanding of zero-trust? if you haven't read about zero-trust, start here.  
+        - <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-207.pdf>
+
+
+prolug
+my-bucket
+NR0o_PPCEKRJxlwjT-E0LSV5puC9tUZTbEaZq09i7tLLa4PlnXnISgsIpu42Dq-Ca9xR8BAWFrXOoDnCOK26Vw==
+
