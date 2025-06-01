@@ -43,7 +43,7 @@ Proof of Skills from this course.
 
 ## Definitions/Terminology
 
-- Capture from this week lesson or recording
+Capture from this week lesson or recording
 
 * Security mindset - constantly think about where leaks could happen, where someone
     could push on a system
@@ -71,52 +71,13 @@ Proof of Skills from this course.
     - honeyfile
     - honeytoken
 
-- Zero trust
-
 - Authentication, Authorization, and Accounting (AAA)
 
 - Segmentation
 
 - SBOM - Software bill of materials
 
-- Rule of Least Privilege
-
-- Configuration Enforcement
-    - Can't have until CIs 
-
 - Decommissioning
-
-- Data protection
-    - Data types
-        - Regulated
-        - trade secr4et
-        * Intellecual property
-        * Legal info
-        * Financial info
-    - Data classifications
-        - Sensitive
-        * Confidential
-        * Public
-        * Restiricted
-        * Private
-        * Critial
-    - General data considerations
-        - Data state
-            - data at rest : Always be AES256 (Minimum cloud standard)
-            - data in transit : Always be moved with TLS
-            - data in use : Shold be obfuscated
-        - Data sovereignty: Huge.
-        - Geolocation: Performance and security
-    - Methods to secure data
-        - Geographic restrictions
-        - Encryption
-        - Hashing
-        - Masking (hide some of the bits)
-        - Tokenization (Tokenize smth, all users from one database have a certain token)
-        - Obfuscation: 
-            Any number of fields of the data should not be able to be mapped to each other
-        - Segmentation
-        - Permission restrictions
 
 - NIST 800-145 (Risk Management)
 
@@ -133,7 +94,7 @@ Proof of Skills from this course.
     - Reputation
 
 - DNS SEC
-- Shibboleth
+- Shibboleth (Auth tool)
 
 - Privileged access management tools
     - JIT permissions (Just in time)
@@ -158,10 +119,10 @@ Proof of Skills from this course.
         - Attack looks like another one that's been happening
     - Trends
         - Statistical analysis/heurystical (things a human can't do) analysis
+
 - Extensible authentication
 
 - TCP half-open embryonic connections
-
 
 - Rolling back kernels is always a reboot
 
@@ -171,11 +132,13 @@ Proof of Skills from this course.
     3. Consulted
     4. Informed
 
-- PKI
-    - public/private keys
-    - Key escrow
+* Software Escrow: doing some work for a company, they say 'we hope u exist 4evr, but just
+  in case we'll keep the software u build in a software escrow, if u go away we will
+  get that software escraow and it'll be ours forever'
 
-* Asymmetric and symmetric encryption
+- Key Escrow
+
+- Key Stretching
 
 - Data States
     - Data at Rest: Always be AES256 (Minimum cloud standard)
@@ -194,11 +157,6 @@ Proof of Skills from this course.
     - Tokenization (hiding data in a token)
     - Masking (Hiding in???)
 
-- Key Stretching
-
-* Software Escrow; doing smth for a company, they say 'we hope u exist 4evr, but just
-  in case we'll keep the software u build in a software escrow, if u go away we will
-  get that software escraow and it'll be ours forever'
 
 * Exposure Factor
 
