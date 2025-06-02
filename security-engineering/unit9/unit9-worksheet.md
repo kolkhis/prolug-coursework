@@ -19,9 +19,9 @@ answer the following questions.
     - This outlines a variation of the CIA security triad.  
         - Confidentiality
         - Integrity
-        - Authentication (or Accessibility)
+        - Authentication 
     - The "A" is only different in our previous discussions of the CIA security triad
-      in that it uses the word Authentication instead of Accessibility.  
+      in that it uses the word Authentication instead of Availability.  
     - Aside from that, the Security Services section outlines a set of concepts that
       should be applied to data and the accessing of data.  
         - Data should be confidential, only readable by those with the correct permissions. Using cryptography, making data untillegiable by anyone without the correct private key is the way to make the data confidential.  
