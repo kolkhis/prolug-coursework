@@ -41,10 +41,6 @@ Complete the lab: <https://killercoda.com/het-tanis/course/Linux-Labs/212-public
         -rw-r--r--  1 root root   99 May 30 23:47 ProLUG.pub
         ```
 
-<!-- TODO: PR to fix `cat authorized_key`, add exit when necessary -->
-
-
-
 ## Digging Deeper challenge (not required for finishing lab)
 
 1. Complete the following labs and see if they reinforce any of your understanding of certificates with
