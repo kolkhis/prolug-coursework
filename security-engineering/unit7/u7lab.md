@@ -36,9 +36,9 @@ These labs focus on pulling metric information and then visualizing that data qu
 1. Complete the lab: <https://killercoda.com/het-tanis/course/Linux-Labs/109-fail2ban-with-log-monitoring>
 
    - Were you able to see the IP address that was banned and unban it?
-        - Yes, the IP was `10.244.23.174`
-            - This is weird because the output of `hostname -I` on `node01` did not
-              contain this IP address.. Kubernetes?
+        > - Yes, the IP was `10.244.23.174`
+        >    - This is weird because the output of `hostname -I` on `node01` did not
+        >      contain this IP address.. Kubernetes?
         - The command to unban the banned IP was:
           ```bash
           fail2ban-client set sshd unbanip 10.244.23.174
@@ -46,7 +46,7 @@ These labs focus on pulling metric information and then visualizing that data qu
 
    - Were you able to see all the NOTICE events in Grafana?
         - Yes:
-          ```txt
+          ```plaintext
           2025-05-16 23:03:51,097 fail2ban.actions        [36481]: NOTICE  [sshd] Unban 10.244.23.174
           2025-05-16 23:01:02,621 fail2ban.actions        [36481]: NOTICE  [sshd] Ban 10.244.23.174
           ```
