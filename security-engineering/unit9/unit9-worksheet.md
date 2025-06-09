@@ -91,10 +91,10 @@ the following questions
 [notes.md](./notes.md)
 
 ### Links:
-- https://www.sans.org/information-security-policy/
-- https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/
-- https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf
-- https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf
+- <https://www.sans.org/information-security-policy/>
+- <https://www.sans.org/blog/the-ultimate-list-of-sans-cheat-sheets/>
+- <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf>
+- <https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-52r2.pdf>
 
 ### Terms:
 
