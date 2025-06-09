@@ -47,21 +47,24 @@ or another of these tools may be the right choice in their organization or not.
 
 - Why do we split out the logs in this lab? Why don’t we just aggregate them to one place?
 
-  - Good question. They're technically being aggregated.
-  - We're splitting out the logs so that we can tell where the logs are coming from.  
-    Each node is getting its own directory in `/var/log`, making it easy to
-    search and identify logs from a given node.  
-    We're excluding the localhost node because the default location is fine for that.
+  > - Good question. They're technically being aggregated.
+  > - We're splitting out the logs so that we can tell where the logs are coming from.  
+  >   Each node is getting its own directory in `/var/log`, making it easy to
+  >   search and identify logs from a given node.  
+  >   We're excluding the localhost node because the default location is fine for that.  
 
-  - What do we split them out by?
-    - We split them by hostname.
-  - How does that template configuration work?
-    - It defines a rule that if it's receiving logs from a remote node, it will
-      log to a specific directory named after that hostname in `/var/log`.  
-      If it's the localhost, it will log to the default location.
+  > - What do we split them out by?
+  >   - We split them by hostname.
+  > - How does that template configuration work?
+  >   - It defines a rule that if it's receiving logs from a remote node, it will
+  >     log to a specific directory named after that hostname in `/var/log`.  
+  >     If it's the localhost, it will log to the default location.
+  >   - It uses the `%HOSTNAME%` syntax (similar to Windows variables) to put the
+  >     hostname of the host that we are receiving the logs from.  
 
 - Are we securing this communication in any way, or do we still need to configure that?
-  - We do not seem to be securing the communication.
+  > - We do not seem to be securing the communication. We still need to configure
+  >   that using TLS.  
 
 3. We will revisit this lab in Unit 10, with security involved via certificates, so make sure you are comfortable
    with the base components you are configuring.
@@ -70,7 +73,8 @@ or another of these tools may be the right choice in their organization or not.
 
 1. Review the base architecture here: <https://grafana.com/docs/loki/latest/get-started/architecture/>
 
-2. Complete the lab here: <https://killercoda.com/het-tanis/course/Linux-Labs/102-monitoring-linux-logs>
+2. Complete the lab here : <https://killercoda.com/het-tanis/course/Linux-Labs/102-monitoring-linux-logs>
+    <!-- # TODO: Add "(don't close it when you finish!)" to this in book --> 
 
    - Does the lab work correctly, and do you understand the data flow?
 
@@ -100,11 +104,11 @@ or another of these tools may be the right choice in their organization or not.
 
    - Run this bash snippet and see if you can see your loki-writes
 
-   ```bash
-   curl -G -s "http://localhost:3100/loki/api/v1/query_range" \
-       --data-urlencode 'query=sum(rate({job="lab_logging"}[10m])) by (level)' \
-       --data-urlencode 'step=300' | jq
-   ```
+     ```bash
+     curl -G -s "http://localhost:3100/loki/api/v1/query_range" \
+         --data-urlencode 'query=sum(rate({job="lab_logging"}[10m])) by (level)' \
+         --data-urlencode 'step=300' | jq
+     ```
 
    - Can you modify that to see the actual entires? <https://grafana.com/docs/loki/latest/reference/loki-http-api/#query-logs-within-a-range-of-time>
 
@@ -123,31 +127,32 @@ or another of these tools may be the right choice in their organization or not.
 
 ### Message Queues (Event Bus) for log aggregation and propagation
 
-1. Apache Kafka is not the only message queue, but it is extremely popular (found in 80% for Fortune 100
+1. Apache Kafka is not the only message queue, but it is extremely popular (found in 80% of Fortune 100
    companies... or 80 of them). Read about the use cases here: <https://kafka.apache.org/uses>
 
 2. Review our diagram here. Maybe we’re testing kafka and want to integrate it to the existing infrastructure.
-   Maybe we have a remote location that we need to reliably catch logs in real time and then move them remote. There are many reasons to use this.
+   Maybe we have a remote location that we need to reliably catch logs in real time and then move them remote.  
+   There are many reasons to use this.
 
-<img src='./assets/images/u6/image3.jpg'></img>
+   <img src='./assets/images/u6/image3.jpg'></img>
 
 3. Complete the killercoda lab found here: <https://killercoda.com/het-tanis/course/Linux-Labs/108-kafka-to-loki-logging>
 
    - Did you get it all to work?
 
-     - Yes!
+       - Yes!
 
    - Does the flow make sense in the context of this diagram?
 
-     - Yeah, it seems to be working in the way pictured.
+       - Yeah, it seems to be working in the way pictured.
 
-       1. Uses `kcat` to write out to Kafka (running in k8s pod on node01 with
-          exposed NodePort 31000).
+           1. Uses `kcat` to write out to Kafka (running in k8s pod on node01 with
+              exposed NodePort 31000).
 
-       2. Using promtail to pick up the messages from kafka (node01:31000) with
-          the "topic" System_Logs (kafka's way of labeling).
+           2. Using promtail to pick up the messages from kafka (`node01:31000`) with
+              the "topic" System_Logs (kafka's way of labeling).
 
-       3. Promtail pushes those up to loki, when is then displayed by grafana
+           3. Promtail pushes those up to loki, when is then displayed by grafana
 
    - Can you find any configurations or blogs that describe why you might want to use this architecture or
      how it has been used in the industry?

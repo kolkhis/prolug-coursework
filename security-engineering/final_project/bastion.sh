@@ -17,7 +17,7 @@ declare -a DESTINATION_LIST
 declare DESTINATION
 declare ENDPOINT
 
-# declare LOGFILE='/var/log/bastion.log'
+declare LOGFILE='/var/log/bastion.log'
 
 declare PROMPT_STRING="
 
