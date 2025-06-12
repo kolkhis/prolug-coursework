@@ -1,5 +1,5 @@
 #!/usr/bin/rbash
-# shellcheck disable=SC2120
+# shellcheck disable=SC2120,SC2317
 
 declare -i VERBOSE
 
@@ -11,6 +11,9 @@ declare DESTINATION_FILE='/destinations.txt'
 # TODO(perf): Make destination(s) an array 
 #   - Associative array?
 #       [hostname]=192.168.4.11
+
+# TODO(perf): Check connectivity of all available destinations before offering list
+
 
 
 declare -a DESTINATION_LIST
@@ -39,10 +42,29 @@ err() {
     printf "[ \033[31mERROR\033[0m ]: " 
 }
 
-# log-entry() {
-#     # TODO(logging): Sort out redirection for logging -- logger? rsyslog?
-#     [[ $# -gt 0 ]] && printf "[%s]: %s\n" "$(date +%D-%T)" "$*" >> "$LOGFILE"
-# }
+log-entry() {
+    # TODO(logging): Sort out redirection for logging -- logger? rsyslog?
+    # [[ $# -gt 0 ]] && printf "[%s]: %s\n" "$(date +%D-%T)" "$*" >> "$LOGFILE"
+    [[ $# -gt 0 ]] || return 1
+    local tag='bastion'
+    local priority='auth.notice'
+    while [[ -n $1 ]]; do
+        case $1 in
+            -p|--priority)
+                [[ -n $2 ]] && shift && priority=$1
+                shift;
+                ;;
+            -t|--tag)
+                [[ -n $2 ]] && shift && tag=$1
+                shift;
+                ;;
+            *)
+                ;;
+        esac
+    done
+
+    logger -t "$tag" -p "$priority" --id=$$ "$*"
+}
 
 parse-destinations(){ 
     mapfile -t DESTINATION_LIST < "$DESTINATION_FILE" && printf "Mapped destination file.\n"
@@ -59,6 +81,19 @@ parse-destinations(){
 
     return 0
 }
+
+# check-destinations(){
+#     # Sanitize destination list of all unreachable hosts.
+#     ! [[ ${#DESTINATION_LIST[@]} -gt 0 ]] && printf >&2 "Destination list empty!\n" && return 1
+#     for dest in "${DESTINATION_LIST[@]}"; do
+#         if ! ping -q -c 1 -w 1 "${dest##*@}"; then
+#             log-entry "Host ${dest##*@} is unreachable. Removing from options."
+#             DESTINATION_LIST=("${DESTINATION_LIST[@]/$dest/}")
+#         fi
+#         printf "\x1b[2J\x1b[H"
+#     done
+# }
+
 
 go-to-destination() {
 #    log-entry "User attempting to connect to ${REMOTE_USER:-$DEFAULT_USER}@$DESTINATION"
@@ -161,7 +196,10 @@ parse-destinations || {
     err; printf >&2 "Failed to parse destinations file: %s\n" "$DESTINATION_FILE"
 }
 
-# TODO(perf): Break go-to-destination out of get-user-input
+check-destinations || {
+    err; printf >&2 "Failed to check destinations.\n"
+}
+
 get-user-input || {
     err; printf "Bad user input!\n" # && continue
     # log-entry "Failed connection to ${REMOTE_USER}@${DESTINATION}"
