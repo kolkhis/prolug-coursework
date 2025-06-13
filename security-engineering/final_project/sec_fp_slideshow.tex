@@ -90,28 +90,42 @@
 
 %%%% CONTENT FRAMES %%%%
 
-%%%%%%%%%%%%%% FRAME 2: Project Purpose %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Project Purpose}
-    Why bastion host + jail?
-    \begin{enumerate}
-        \item{Improved security. Air-gapped network.} 
-        \item{Allow safe ingress.}
-        \item{Education. Hands-on experience with an enterprise solution.}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-%%%%%%%%%%%%%% FRAME 3: Goals %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% FRAME 2: Goals %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Goals}
-    \begin{enumerate}
-        \item{Create a bastion host in the homelab} 
-        \item{Use this bastion as an ingress to the rest of the VMs (jumpbox)}
-        \item{Route all incoming SSH traffic to the bastion}
-    \end{enumerate}
+    \begin{itemize}
+        % \item{Create a bastion host in the homelab} 
+        % \item{Use this bastion as an ingress to the rest of the VMs (jumpbox)}
+        % \item{Route all incoming SSH traffic to the bastion}
+        \item{\textbf{Build a Bastion
+            Host} -- Gateway for SSH ingress}
+
+        \item{\textbf{Restrict User
+            Access} -- Use \texttt{chroot} and \texttt{rbash} to isolate the shell
+            environment}
+
+        \item{\textbf{Route Ingress SSH
+            Traffic} -- Use \texttt{sshd} \texttt{Match} blocks to force logins through the jail}
+
+        \item{\textbf{Offer Controlled
+            Forwarding}  -- Custom script presents user with allowed destinations}
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME 3: Project Purpose %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Project Purpose}
+    \begin{itemize}
+        \item{\textbf{Secure gateway} -- Centralized and controlled access to internal systems} 
+            \vspace{0.5cm}
+        \item{\textbf{Air-Gapped design} -- Ensure no direct ingress to internal hosts}
+            \vspace{0.5cm}
+        \item{\textbf{Hands-on learning} -- Simulate real-world security architecture}
+    \end{itemize}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 %%%%%%%%%%%%%% FRAME 4 %%%%%%%%%%%%%%%%%%%%
