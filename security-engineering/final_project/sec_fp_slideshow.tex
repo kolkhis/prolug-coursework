@@ -160,18 +160,19 @@
 
 
 %%%%%%%%%%%%%% FRAME 6 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Tech Stack}
+\begin{frame}{Tech Stack / Tools Used}
     \begin{itemize}
         \item{\texttt{Linux}}
         \item{\texttt{bash}}
         \item{\texttt{rbash}}
         \item{\texttt{logger} (\texttt{systemd} logging utility)}
         \item{\texttt{chroot}}
+        \item{\texttt{ping}}
         \item{\texttt{ssh}}
             \begin{enumerate}
                 \item{SSH \texttt{Match} blocks (conditionals)}
             \end{enumerate}
-        \item{Custom Shell - \texttt{bastion.sh}}
+        \item{Custom Shell -- \texttt{bastion.sh}}
     \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -180,12 +181,15 @@
 %%%%%%%%%%%%%% FRAME 7 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Why use a Chroot Jail?}
     The idea behind a \texttt{chroot} directory is to create an \textbf{isolated
-    environment} in which to operate.   
+    environment} in which to send users.   
 
+    \vspace{0.25cm}
     It forces the user into a sandbox and can only access the tools we give them.  
 
+    \vspace{0.25cm}
     There are other ways of directing a user to an isolated environment.  
 
+    \vspace{0.25cm}
     The \texttt{chroot} method is much lower in complexity, easy to set up, and very effective.  
     \begin{itemize}
         \item Simple to configure
@@ -266,7 +270,8 @@
         \item{\texttt{/etc/group} -- Allows checking the user's groups, affects permissions} 
         \item{\texttt{/etc/nsswitch.conf} -- Needed for name resolution to work
             properly (e.g., DNS)} 
-        \item{\texttt{/etc/hosts} -- For local name resolution when \texttt{nsswitch.conf} includes \texttt{hosts: files dns}} 
+        \item{\texttt{/etc/hosts} -- For local name resolution when
+            \texttt{nsswitch.conf} includes \texttt{hosts: files dns}} 
         \item{\texttt{/lib/x86\_64-linux-gnu/*nss*} -- Name Switch Service libraries
             used by \texttt{glibc}, required for name resolution} 
     \end{itemize}
@@ -303,7 +308,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% FRAME 13 %%%%%%%%%%%%%%%%%%%% 
-\begin{frame}{Custom Shell}
+\begin{frame}{Custom Shell -- \texttt{bastion.sh} with \texttt{rbash}}
     \begin{figure}
         \centering
         \includegraphics[width=0.5\linewidth]{juvie-etc_passwd-entry.png}
@@ -311,7 +316,8 @@
     The user does not have access to a normal shell (\texttt{bash} or \texttt{sh}).
     \vspace{0.25cm}
 
-    They are only given access to a custom shell script called \texttt{bastion.sh}.  
+    They are only given access to a custom shell script called \texttt{bastion.sh},
+    which uses \texttt{rbash} instead of \texttt{bash}.
     \vspace{0.25cm}
 
     This script presents the user with options for servers to jump to (parsed from an
@@ -333,8 +339,10 @@
     \texttt{rbash} (Restricted Bash) is a safer variant of \texttt{bash}.  
 
     It disables dangerous features that could let a user escape the jail.  
+    \vspace{0.25cm}
 
     \texttt{rbash} \textbf{disallows} these actions:
+    \vspace{0.25cm}
     \begin{itemize}
         \item{Using \texttt{cd} to escape the jail} 
         \item{Setting or unsetting \texttt{PATH}, \texttt{SHELL}, \texttt{HISTFILE}, \texttt{ENV}/\texttt{BASH\_ENV} }
@@ -343,8 +351,8 @@
         \item{Using \texttt{exec} to replace the shell process} 
         \item{and much more...} 
     \end{itemize}
-    This reduces the attack surface of the custom shell and enforces a strict execution
-    path; only allowed tools/scripts are executed.  
+    \vspace{0.15cm}
+    This reduces the attack surface of the custom shell.  
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -396,8 +404,6 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 \begin{frame}{References}
     \begin{itemize}
         \item{https://killercoda.com/het-tanis/course/Linux-Labs/204-building-a-chroot-jail}
@@ -407,11 +413,6 @@
         \item{\texttt{man rbash}}
         \item{And, as always, \texttt{man bash}}
     \end{itemize}
-    % \bibliographystyle{apalike}
-    %     https://killercoda.com/het-tanis/course/Linux-Labs/204-building-a-chroot-jail
-    %     https://killercoda.com/het-tanis/course/Linux-Labs/210-building-a-bastion-host
-    %     https://github.com/het-tanis/prolug-labs/tree/main/Linux-Labs/210-building-a-bastion-host
-    % \bibliography{bib}
 \end{frame}
 
 \begin{frame}{Questions?}
@@ -419,7 +420,8 @@
         \centering
         \includegraphics[width=0.4\linewidth]{kolkhis_github_qr.png}
         \caption{Kolkhis on GitHub}
-        \label{}
+        \label{GH-QR-Code}
     \end{figure}
 \end{frame}
+
 \end{document}
