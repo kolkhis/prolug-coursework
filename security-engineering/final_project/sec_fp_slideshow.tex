@@ -1,5 +1,4 @@
 \documentclass[14pt,compress,dvipsnames,aspectratio=169]{beamer} %usenames,
-%\usetheme{Singapore}
 \useoutertheme{shadow}
 \usetheme{CambridgeUS}
 \definecolor{mygreen}{RGB}{150, 255, 210}%186}
@@ -208,9 +207,9 @@
     The \texttt{chroot} directory can be any directory. We're using
     \texttt{/var/chroot} in this particular project.
 
-    We want this directory to pretend to be its own standalone Linux machine.  
+    We want this directory to pretend to be its own standalone Linux machine, so we
+    need to emulate the root directory structure:  
 
-    To pretend, it needs the same directory structure as \texttt{/} (root):  
     \begin{itemize}
         \item{\texttt{/bin}} 
         \item{\texttt{/lib}} 
