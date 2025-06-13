@@ -131,19 +131,24 @@
 
 %%%%%%%%%%%%%% FRAME 5 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{High-Level Overview}
-    \begin{enumerate}
-        \item{1. Traffic comes into network via SSH} 
-        \item{2. Router forwards SSH traffic to bastion host} 
-        \item{3. Custom bastion script presents user with destinations}
-        \item{4. User enters their destination, they're forwarded there}
-    \end{enumerate}
+        1. Traffic comes into network via SSH 
+        \vspace{1.15cm}
+
+        2. Router forwards SSH traffic to bastion host
+        \vspace{1.15cm}
+
+        3. Custom bastion script presents user with destinations
+        \vspace{1.15cm}
+
+        4. User enters their destination, they're forwarded there
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%% FRAME 6 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Tech Stack}
-    \begin{enumerate}
+    \begin{itemize}
+        \item{\texttt{Linux}}
         \item{\texttt{bash}}
         \item{\texttt{rbash}}
         \item{\texttt{logger} (\texttt{systemd} logging utility)}
@@ -153,7 +158,7 @@
                 \item{SSH \texttt{Match} blocks (conditionals)}
             \end{enumerate}
         \item{Custom Shell - \texttt{bastion.sh}}
-    \end{enumerate}
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -163,13 +168,16 @@
     The idea behind a \texttt{chroot} directory is to create an \textbf{isolated
     environment} in which to operate.   
 
-    It forces the user into a directory of our choice, at which point they only have
-    access to the tools we give them.  
+    It forces the user into a sandbox and can only access the tools we give them.  
 
-    There are other ways of directing a user to an isolated environment, such as
-    using containers, optionally with namespaces and Cgroups, or other tools.  
+    There are other ways of directing a user to an isolated environment.  
 
     The \texttt{chroot} method is much lower in complexity, easy to set up, and very effective.  
+    \begin{itemize}
+        \item Simple to configure
+        \item No extra dependencies
+        \item Easily audited (single log stream)
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -182,10 +190,10 @@
     The \texttt{chroot} directory can be any directory. We're using
     \texttt{/var/chroot} in this particular project.
 
-    We want this directory to pretend to be its own, fully functional, isolated Linux machine.  
+    We want this directory to pretend to be its own standalone Linux machine.  
 
     To pretend, it needs the same directory structure as \texttt{/} (root):  
-    \begin{enumerate}
+    \begin{itemize}
         \item{\texttt{/bin}} 
         \item{\texttt{/lib}} 
         \item{\texttt{/lib64}} 
@@ -194,7 +202,7 @@
         \item{\texttt{/home}} 
         \item{\texttt{/usr/bin}} 
         \item{\texttt{/lib/x86\_64-linux-gnu}} 
-    \end{enumerate}
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -206,124 +214,175 @@
 
     To that end, we will give it the binaries necessary to perform the jump, and the
     binaries needed to operate the custom shell script.  
-    \begin{enumerate}
+    \begin{itemize}
         \item{\texttt{/usr/bin/rbash} (restricted bash) -- to run the custom script} 
         \item{\texttt{/usr/bin/ping} -- to check connectivity} 
         \item{\texttt{/usr/bin/ssh} -- to perform the jump} 
         \item{\texttt{/usr/bin/logger} -- to perform logging} 
-    \end{enumerate}
+    \end{itemize}
     Along with the binaries, we must also provide their linked libraries (found via
     the \texttt{ldd} command).  
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 %%%%%%%%%%%%%% FRAME 10 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{} 
-        \item{} 
-        \item{} 
-        \item{} 
-        \item{} 
-        \item{} 
-    \end{enumerate}
+\begin{frame}{Populating the Jail -- Special Files in \texttt{/dev}}
+    Many Linux programs require \textbf{character special files} in order to function
+    properly.
+
+    In particular, these special files are needed in the \texttt{/var/chroot/dev} dir:
+    \begin{itemize}
+        \item{\texttt{/dev/null} -- Used by almost every Unix tool for redirection} 
+        \item{\texttt{/dev/zero} -- Used for file generation and memory allocation} 
+        \item{\texttt{/dev/random} and \texttt{/dev/urandom} -- Used by \texttt{ssh} to generate entropy } 
+        \item{\texttt{/dev/tty} -- Needed for user input/interaction} 
+    \end{itemize}
+    \vspace{0.5em}
+    Without these special files, \textbf{some or all} of the binaries in the jail may
+    fail or act strangely.
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% FRAME 11 %%%%%%%%%%%%%%%%%%%% 
-\begin{frame}{}
-    \begin{enumerate}
-        \item{} 
-        \item{} 
-        \item{} 
-        \item{}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%% FRAME 12 %%%%%%%%%%%%%%%%%%%% 
-\begin{frame}{}
-    \begin{enumerate}
-        \item{} 
-        \item{} 
-        \item{} 
-        \item{} 
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%% FRAME 13 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{} 
-        \item{} 
-        \item{} 
-    \end{enumerate}
+%%%%%%%%%%%%%% FRAME 11 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Populating the Jail -- System Files}
+    To pretend it's a whole Linux environment, the jail needs key system files:
+    \begin{itemize}
+        \item{\texttt{/etc/passwd} -- Required by \texttt{rbash/ssh} to for checking the user's UID and shell} 
+        \item{\texttt{/etc/group} -- Allows checking the user's groups, affects permissions} 
+        \item{\texttt{/etc/nsswitch.conf} -- Needed for name resolution to work
+            properly (e.g., DNS)} 
+        \item{\texttt{/etc/hosts} -- For local name resolution when \texttt{nsswitch.conf} includes \texttt{hosts: files dns}} 
+        \item{\texttt{/lib/x86\_64-linux-gnu/*nss*} -- Name Switch Service libraries
+            used by \texttt{glibc}, required for name resolution} 
+    \end{itemize}
+    \vspace{0.5em}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 14 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{} 
-        \item{}
-        \item{} 
-        \item{}
-              
-    \end{enumerate}
+%%%%%%%%%%%%%% FRAME 12 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{SSH \texttt{Match} Rule}
+    The jailed user has its own user account on the system (\texttt{juvie}).  
+
+    \vspace{0.25cm}
+    We can put an entry in \texttt{/etc/ssh/sshd\_config} to \textbf{match} logins
+    as this user.  
+    \vspace{0.25cm}
+
+    \texttt{Match User juvie}
+
+    \hspace{1.0cm}\texttt{ChrootDirectory /var/chroot}
+
+    \hspace{1.0cm}\texttt{PasswordAuthentication yes}
+
+    \hspace{1.0cm}\texttt{AuthenticationMethods password}
+
+    \vspace{0.25cm}
+    This entry:
+    \begin{itemize}
+        \item{Matches SSH logins as the \texttt{User} named \texttt{juvie}} 
+        \item{Sets their \texttt{ChrootDirectory} to \texttt{/var/chroot}} 
+        \item{Allows password login for this user} 
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%% FRAME 13 %%%%%%%%%%%%%%%%%%%% 
+\begin{frame}{Custom Shell}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\linewidth]{juvie-etc_passwd-entry.png}
+    \end{figure}
+    The user does not have access to a normal shell (\texttt{bash} or \texttt{sh}).
+    \vspace{0.25cm}
+
+    They are only given access to a custom shell script called \texttt{bastion.sh}.  
+    \vspace{0.25cm}
+
+    This script presents the user with options for servers to jump to (parsed from an
+    SSH config file).  
+    \vspace{0.25cm}
+
+    If the user enters an option that is not presented to them, they are kicked out.  
+    \vspace{0.25cm}
+
+    The \texttt{bastion.sh} script uses \texttt{logger} to log user actions to
+    \texttt{journald}.  
+    % The script runs on \texttt{rbash} 
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 14 %%%%%%%%%%%%%%%%%%%% 
+\begin{frame}{Why \texttt{rbash} instead of \texttt{bash}?}
+    \texttt{rbash} (Restricted Bash) is a safer variant of \texttt{bash}.  
+
+    It disables dangerous features that could let a user escape the jail.  
+
+    \texttt{rbash} \textbf{disallows} these actions:
+    \begin{itemize}
+        \item{Using \texttt{cd} to escape the jail} 
+        \item{Setting or unsetting \texttt{PATH}, \texttt{SHELL}, \texttt{HISTFILE}, \texttt{ENV}/\texttt{BASH\_ENV} }
+        \item{Output redirection (e.g., \texttt{>}, \texttt{>\&}, \texttt{>>}, etc.)} 
+        \item{Running commands with slashes (e.g., \texttt{/bin/sh})} 
+        \item{Using \texttt{exec} to replace the shell process} 
+        \item{and much more...} 
+    \end{itemize}
+    This reduces the attack surface of the custom shell and enforces a strict execution
+    path; only allowed tools/scripts are executed.  
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%% FRAME 15 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{}
-        \item{}
-        \item{}
-    \end{enumerate}
+\begin{frame}{Scripting Automation}
+    The whole setup process has been automated using three Bash scripts.  
+    \vspace{1.0cm}
+    \begin{itemize}
+        \item{\texttt{setup-chroot-jail} -- Sets everything up} 
+        \vspace{1.0cm}
+        \item{\texttt{generate-destinations} -- Helper script that parses an SSH
+            config file into a more script-friendly format}
+        \vspace{1.0cm}
+        \item{\texttt{reset-chroot-jail} -- Helper script used during development to
+            remove the chroot jail and jailed user}
+        % \item{\texttt{}}
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
 
 %%%%%%%%%%%%%% FRAME 16 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{}
-        \item{}
-        \item{}
-    \end{enumerate}
+\begin{frame}{Future Improvements}
+    \begin{itemize}
+        \item{Parse an ansible inventory file for SSH destinations} 
+        \item{Use \texttt{readonly bind mounts} instead of copying binaries/libraries}
+        \item{Add support for logging user actions to a central Loki+Promtail/Alloy instance}
+        \item{Implement per-user logging and session auditing}
+        \item{Add MFA or TOTP-based verification on top of password login}
+        \item{Add AppArmor or Seccomp profile to further restrict jailed shell behavior}
+        \item{Replace \texttt{rbash} with a minimal statically compiled Go binary as a shell}
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
 %%%%%%%%%%%%%% FRAME 17 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{}
-        \item{}
-        \item{}
-        \item{}
-    \end{enumerate}
+\begin{frame}{Demo}
+    (show them how it works)
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%% FRAME 18 %%%%%%%%%%%%%%%%%%%%
-\begin{}{}
-    \begin{enumerate}
-        \item{} 
-        \item{} 
-    \end{enumerate}
+\begin{frame}{Questions?}
+    \begin{itemize}
+        \vspace{1.0cm}
+        \item{Ask me right now}
+        \vspace{1.0cm}
+        \item{@ me on Discord} 
+    \end{itemize}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 \begin{frame}{References}
