@@ -1,4 +1,4 @@
-\documentclass[14pt,compress,usenames,dvipsnames,aspectratio=169]{beamer}
+\documentclass[14pt,compress,dvipsnames,aspectratio=169]{beamer} %usenames,
 %\usetheme{Singapore}
 \useoutertheme{shadow}
 \usetheme{CambridgeUS}
@@ -55,7 +55,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows}
 
-%%%%%%%%% TITLE SLIDE %%%%%%%%%
+%%%%%%%%% SLIDE 1: TITLE SLIDE %%%%%%%%%
 \title{\textbf{Automated Setup of an Air-Gapped Network with a Bastion Host}}
 \author{Using Proxmox on a Dell PowerEdge R730}
 
@@ -63,7 +63,7 @@
 
 \usefonttheme{professionalfonts}
 
-\usepackage{mydefs}
+% \usepackage{mydefs}
 
 \setbeamercovered{transparent} 
 \setbeamertemplate{navigation symbols}{} 
@@ -90,23 +90,37 @@
 
 %%%% CONTENT FRAMES %%%%
 
-%%%%%%%%%%%%%% FRAME 1: Project Goals %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Goals}
+%%%%%%%%%%%%%% FRAME 2: Project Purpose %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Project Purpose}
+    Why bastion host + jail?
     \begin{enumerate}
-        \item{} 
-        \item{}
-        \item{}
+        \item{Improved security. Air-gapped network.} 
+        \item{Allow safe ingress.}
+        \item{Education. Hands-on experience with an enterprise solution.}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 2 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Disclaimer}
+
+%%%%%%%%%%%%%% FRAME 3: Goals %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Goals}
     \begin{enumerate}
-        \item{} 
-        \item{}
+        \item{Create a bastion host in the homelab} 
+        \item{Use this bastion as an ingress to the rest of the VMs (jumpbox)}
+        \item{Route all incoming SSH traffic to the bastion}
     \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 4 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{System Diagram}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.75\linewidth]{bastion_route_diagram.png}
+        \caption{SSH Traffic Route}
+    \end{figure}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -115,87 +129,95 @@
 %--------------------------- The meat ------------------------------%
 
 
-%%%%%%%%%%%%%% FRAME 3 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{} 
-            \begin{enumerate}
-                \item{}
-                \item{}
-                \item{}
-            \end{enumerate}
-
-        \item{}
-            \begin{enumerate}
-                \item{}
-                \item{}
-            \end{enumerate}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%%%%%%%%%%%%%% FRAME 4 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.75\linewidth]{monitoring_stack_viz.png}
-        \caption{Monitoring Schema}
-        \label{fig:enter-label}
-    \end{figure} 
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
 %%%%%%%%%%%%%% FRAME 5 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
+\begin{frame}{High-Level Overview}
     \begin{enumerate}
-        \item{} 
-        \item{}
-        \item{}
-        \item{}
-        \item{}
-            %whether to use either dnf/yum or apt.}
-        \item{}
+        \item{1. Traffic comes into network via SSH} 
+        \item{2. Router forwards SSH traffic to bastion host} 
+        \item{3. Custom bastion script presents user with destinations}
+        \item{4. User enters their destination, they're forwarded there}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%% FRAME 6 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
+\begin{frame}{Tech Stack}
     \begin{enumerate}
-        \item{}
-        \item{}
-        \item{}
- 
+        \item{\texttt{bash}}
+        \item{\texttt{rbash}}
+        \item{\texttt{logger} (\texttt{systemd} logging utility)}
+        \item{\texttt{chroot}}
+        \item{\texttt{ssh}}
+            \begin{enumerate}
+                \item{SSH \texttt{Match} blocks (conditionals)}
+            \end{enumerate}
+        \item{Custom Shell - \texttt{bastion.sh}}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%% FRAME 7 %%%%%%%%%%%%%%%%%%%%
-% Data Source Provisioning File
-\begin{figure}
-    \centering
-    \includegraphics[width=0.55\linewidth]{grafana_datasource_provisioning_file.png}
-    \caption{Grafana Datasource Provisioning File}
-    \label{fig:enter-label}
-\end{figure}
- 
-% Dashboard Provisioning File
-\begin{figure}
-    \centering
-    \includegraphics[width=0.55\linewidth]{grafana_dashboard_provisioning_example.png}
-    \caption{Grafana Dashboard Provisioning File}
-    \label{fig:enter-label}
-\end{figure}
+\begin{frame}{Why use a Chroot Jail?}
+    The idea behind a \texttt{chroot} directory is to create an \textbf{isolated
+    environment} in which to operate.   
+
+    It forces the user into a directory of our choice, at which point they only have
+    access to the tools we give them.  
+
+    There are other ways of directing a user to an isolated environment, such as
+    using containers, optionally with namespaces and Cgroups, or other tools.  
+
+    The \texttt{chroot} method is much lower in complexity, easy to set up, and very effective.  
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 
 
 %%%%%%%%%%%%%% FRAME 8 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Building the Chroot Directory}
+    The \texttt{chroot} directory can be any directory. We're using
+    \texttt{/var/chroot} in this particular project.
+
+    We want this directory to pretend to be its own, fully functional, isolated Linux machine.  
+
+    To pretend, it needs the same directory structure as \texttt{/} (root):  
+    \begin{enumerate}
+        \item{\texttt{/bin}} 
+        \item{\texttt{/lib}} 
+        \item{\texttt{/lib64}} 
+        \item{\texttt{/dev}} 
+        \item{\texttt{/etc}} 
+        \item{\texttt{/home}} 
+        \item{\texttt{/usr/bin}} 
+        \item{\texttt{/lib/x86\_64-linux-gnu}} 
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 9 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Populating the Jail -- Binaries and Libraries}
+    We want the \texttt{chroot} directory to contain \textit{only} the necessary
+    binaries to perform its function as an SSH ingress (jumpbox).  
+
+    To that end, we will give it the binaries necessary to perform the jump, and the
+    binaries needed to operate the custom shell script.  
+    \begin{enumerate}
+        \item{\texttt{/usr/bin/rbash} (restricted bash) -- to run the custom script} 
+        \item{\texttt{/usr/bin/ping} -- to check connectivity} 
+        \item{\texttt{/usr/bin/ssh} -- to perform the jump} 
+        \item{\texttt{/usr/bin/logger} -- to perform logging} 
+    \end{enumerate}
+    Along with the binaries, we must also provide their linked libraries (found via
+    the \texttt{ldd} command).  
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME 10 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
     \begin{enumerate}
         \item{} 
@@ -208,7 +230,7 @@
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%% FRAME 9 %%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%% FRAME 11 %%%%%%%%%%%%%%%%%%%% 
 \begin{frame}{}
     \begin{enumerate}
         \item{} 
@@ -220,7 +242,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 10 %%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%% FRAME 12 %%%%%%%%%%%%%%%%%%%% 
 \begin{frame}{}
     \begin{enumerate}
         \item{} 
@@ -232,7 +254,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 11 %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% FRAME 13 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
     \begin{enumerate}
         \item{} 
@@ -243,7 +265,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 12 %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% FRAME 14 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
     \begin{enumerate}
         \item{} 
@@ -256,45 +278,45 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 13 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{}
-        \item{}
-        \item{}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
-%%%%%%%%%%%%%% FRAME 14 %%%%%%%%%%%%%%%%%%%%
-\begin{frame}{}
-    \begin{enumerate}
-        \item{}
-        \item{}
-        \item{}
-    \end{enumerate}
-\end{frame}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
 %%%%%%%%%%%%%% FRAME 15 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{}
     \begin{enumerate}
         \item{}
         \item{}
         \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%% FRAME 16 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{}
+        \item{}
         \item{}
     \end{enumerate}
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%% FRAME 16 %%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%% FRAME 17 %%%%%%%%%%%%%%%%%%%%
+\begin{frame}{}
+    \begin{enumerate}
+        \item{}
+        \item{}
+        \item{}
+        \item{}
+    \end{enumerate}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%% FRAME 18 %%%%%%%%%%%%%%%%%%%%
 \begin{}{}
     \begin{enumerate}
         \item{} 
