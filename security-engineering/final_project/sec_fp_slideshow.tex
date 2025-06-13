@@ -57,7 +57,7 @@
 
 %%%%%%%%% SLIDE 1: TITLE SLIDE %%%%%%%%%
 \title{\textbf{Automated Setup of an Air-Gapped Network with a Bastion Host}}
-\author{Using Proxmox on a Dell PowerEdge R730}
+\author{Using Bash}
 
 \date{}  % Get rid of date
 
@@ -354,10 +354,10 @@
 %%%%%%%%%%%%%% FRAME 16 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Future Improvements}
     \begin{itemize}
+        \item{Enable \texttt{fail2ban} for bastion host} 
         \item{Parse an ansible inventory file for SSH destinations} 
         \item{Use \texttt{readonly bind mounts} instead of copying binaries/libraries}
-        \item{Add support for logging user actions to a central Loki+Promtail/Alloy instance}
-        \item{Implement per-user logging and session auditing}
+        \item{Implement per-user logging and session auditing (e.g., per-IP)}
         \item{Add MFA or TOTP-based verification on top of password login}
         \item{Add AppArmor or Seccomp profile to further restrict jailed shell behavior}
         \item{Replace \texttt{rbash} with a minimal statically compiled Go binary as a shell}
@@ -370,7 +370,6 @@
     (show them how it works)
 \end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 
 %%%%%%%%%%%%%% FRAME 18 %%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Questions?}
@@ -386,9 +385,19 @@
 
 
 \begin{frame}{References}
-    \bibliographystyle{apalike}
-    % TODO
-    \bibliography{bib}
+    \begin{itemize}
+        \item{https://killercoda.com/het-tanis/course/Linux-Labs/204-building-a-chroot-jail}
+        \item{https://killercoda.com/het-tanis/course/Linux-Labs/210-building-a-bastion-host}
+        \item{\texttt{man chroot}}
+        \item{\texttt{man logger}}
+        \item{\texttt{man rbash}}
+        \item{And, as always, \texttt{man bash}}
+    \end{itemize}
+    % \bibliographystyle{apalike}
+    %     https://killercoda.com/het-tanis/course/Linux-Labs/204-building-a-chroot-jail
+    %     https://killercoda.com/het-tanis/course/Linux-Labs/210-building-a-bastion-host
+    %     https://github.com/het-tanis/prolug-labs/tree/main/Linux-Labs/210-building-a-bastion-host
+    % \bibliography{bib}
 \end{frame}
 
 \begin{frame}{Questions?}
