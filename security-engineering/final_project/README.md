@@ -19,6 +19,8 @@ This script sets up:
 To set up the chroot jail, use the `setup-chroot-jail` script:
 ```bash
 ./setup-chroot-jail
+# or, for verbose output
+./setup-chroot-jail -v
 ```
 This can be run without any arguments to use all default values. E.g., the chroot
 directory will be `/var/chroot` and the jailed user will be named `juvie`.  
