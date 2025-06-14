@@ -13,6 +13,8 @@ This script sets up:
 - A parsed list of destinations from an SSH config file
 - SSH key fingerprints for those destinations
 
+The setup script is self-documenting. Run `./setup-chroot-jail --help` for usage.  
+
 
 ## Basic Usage
 
