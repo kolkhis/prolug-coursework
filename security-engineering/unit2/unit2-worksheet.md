@@ -135,16 +135,6 @@ or similar blogs on DNS and host file configurations.
 > - Typosquatting and homograph attacks: When you come across similar looking domain names (`goog1e.com`). Not necessarily a DNS thing but it seems related.  
 
 
-
-<div class="warning">
-Submit your input by following the link below.
-
-The discussion posts are done in Discord threads. Click the 'Threads' icon on the top right and search for the discussion post.
-
-</div>
-
-- [Link to Discussion Posts](https://discord.com/channels/611027490848374811/1098309490681598072)
-
 ## Definitions
 
 ---
