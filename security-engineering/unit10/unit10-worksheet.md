@@ -64,24 +64,40 @@ Proof of Skills from this course.
 
     * How would you answer if I asked you for a quick rundown of how you would  
       secure a Linux system?  
-        - I would start with access points. SSH being chief among them. I'd start by
-          locking down SSH to minimum security standards (e.g., no root via SSH,
-          public key authentication).  
-        - I'd then go over to STIGs. I'd start with the STIGs for the operating
-          system that the machine is running. Then I'd identify services that are
-          being hosted on that host and STIG those services as well.  
+
+        > - I would start with access points. SSH being chief among them. I'd start by
+        >   locking down SSH to minimum security standards (e.g., no root via SSH,
+        >   public key authentication).  
+
+        > - I'd then go over to STIGs. I'd start with the STIGs for the operating
+        >   system that the machine is running. Then I'd identify services that are
+        >   being hosted on that host and STIG those services as well.  
 
     * How would you answer if I asked you why you are a good fit as a security  
       engineer in my company?  
 
-        - 
+        > - I would say that I can objectively analyze the security posture of your
+        >  company with fresh eyes, as well as suggest and implement improvements to
+        >  the overall security procedures implemented at the company.  
 
-    * Think about what security concepts you think bear the most weight as you  
+    * Think about what security concepts you think bear the most weight as you 
       put these course objectives onto your resume.  
 
-        * Which would you include?  
+        > * Which would you include?  
+        >     - Build standards and compliance (Implementing STIGs)  
+        >     - Bastion Hosts and Air-gapping a network  
+        >     - Auditing (Monitoring and Parsing Logs)  
+        >     - Alerting  
+        >     - Configuration drift and remediation  
+        >     - Patching systems  
+        >     - Key management (SSH keys)  
 
-        * Which don’t you feel comfortable including?  
+        > * Which don’t you feel comfortable including?  
+        >     - Certificate management (TLS). I need to spend more time with this.  
+        >     - Network security. If it's just STIGs, that's one thing, but if it's
+        >       anything beyond that, I still need more practice. In particular, I need
+        >       to learn how to use `tcpdump` effectively, as well as Wireshark and
+        >       other packet inspection and network troubleshooting tools.  
 
 
 ## Definitions/Terminology  
