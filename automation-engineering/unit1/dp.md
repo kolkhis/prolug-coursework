@@ -100,3 +100,18 @@ an alert to go out when our systems are saturated, or if we get important
 security logs that the admins must know about.
 ```
 
+## Unit 1 DP 1 followup
+
+
+The topic of this blog isn't exactly "Automation" but where does Dr. Richert highlight automation and its benefits to the process? 
+<https://redlineperf.com/enhancing-continuous-integration-practices-at-noaa-emc/>
+
+```markdown
+Dr. Richert is talking about adding automation via GitHub Actions for their CI pipelines. Super cool stuff. 
+They've apparently automated the process of installing specific tooling (compilers and sci libraries, presumably conda with numpy, scipy, pandas, matplotlib, etc.). They're also caching so that installs do not happen when they've already been cached. They've also implemented build tests for packages that are installed through Spack (package manager for supercompute), so they can catch things before they go into production.
+
+This kind of highlights the benefits of using automation tools like GH actions to cut down on code complexity and optimize workflows. Awesome the hear that it's being picked up by such a big organization.
+```
+
+
+
