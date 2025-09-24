@@ -157,6 +157,9 @@ security logs that the admins must know about.
       intervention.  
 
 ## Notes During Lecture/Class:
+
+[./notes.md](./notes.md)
+
 ### Links:
 
 - Event Driven Architecture: <https://serverlessland.com/>
