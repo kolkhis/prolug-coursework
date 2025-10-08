@@ -156,35 +156,88 @@ If you would add something, how does it improve the code?
 
 ### Ansible execution
 1. Run the `u2_script1.yml` and look at what it shows you.
-    ```bash
-    ansible-playbook /root/u2_script1.yml
-    ```
-    What are you shown?
+   ```bash
+   ansible-playbook /root/u2_script1.yml
+   ```
+   What are you shown?
+    - Playbook output that indicates we're generating two scripts on the localhost.  
+
 
 2. Inspect the file and see if you can modify it to show the first and last 15 lines.
-    ```bash
-    cat /root/u2_script1.yml
-    ```
-    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
+   ```bash
+   cat /root/u2_script1.yml
+   ```
+   Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
+    - Answer: Change the content of the scripts being generated:
+      ```yaml
+      - name: Create generated_script 1
+        copy:
+          dest: /root/u2_generatedscript1.sh
+          content: |
+            #!/bin/bash
+            head -n 15 /etc/passwd
+            tail -n 15 /etc/passwd
+          mode: '0755'
+      ```
+
 
 3. Run the u2_script2.yml and look at what it shows you.
    ```bash
    ansible-playbook /root/u2_script2.yml
    ```
    What are you shown?
+    - Answer: It shows the output of the scripts that were created with the
+      first playbook. 
 
 4. Inspect the file and see if you can make it name the file differently or populate different content.
    ```bash
    cat /root/u2_script2.yml
    ```
    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
-
-5. Do one final `ls -l` against the `/root` directory.
-    - What is a difference between the `.sh`, `.py`, and `.yml` files?
+    - Answer: The wording on this one is a little confusing. The playbook does not 
+      create any files. I'm going to assume we mean "rename the output variable".  
+      E.g.:
       ```bash
-      ls -l
+      ok: [localhost] => {
+          "script2_output.stdout": "2025-10-08 13:12:22"
+      }
+      ```
+      Instead of `script2_output`, we can make it something like
+      `date_script_output` by changing this:
+      ```yml
+        - name: Run generated_script 2
+          command: /root/u2_generated_script2.sh
+          #register: script2_output
+          register: date_script_output
+
+        - name: Display output of generated_script 2
+          debug:
+            #var: script2_output.stdout
+            var: date_script_output.stdout
       ```
 
-As you’re interacting with the OS, are there any observations you have about how the scripts are set up,
-their structure and their output. Is there anything you would add for your scripts? If you would add
-something, how does it improve the code?
+5. Do one final `ls -l` against the `/root` directory.  
+   What is a difference between the `.sh`, `.py`, and `.yml` files?
+   ```bash
+   ls -l
+   ```
+    - Answer: Different file extensions, to state the obvious. In that same
+      vein, the different file extensions tell us about what type of automation
+      they are, and how we might go about executing them. The `.sh` file
+      extensions can likely be executed directly from the shell. The `.py`
+      files require giving them as arguments to `python3` to run (unless they
+      have an appropriate shebang line), and the `.yml` files are Ansible
+      playbooks.  
+
+As you’re interacting with the OS, are there any observations you have about 
+how the scripts are set up, their structure and their output.
+
+- Is there anything you would add for your scripts?
+
+For the playbooks, reporting out to an external source would be good.
+
+- If you would add something, how does it improve the code?
+
+This would not require us to be at the terminal to see the result of the playbook
+execution. For instance, a webhook integration (like you've got set up for the
+ProLUG environment) would be a good addition.  
