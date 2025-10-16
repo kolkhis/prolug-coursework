@@ -9,32 +9,62 @@ the end to turn them in as a final submission packet.
 
 ## Discussion Questions
 
-Unit 3 Discussion Post 1: Find a blog post or open source tool that focuses on IT inventory
-management
+### Unit 3 Discussion Post 1
 
-1. What is meant by the term “inventory” in an IT context?
-   ```answer
-   Your answer here.
-   ```
+Find a blog post or open source tool that focuses on IT inventory
+management.  
 
-2. What are some of the issues with inventories in a company?
-   ```answer
-   Your answer here.
-   ```
-    - How have people attempted to overcome these issues?
-      ```answer
-      Your answer here.
-      ```
 
-3. What different formats of inventories can you find for IT management?
-   ```answer
-   Your answer here.
-   ```
-    - Why would formatting matter?
-      ```answer
-      Your answer here.
-      ```
+1. What is meant by the term “inventory” in an IT context?  
 
+   An inventory in IT context is a complete list of all technological resources   
+   that an organization owns.    
+
+  
+2. What are some of the issues with inventories in a company?    
+ 
+   Unclear inventories, where it's not apparent what is what, maybe it's not clear   
+   what servers are prod/dev/test environments.    
+   Maybe an inventory just not existing, or incomplete inventories. Misconfigured   
+   inventories. Not grouping servers together. Grouping incorrectly.  
+   Leaving out variables containing essential information about the servers.  
+   Changing the inventory without notice. If someone decides to refactor, say   
+   labels (variables) for servers and all the playbooks are relying on that  
+   label to determine which tasks to run, that could be a huge issue.    
+  
+   Poorly maintaining or simply failing to create an inventory is a huge issue.    
+
+  
+    - How have people attempted to overcome these issues?    
+
+      Aside from rebuilding a bad inventory from scratch...  
+      Regular inventory maintenance. Either update the inventory manually on a  
+      set schedule or have some sort of dynamic inventory generation set up.    
+      Also setting up a standard or guidelines for how an inventory should be  
+      formatted would be a great way to ensure the inventory remains static.    
+
+
+3. What different formats of inventories can you find for IT management?    
+
+   `.ini`, `.yaml`, `.csv`, `.json`, `.xml` to name a few of the popular ones that are used for  
+   machine-readable inventories. Some could use spreadsheets in Excel or Google  
+   Sheets (`.xls`/`.xlsx`) for organizing data in a tabular format.    
+   There are also database exports, SQLite or SQL dumps, that are supported by  
+   managed inventory software solutions.    
+
+  
+    - Why would formatting matter?  
+
+      Formatting is important. If it needs to be machine-readable *only*, then  
+      using something like CSV, where everything is a hot mess to looks at, is   
+      probably fine since the human-readable element is not there.  
+  
+      But, if the inventory needs to be both machine-readable *and*  
+      human-readable, then a more structured format like `.ini`, `.yaml`, or `.json`   
+      is a better approach. These are easily parsed by code and humans.    
+
+
+Source used: <https://invgate.com/itsm/it-asset-management/it-asset-inventory>
 
 ### Unit 3 Discussion Post 2
 You are a system administrator for a small company with ~100 total Linux systems.  
@@ -67,25 +97,45 @@ He then asserts, “without a good inventory, you cannot have security in the sy
 
 ## Definitions/Terminology
 
-- IT Inventory: 
+- IT Inventory: A complete list of all technological resources that an
+  organization owns.  
 
 - File formats (be able to identify and parse them with your tools): 
-    - `.csv`: 
-    - `.ini`: 
-    - `.yaml`: 
 
-- Grouping: 
+    - `.csv`: Comma-separated values.
+    - `.ini`: Configuration file that uses key/value pairs structured in sections.  
+        - Ansible supports this format for inventories.  
+        - Often used in Windows/MS environments for system and application configuration.  
+        - Originally derived from the word "initialization."  
+    - `.yaml`: A structured data format that's often used for configuration.  
+        - Used for writing Ansible playbooks and roles.  
+        - Stands for "Yet Another Markup Lanugage"
+        - ...or "Yaml Ain't Markup Language"
 
-- Variables (in relation to inventories): 
+- Grouping: Identifying similar machines/components and organizing them together.  
 
-- Ranges (and their usefulness): 
-    - `[01:50]` 
-    - `[01:50:2]` 
+- Variables (in relation to inventories): Key/value pairs that can be set to 
+  describe properties or settings for inventory items. 
+
+- Ranges (and their usefulness): Ranges allow you to specify a range of numbers
+  within brackets, and will expand to the range listed. 
+    - `[01:50]`: Specify `01` to `50` including the leading zero(es).  
+    - `[01:50:2]`: Specify `01` to `50` including the leading zero(es) by **steps of two**. 
+    - Useful for specifying ranges of IPs:
+      ```yaml
+      [servers]
+      192.168.1.[01:50]
+      ```
+      Specifies a range of servers in the `192.168.1.01-50` range
+    - We can also specify ranges of letters with the same notation.
+        - `control-node-[a-z]`
 
 
 ## Notes During Lecture/Class:
 
 ### Links:
+
+<https://stackoverflow.com/questions/3790454/how-do-i-break-a-string-in-yaml-over-multiple-lines>
 
 <https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html>
 
