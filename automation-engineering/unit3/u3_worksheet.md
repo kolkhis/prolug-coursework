@@ -16,13 +16,14 @@ management.
 
 
 1. What is meant by the term “inventory” in an IT context?  
-
+   ```markdown
    An inventory in IT context is a complete list of all technological resources   
    that an organization owns.    
+   ```
 
-  
+
 2. What are some of the issues with inventories in a company?    
- 
+   ```markdown
    Unclear inventories, where it's not apparent what is what, maybe it's not clear   
    what servers are prod/dev/test environments.    
    Maybe an inventory just not existing, or incomplete inventories. Misconfigured   
@@ -33,28 +34,34 @@ management.
    label to determine which tasks to run, that could be a huge issue.    
   
    Poorly maintaining or simply failing to create an inventory is a huge issue.    
+   ```
 
   
     - How have people attempted to overcome these issues?    
 
+      ```markdown
       Aside from rebuilding a bad inventory from scratch...  
       Regular inventory maintenance. Either update the inventory manually on a  
       set schedule or have some sort of dynamic inventory generation set up.    
       Also setting up a standard or guidelines for how an inventory should be  
       formatted would be a great way to ensure the inventory remains static.    
+      ```
 
 
 3. What different formats of inventories can you find for IT management?    
 
+   ```markdown
    `.ini`, `.yaml`, `.csv`, `.json`, `.xml` to name a few of the popular ones that are used for  
    machine-readable inventories. Some could use spreadsheets in Excel or Google  
    Sheets (`.xls`/`.xlsx`) for organizing data in a tabular format.    
    There are also database exports, SQLite or SQL dumps, that are supported by  
    managed inventory software solutions.    
+   ```
 
   
     - Why would formatting matter?  
 
+      ```markdown
       Formatting is important. If it needs to be machine-readable *only*, then  
       using something like CSV, where everything is a hot mess to looks at, is   
       probably fine since the human-readable element is not there.  
@@ -62,38 +69,66 @@ management.
       But, if the inventory needs to be both machine-readable *and*  
       human-readable, then a more structured format like `.ini`, `.yaml`, or `.json`   
       is a better approach. These are easily parsed by code and humans.    
+      ```
 
 
 Source used: <https://invgate.com/itsm/it-asset-management/it-asset-inventory>
 
 ### Unit 3 Discussion Post 2
+
 You are a system administrator for a small company with ~100 total Linux systems.  
 The security engineer approaches you and shows you vulnerabilities in your 110 total Linux systems.  
 He then asserts, “without a good inventory, you cannot have security in the system.”
 
-1. Do you agree with him, why or why not?
-   ```answer
-   Your answer here.
-   ```
-
-    1. How do you plan to start to “true up” your inventories?
-       ```answer
-       Your answer here.
-       ```
-
-    2. How can you prevent this type of problem (if you think it is one) in the future?
-       ```answer
-       Your answer here.
-       ```
-
-2. We often say in engineering, “Or you can do nothing”. This speaks to the possibility
-   of just accepting the situation and allowing a system to keep running.
-
-    1. Can you do that in this situation, or must this be corrected? Why or why not?
-       ```answer
-       Your answer here.
-       ```
-
+1. Do you agree with him, why or why not?  
+   ```answer  
+   I do agree. Without a decent inventory, you will not be able to tell what  
+   machines are in the environment, their characteristics (e.g., their OS, the  
+   applications they're running, their roles, etc.), which can prevent you from  
+   being able to apply the correct security patches to the systems.    
+   You also won't be able to troubleshoot a security incident easily if you  
+   can't identify affected servers easily.    
+   If the vulnerabilities are really severe, without an inventory we won't be  
+   able to quickly take them offline for a maintenance.    
+   ```  
+  
+    1. How do you plan to start to “true up” your inventories?  
+       ```answer  
+       Make the inventories clear.  
+       Separate the hosts into groups depending on their roles and tasks  
+       they're meant to perform.    
+       Add appropriate variables for either specific machines (if needed), or  
+       variables for entire groups, which can then be used in playbooks to  
+       determine which tasks need to be done on which hosts.    
+  
+       If the 100 Linux systems are all running the same operating system,  
+       great. If not, start by grouping them by OS. Then at least we can apply  
+       the appropriate patch for the OS type.  
+  
+       If the vulnerabilities are to do with a specific application, then just  
+       having an inventory that is **complete** may be enough to apply the  
+       security patch.  
+       ```  
+  
+    2. How can you prevent this type of problem (if you think it is one) in the future?  
+       ```answer  
+       Just by having a complete, properly formatted inventory should be enough  
+       to apply patches in a timely manner.  
+       ```  
+  
+2. We often say in engineering, “Or you can do nothing”. This speaks to the possibility  
+   of just accepting the situation and allowing a system to keep running.  
+  
+    1. Can you do that in this situation, or must this be corrected? Why or why not?  
+       ```answer  
+       No, we can't just "do nothing." This needs to be corrected. A  
+       vulnerability in production systems is a security incident and needs to  
+       be remediated ASAP. Now, if we have an acceptable amount of downtime  
+       we'd probably patch these in cycles, a few at a time to keep downtime to  
+       a minimum. But yeah, we can't do nothing if there are vulnerabilities  
+       found within *all* systems.  
+       ```  
+  
 
 ## Definitions/Terminology
 
