@@ -163,13 +163,26 @@ cat /root/hosts_example3
 ```
 
 
-What file type are these? (https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html)?
+- What file type are these? (<https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html>)?
+    - These are INI formatted ansible inventories.  
 
-What other file types might you use for inventories?
+- What other file types might you use for inventories?
+    - INI
+    - YAML
 
-Do you have a preference on how the data are formatted, or where the variables are located on these?
+- Do you have a preference on how the data are formatted, or where the variables are located on these?
+    - I do. I prefer INI-style inventories for readability. The YAML variants
+      of ansible inventories look like a game of jenga with one piece left at
+      the bottom.
+      The inventories should be applied to groups (if applicable), I think
+      single-host inline variables are hard to maintain and don't work well if
+      we need to scale.  
 
-Do you think some of this looks better formatted or do you prefer it as yaml?
+- Do you think some of this looks better formatted or do you prefer it as yaml?
+    - I like the `hosts_example3` inventory most. This uses `:children` to make
+      sub-groups containing other groups, and applies variables to entire
+      groups rather than single-host variables -- though there are some for the
+      two nodes, this would be my pick for an inventory to scale.  
 
 Check the yaml versions of these files.
 ```bash
@@ -179,8 +192,10 @@ ansible-inventory -i /root/hosts_example3 --list -y
 ```
 
 
-This is a very high level review of the many ansible-inventory commands. It is recommended that you parse and play with these files more, as the concepts will continue to be built on in later labs.
-  
+This is a very high level review of the many `ansible-inventory` commands.  
+It is recommended that you parse and play with these files more, as the 
+concepts will continue to be built on in later labs.
+
 
 
 
