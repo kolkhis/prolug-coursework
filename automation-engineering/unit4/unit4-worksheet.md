@@ -185,6 +185,9 @@ Unit4 Lab from Lab book
           `ansible.builtin.command` module. I thought we always had to specify
           a module before arguments, so it's really need to see that we can
           just use arguments and use that default module.  
+        - I learned that Ansible only uses five connections at a time by default (changed with `-f`).  
+        - The command module does not support redirects/pipes, it's meant for
+          only one command at a time.  
 
     2. How are you going to use this in your current or future automations?
 
