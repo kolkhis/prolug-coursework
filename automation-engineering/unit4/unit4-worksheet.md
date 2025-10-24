@@ -111,7 +111,8 @@ methods you can use to verify those systems are operational?
   perform an action or retrieve data.  
 
 - Ad-hoc: Commands that are put together on the fly that are not part of a
-  larger automated process.  
+  larger automated process. They're intended to be run straight from the
+  command line and are non-reusable.  
 
 - Admin Commands: Administrative commands used to set values or get values from
   a system.  
@@ -180,11 +181,29 @@ Unit4 Lab from Lab book
 
     1. What did you learn about this that you didn’t know?
 
+        - I did not know that the default module for Ansible was the
+          `ansible.builtin.command` module. I thought we always had to specify
+          a module before arguments, so it's really need to see that we can
+          just use arguments and use that default module.  
+
     2. How are you going to use this in your current or future automations?
+
+        - Likely just for one-offs/ad-hoc commands. If we need to quickly
+          reboot a system, we can save a few keystrokes.  
+          ```bash
+          ansible server -a reboot
+          ansible server -a '/sbin/reboot' # More explicit (the example from the page)
+          ```
 
 ## Reflection Questions
 
 1. What questions do you still have about this week?
 
+    - What type of situations are usually presented that require stopgap
+      solutions in enterprise environments?
+
 2. How are you going to use what you’ve learned in your current role?
+
+    - I will apply these concepts to how I interact with my homelab
+      environment's automation tools.  
 
