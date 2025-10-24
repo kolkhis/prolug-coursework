@@ -107,31 +107,58 @@ methods you can use to verify those systems are operational?
 
 ## Definitions/Terminology
 
-- One-off
+- One-off: Commands that are not part of an automation, but are run to quickly
+  perform an action or retrieve data.  
 
-- Ad-hoc
+- Ad-hoc: Commands that are put together on the fly that are not part of a
+  larger automated process.  
 
-- Admin Commands
+- Admin Commands: Administrative commands used to set values or get values from
+  a system.  
 
-- Stop gap fix
+- Stop gap fix: A temporary solution to an immediate problem. A stopgap fix is
+  not meant to be a permenent solution to the problem, but should remediate it
+  long enough to get a permenent fix out.  
 
     - How does this relate to a full implementation?
+        - A full implementation is the stage where a system design is realized.  
+          This relates to stop gap fixes in that the full implementation is
+          likely flawed in some way and must be retooled to accommodate the
+          **permanent** fix to the problem.  
+
 
     - How does this relate to a systemic system problem?
+        - A systemic system problem would be an issue with the system
+          design/configuration itself. If a stopgap fix is needed, depending on
+          the problem, this could indicate a problem in how the system itself was 
+          designed, and may require changes to the system configuration/setup
+          process.  
+          For instance, if the system is provisioned via IaC, maybe with
+          Terraform, the permanent fix may need to be implemented within the
+          Terraform module itself.  
 
     - How does this relate to a systemic capacity problem?
+        - If the problem is a capacity issue, then the resources we allocate to
+          the system may need to be scaled.  
+          If we're routing traffic off a server as a stopgap due to being
+          unable to handle <N> amount of connections, then maybe we need to
+          look into the resources that are provisioned for the system itself
+          rather than how the system was built.  
 
-- System load (and utilization ((always as a percentage)) )
+- System load (and utilization ((always as a percentage)) ): The percentage of
+  resources that are being utilized by the system.  
 
-    - Averages
+    - Averages: The average/mean resource usage of a given type of resource.  
 
-    - High water mark
+    - High water mark: The highest acceptable load for a specific type of
+      resource.  
 
-    - Low water mark
+    - Low water mark: The lowest acceptable load for a specific type of
+      resource.  
 
-    - Spiking
+    - Spiking: A sudden, sharp increase in resource utilization.  
 
-    - Capacity
+    - Capacity: The total amount of resources the system has access to.  
 
 
 ## Notes During Lecture/Class:
