@@ -64,12 +64,45 @@ week’s misunderstanding. You have 110 servers currently in your inventory. Wha
 methods you can use to verify those systems are operational?
 
 1. How might you “touch” those servers every day?
+    - Maybe a simple ansible playbook that will SSH into the servers and run
+      some general commands to verify that the servers are up, and check the
+      status of our applications.  
 
 2. How might you plan to keep that inventory updated automatically?
 
+    - That depends entirely on the platform. If we have all those servers
+      virtualized on a cloud provider, a hypervisor cluster, or some other such
+      centralized platform, we could use the API to dynamically generate an
+      inventory for us, thus giving us a full view into all of our servers and
+      keeping our inventory up to date and complete.  
+
+    - Alternatively, we could manually maintain the inventory. Whenever a new
+      server is added, we put it in the inventory. This method requires far more toil
+      and is very prone to human error, and isn't very highly scalable.  
+
 3. How might you monitor those servers? (What tools can you find that would do this?)
 
+    - There are a number of observability tools out there. I'm most familiar
+      with the tooling provided by Grafana Labs:
+        - Grafana  
+        - Prometheus  
+            - w/ Node_Exporter  
+        - Loki
+            - w/ Promtail
+        - Alternatively, Alloy to replace Node_Exporter and Promtail.  
+    - ELK stack (ElasticSearch, Logstash, Kibana) is also a popular solution
+      for observability. This seems to now be called the Elastic Stack.  
+    - These ones are nice because they're free. There are also plenty of paid
+      solutions. 
+
 4. How might you present a report for these servers (to your team or others?)
+
+    - This could be done with a jinja template via ansible, since ansible
+      supports jinja2 templates out of the box. We could use an Ansible
+      playbook to check in on servers daily and populate a template with
+      relevant information, then either grab and send that manually to the team
+      or set up a webhook to integrate with whatever platform is being used
+      (e.g., Slack, Discord, etc.).  
 
 
 ## Definitions/Terminology
