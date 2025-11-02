@@ -25,18 +25,18 @@ Execute the api call and see if you can read the data.
       format it seems.
 
 - What does the script look like in bash?
-
-```bash
-cat /root/u3_script.sh
-```
+  ```bash
+  cat /root/u3_script.sh
+  ```
 
 - What tools or techniques were used to gather this data? Could you modify the api to call something else?
-    - Uses a curl to save response into a .json file, then parsed with jq to
-      format the output.  
-        - I don't think this is an API endpoint: <https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson>
-    - Could modify the URL with the given format: 
-      `https://earthquake.usgs.gov/fdsnws/event/1/[METHOD[?PARAMETERS]]`
-      So we could maybe specify a timeframe.
+    - **Answer:**
+        - Uses a `curl` to save response into a .json file, then parsed with `jq` to
+          format the output.  
+            - **side note:** I don't think this is an API endpoint: <https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson>, it seems to be a static file they make available daily.  
+        - Could modify the URL with the given format for the API: 
+          `https://earthquake.usgs.gov/fdsnws/event/1/[METHOD[?PARAMETERS]]`
+          So we could maybe specify a timeframe.
 
 Could you pipe this output to call only the fields between the "-", specifically the second field?
 
@@ -49,7 +49,7 @@ cat /root/users.csv
 ```
 
 - What do you notice about this data format? Can you parse this for just the first and third fields?
-    - It's comma-delimited (CSV), so we could use `read`, `cut`, or `awk` to easily
+    - **Answer:** It's comma-delimited (CSV), so we could use `read`, `cut`, or `awk` to easily
       parse this
 
 ```bash
@@ -57,11 +57,11 @@ cat /root/users.csv | awk -F , '{print $1,$3}'
 ```
 
 - Does this look correct to you? How might you use this data?
-    - This looks correct. This can be used to glean insight into statstics like average ages
+    - **Answer:** This looks correct. This can be used to glean insight into statstics like average ages
       and how many males vs. how many females.  
 
 - How might you strip the header off as you use the data?
-    - Use a condition for awk:
+    - **Answer:** Use a condition for awk:
       ```bash
       awk -F, 'NR > 1 {print $1, $3}' /root/users.csv
       ```
@@ -72,7 +72,7 @@ If you need to regenerate the data use this script.
 ```
 
 - Does it repopulate the data?
-    - Yes, it generates new data
+    - **Answer:** Yes, it generates new data
 
 ```bash
 cat /root/users.csv
@@ -100,7 +100,7 @@ Run the scripts and modify them to fit your needs.
   ```
 
 - What are you shown?
-    - It looks like earthquake information, showing magnitute, location, and
+    - **Answer:** It looks like earthquake information, showing magnitute, location, and
       time
 
 - Inspect the file and see if you can figure out what it was doing.
@@ -109,14 +109,14 @@ Run the scripts and modify them to fit your needs.
   ```
 
 - Note: Modify with vi or vim. Can you make this show the lowest 10 items, ordered by magnitude?
-    - Can change the sort functionality to not sort in reverse in order to
+    - **Answer:** Can change the sort functionality to not sort in reverse in order to
       print lowest magnitudes
       ```python
       earthquakes.sort(reverse=False, key=lambda x: x[0])
       ```
 
 - Can you generate a python script that parses the /root/users.csv file? (What resources might you use to do this?)
-    - A very simple script I wrote to simply print the data in a structured
+    - **Answer:** A very simple script I wrote to simply print the data in a structured
       format:
       ```python
       #!/usr/bin/python3
@@ -147,7 +147,7 @@ ansible-playbook /root/u3_script.yml
 ```
 
 - What are you shown?
-    - It seems to be the full output of the file pulled from our endpoint, `all_day.geojson`
+    - **Answer:** It seems to be the full output of the file pulled from our endpoint, `all_day.geojson`
 
 - Can you modify this output so show other interesting parts of the API calls?
 
@@ -164,14 +164,13 @@ cat /root/hosts_example3
 
 
 - What file type are these? (<https://docs.ansible.com/ansible/latest/inventory_guide/intro_inventory.html>)?
-    - These are INI formatted ansible inventories.  
+    - **Answer:** These are INI formatted ansible inventories.  
 
 - What other file types might you use for inventories?
-    - INI
-    - YAML
+    - **Answer:** INI, YAML, JSON
 
 - Do you have a preference on how the data are formatted, or where the variables are located on these?
-    - I do. I prefer INI-style inventories for readability. The YAML variants
+    - **Answer:** I do. I prefer INI-style inventories for readability. The YAML variants
       of ansible inventories look like a game of jenga with one piece left at
       the bottom.
       The inventories should be applied to groups (if applicable), I think
@@ -179,7 +178,7 @@ cat /root/hosts_example3
       we need to scale.  
 
 - Do you think some of this looks better formatted or do you prefer it as yaml?
-    - I like the `hosts_example3` inventory most. This uses `:children` to make
+    - **Answer:** I like the `hosts_example3` inventory most. This uses `:children` to make
       sub-groups containing other groups, and applies variables to entire
       groups rather than single-host variables -- though there are some for the
       two nodes, this would be my pick for an inventory to scale.  
