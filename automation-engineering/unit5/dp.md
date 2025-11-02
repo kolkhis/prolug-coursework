@@ -5,23 +5,34 @@ You know about variable precedence and have decided to study it for your Ansible
 Read <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_variables.html> and 
 answer the following questions:
 
-1. What is variable precedence and why should it matter?
+1. What is variable precedence and why should it matter?  
 
-    - Variable precedence is the order in which variables are evaluated.  
+    - Variable precedence is the order in which variables are evaluated,
+      determining which locations take priority.  
       This matters because those variable assignments evaluated last will be the ones 
       that take effect inside the play.  
       Setting default values for variables is handy, but you need to know which
       variable assignments (and where they happen) will take priority.  
 
-2. What does it mean to register a variable, and how is that variable used in the playbook?
+2. What does it mean to register a variable, and how is that variable used in the playbook?  
 
     - Registering a variable will typically save the output of a task into the
       variable itself.  
       The variable can be used in the play however you want, but we need to be
       aware that when we access the variable, it's in a JSON-type format, so we
       use dot notation to scope into the specific value that we need.  
+      ```yaml
+      - name: Test register
+        ansible.builtin.shell:
+          cmd: systemctl is-active firewalld
+        register: firewalld_active_output
 
-3. How might variables be useful at the end of an automation, in relation to reporting out what happened in the playbook?
+      - name: Show stdout of registered command output
+        ansible.builtin.debug:
+          var: firewalld_active_output
+      ```
+
+3. How might variables be useful at the end of an automation, in relation to reporting out what happened in the playbook?  
 
     - Variables can be extremely useful at the end of automation to generate
       reports (e.g., using jinja templates that use variables to populate the
@@ -36,18 +47,41 @@ You have reviewed filters
 <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_filters.html#providing-default-values>
 and think you have a good handle on what is happening.
 
-1. What is the variable name being called?
+1. What is the variable name being called?  
 
-2. What is the default value if that variable does not exist or is not populated?
+    - In the image, the variable is being called `testansible`.  
 
-3. What is the reason this might be nice in your executions if you want them always to complete?
+2. What is the default value if that variable does not exist or is not populated?  
 
-4. Is there a danger to always setting default values?
+    - The default value for `testansible` is `svc_ansible`.  
+
+3. What is the reason this might be nice in your executions if you want them always to complete?  
+
+    - Trying to access an unset or null value variable will cause the task to fail, so setting a
+      default value will stop that from happening.  
+
+4. Is there a danger to always setting default values?  
+
+    - Yeah, in instances where we **need** a specific variable to be tailored to 
+      the environment, where a default value is not going to be valid, would be 
+      dangerous.  
+      For instance, if we had to use credentials to authenticate with, say, a
+      database. We wouldn't want to store the password in plaintext as a
+      default value.  
 
 5. Or another way to ask that, is there a tradeoff between always finishing and 
-   sometimes having incorrectly set values?
+   sometimes having incorrectly set values?  
 
-6. Where will you use these in your automations?
+    - If there's a mission critical operation that is required to complete
+      successfully with specific values, we would not want an incorrectly set 
+      variable from using a default where we shouldn't.  
 
+6. Where will you use these in your automations?  
+
+    - For values that aren't required to be ultra-specific, defaults can be
+      really useful. Like if we have a playbook that sets up a Samba share, we
+      could set a default location for where to mount it, or if it's a Samba
+      server, a default location to share it from (like
+      `/srv/samba/sharename`).  
 
 
