@@ -31,21 +31,21 @@ chmod 755 *.py
    /root/u2_script1.sh
    ```
    What are you shown?
-    - Answer: /etc/passwd entries. The first 10 and the bottom 10 it seems.  
+    - **Answer:** /etc/passwd entries. The first 10 and the bottom 10 it seems.  
 
 2. Inspect the file and see if you can modify it to show the first 15 lines.
    ```bash
    cat /root/u2_script1.sh
    ```
    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
-    - Answer: Changed `head -n 10` to `head -n 15`
+    - **Answer:** Changed `head -n 10` to `head -n 15`
 
 3. Run the u2_script2.sh and look at what it shows you.
    ```bash
    /root/u2_script2.sh
    ```
    What happened in the script? Did it work correctly?
-    - Answer: It created a logfile that contains the full date, the filename contains the date in `YYYY-MM-DD` format
+    - **Answer:** It created a logfile that contains the full date, the filename contains the date in `YYYY-MM-DD` format
    ```bash
    ls -l /root
    ```
@@ -55,7 +55,7 @@ chmod 755 *.py
    ```bash
    cat /root/u2_script2.sh
    ```
-    - Answer: Change this line:
+    - **Answer:** Change this line:
       ```bash
       date >> ~/log.`date +%F`.txt
       ```
@@ -71,22 +71,19 @@ their structure and their output.
 
 Is there anything you would add for your scripts?
 
-```answer
-- Maybe a bit more output describing what is happening. Maybe also timestamping 
+- **Answer:** Maybe a bit more output describing what is happening. Maybe also timestamping 
   the messages, as well as some error handling to account for failed commands.  
-```
 
 If you would add something, how does it improve the code?
 
-```answer
-- More output enables us to tell what state the script is in, and where it's at
-  in execution.  
-- Timestamps help us determine when things are happening (more
-  useful for a script that's actually logging out to a file somewhere, though).
-- Error handling is super handy, allowing us to have some backup
-  solution/command, potentially exit if the command is required to run for the
-  rest of the script to run, or even just tell us that the command failed.  
-```
+- **Answer:**
+    - More output enables us to tell what state the script is in, and where it's at
+      in execution.  
+    - Timestamps help us determine when things are happening (more
+      useful for a script that's actually logging out to a file somewhere, though).
+    - Error handling is super handy, allowing us to have some backup
+      solution/command, potentially exit if the command is required to run for the
+      rest of the script to run, or even just tell us that the command failed.  
 
 ### Python execution
 
@@ -95,14 +92,14 @@ If you would add something, how does it improve the code?
    /root/u2_script1.py
    ```
    What are you shown?
-    - Answer: This output seems to also be `/etc/passwd` entries.  
+    - **Answer:** This output seems to also be `/etc/passwd` entries.  
 
 2. Inspect the file and see if you can modify it to show the first and last 15 lines.
    ```bash
    cat /root/u2_script1.py
    ```
    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
-    - Answer: Change these lines:
+    - **Answer:** Change these lines:
       ```python
       print("".join(lines[:10]))
       print("...")
@@ -119,7 +116,7 @@ If you would add something, how does it improve the code?
    /root/u2_script2.py
    ```
    What are you shown?
-    - Answer: I see `root` and `node_exporter`. These are the two
+    - **Answer:** I see `root` and `node_exporter`. These are the two
       user accounts that have access to bash as their shell.  
 
 4. Inspect the file and see if you can make it use a different user shell, maybe one you've seen from
@@ -128,7 +125,7 @@ If you would add something, how does it improve the code?
    cat /root/u2_script2.py
    ```
    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
-    - Answer: Change this line:
+    - **Answer:** Change this line:
       ```python
       if line.strip().endswith("/bin/bash"):
       # Change to:
@@ -138,7 +135,7 @@ If you would add something, how does it improve the code?
 As you’re interacting with the OS, are there any observations you have about how the scripts are set up,
 their structure and their output. Is there anything you would add for your scripts?
 
-- Maybe we could add some command-line options. Instead of manually needing to
+- **Answer:** Maybe we could add some command-line options. Instead of manually needing to
   go in and set the shell to a different one, we could allow the user to pass
   in an argument and search for that.  
   Something like: 
@@ -149,7 +146,7 @@ their structure and their output. Is there anything you would add for your scrip
 
 If you would add something, how does it improve the code?
 
-- That adds flexibility. It turns it into more of a command-line tool rather
+- **Answer:** That adds flexibility. It turns it into more of a command-line tool rather
   than just a script. Parsing user-inputted arguments can make the script
   extremely flexible, and allow us to achieve different behavior with the same
   script.  
@@ -160,7 +157,7 @@ If you would add something, how does it improve the code?
    ansible-playbook /root/u2_script1.yml
    ```
    What are you shown?
-    - Playbook output that indicates we're generating two scripts on the localhost.  
+    - **Answer:** Playbook output that indicates we're generating two scripts on the localhost.  
 
 
 2. Inspect the file and see if you can modify it to show the first and last 15 lines.
@@ -168,7 +165,7 @@ If you would add something, how does it improve the code?
    cat /root/u2_script1.yml
    ```
    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
-    - Answer: Change the content of the scripts being generated:
+    - **Answer:** Change the content of the scripts being generated:
       ```yaml
       - name: Create generated_script 1
         copy:
@@ -186,7 +183,7 @@ If you would add something, how does it improve the code?
    ansible-playbook /root/u2_script2.yml
    ```
    What are you shown?
-    - Answer: It shows the output of the scripts that were created with the
+    - **Answer:** It shows the output of the scripts that were created with the
       first playbook. 
 
 4. Inspect the file and see if you can make it name the file differently or populate different content.
@@ -194,7 +191,7 @@ If you would add something, how does it improve the code?
    cat /root/u2_script2.yml
    ```
    Note: Modify with `vi` or `vim`. You may have to RTFM to continue.
-    - Answer: The wording on this one is a little confusing. The playbook does not 
+    - **Answer:** The wording on this one is a little confusing. The playbook does not 
       create any files. I'm going to assume we mean "rename the output variable".  
       E.g.:
       ```bash
@@ -221,7 +218,7 @@ If you would add something, how does it improve the code?
    ```bash
    ls -l
    ```
-    - Answer: Different file extensions, to state the obvious. In that same
+    - **Answer:** Different file extensions, to state the obvious. In that same
       vein, the different file extensions tell us about what type of automation
       they are, and how we might go about executing them. The `.sh` file
       extensions can likely be executed directly from the shell. The `.py`
@@ -234,10 +231,11 @@ how the scripts are set up, their structure and their output.
 
 - Is there anything you would add for your scripts?
 
-For the playbooks, reporting out to an external source would be good.
+**Answer:** For the playbooks, reporting out to an external source would be good.
 
 - If you would add something, how does it improve the code?
 
-This would not require us to be at the terminal to see the result of the playbook
+**Answer:** This would not require us to be at the terminal to see the result of the playbook
 execution. For instance, a webhook integration (like you've got set up for the
 ProLUG environment) would be a good addition.  
+
