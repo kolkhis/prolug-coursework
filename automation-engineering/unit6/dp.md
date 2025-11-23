@@ -14,9 +14,23 @@ Read to answer the following questions:
 
 1. What is release engineering?  
 
+    - Release engineering is, broadly speaking, a discipline of software engineering that focuses on automated build deployments and delivery of software.  
+
 2. What are the release engineering principles?  
 
+    1. Reproducible Builds: The build system should be able to take the inputs and produce **repeatable artifacts** (the product of the build, e.g., the compiled binary of the source code).  
+    2. Automated Builds: Once the code is checked in (e.g., with the `checkout` action in GitHub Actions), automation should produce build artifacts to then be uploaded to a storage system.  
+    3. Automated Tests: Once the build system produces artifacts, automated tests should be used to ensure they function as intended.  
+    4. Automated Deployments: Deployments should be performed by computers, not humans.  
+    5. Small Deployments: Build artifacts should contain small, self-contianed changes. This makes it easier to troubleshoot problematic areas of the pipeline.  
+
 3. How do the tools we’ve discussed this week, Apptainer, Packer, Terraform, or even Ansible fit into these topics?  
+
+    - These tools are important in release engineering for several reasons.
+      They are essential in some of the release engineering principles. For
+      one, Terraform allows us to enforce **reproducible builds**, as well as **automated builds**.
+      Apptainer and Packer also help will reproducible and automated builds.  
+      All these tools contribute to automated deployments.  
 
 
 
