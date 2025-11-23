@@ -84,6 +84,7 @@ https://apptainer.org/docs/user/latest/introduction.html#why-use-apptainer
 | **Portability** | Images tied to specific platforms. | One portable `.sif` works everywhere with Apptainer.
 | **Learning Curve** | Moderate (builders, provisioners). | Low (simple definition files).
 | **Analogy** | A factory that produces machines. | A sealed box containing an app.
+
 3. Modify or fix the drawing to show how your team will deploy containers.
 
 
@@ -111,12 +112,12 @@ https://apptainer.org/docs/user/latest/introduction.html#why-use-apptainer
 
 ### Links
 
-- Apptainer: https://apptainer.org/docs/user/latest/
-- Packer Tutorial Library: https://developer.hashicorp.com/tutorials/library?product=packer&edition=open_source
-    - Packer with github actions: https://developer.hashicorp.com/packer/tutorials/cloud-production/github-actions
-    - Provisioning: https://developer.hashicorp.com/packer/tutorials/docker-get-started/docker-get-started-provision
+- Apptainer: <https://apptainer.org/docs/user/latest/>
+- Packer Tutorial Library: <https://developer.hashicorp.com/tutorials/library?product=packer&edition=open_source>
+    - Packer with github actions: <https://developer.hashicorp.com/packer/tutorials/cloud-production/github-actions>
+    - Provisioning: <https://developer.hashicorp.com/packer/tutorials/docker-get-started/docker-get-started-provision>
 - Terraform
-    - With Docker: https://developer.hashicorp.com/terraform/tutorials/docker-get-started
+    - With Docker: <https://developer.hashicorp.com/terraform/tutorials/docker-get-started>
 
 
 ### Terms
