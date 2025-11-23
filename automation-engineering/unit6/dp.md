@@ -8,6 +8,7 @@ The main problems have been around reliably building the exact same environment
 and also making those builds happen in a timely manner.  
 
 Read to answer the following questions: 
+
 - <https://sre.google/sre-book/release-engineering/>
 - <https://sre.google/workbook/canarying-releases/> 
 
@@ -15,6 +16,7 @@ Read to answer the following questions:
 1. What is release engineering?  
 
     - Release engineering is, broadly speaking, a discipline of software engineering that focuses on automated build deployments and delivery of software.  
+      It's a practice with a heavy focus on the automated build and deployment of applications.  
 
 2. What are the release engineering principles?  
 
