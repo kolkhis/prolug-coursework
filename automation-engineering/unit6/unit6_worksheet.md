@@ -45,16 +45,45 @@ tools for container deployments. You’ve been tasked with making the decision b
 two packages. Read the following: https://developer.hashicorp.com/packer/docs/intro and
 https://apptainer.org/docs/user/latest/introduction.html#why-use-apptainer
 
-1. Can you describe apptainer and packer?
+1. Can you describe Apptainer and Packer?  
 
-2. How would you make the decision between the two of these tools? (You may want to make a table)
+    - Both of these tools are used to manage machine images.  
+        - A machine image is a file that contains a pre-configured OS with installed software for use with containerization/virtualization platforms.  
+    - Packer: It's considered very lightweight, highly portable, and highly performant.  
+        - It stores the metadata associated with the artifacts that we build, but not the artifacts themselves.  
+        - It functions around artifact **creators** and artifact **consumers**.  
+    - Apptainer: It's a container platform that allows you to create and run containers that package software. Focuses on reproducibility and security by using cryptographic signatures and immutable container image formats, as well as in-memory decryption.  
+        - It's primarily used for managing container machine images.  
 
-    1. What do they both do?
+2. How would you make the decision between the two of these tools? (You may want to make a table)  
+    - What do they both do?  
+        - Both are used to automate building reproducible environments.  
 
-    2. What do only one or the other do?
+    - What do only one or the other do?  
+        - Apptainer builds and runs containers. Packer only builds.  
 
-    3. What are the strengths and weaknesses of each?
+    - What are the strengths and weaknesses of each?  
+        - Packer:  
+            - Builds VM/OS images for cloud or virtual machines.  
+            - Ideal for DevOps infrastructure stuff.  
+        - Apptainer:  
+            - Builds and runs portable and secure containers.  
+            - More for application portability and HPC workflows.  
+        - See table for more (markdown table rendered on GH cuz Discord does not support tables. I did use AI to help with creating this)  
 
+| Feature / Aspect | **Packer** | **Apptainer**
+|------------------|-------------|----------------
+| **Purpose** | Builds machine images. | Builds and runs containers.
+| **Focus** | Infrastructure / VM templates. | HPC, science, secure app containers.
+| **Output** | VM images, cloud images, Docker bases. | `.sif` container files.
+| **Runs Containers?** | No. Only builds images. | Yes. Also builds them.
+| **Root Required?** | Often yes (depending on builder). | No root needed to run containers.
+| **Best Use Case** | Automating OS or VM image creation. | Reproducible apps on shared HPC systems.
+| **Strengths** | Multi-platform image building; integrates with Terraform/CI. | Secure, portable, user-space containers; works with SLURM/MPI.
+| **Weaknesses** | Not for runtime; platform-specific output. | Limited outside HPC; not a VM-image tool.
+| **Portability** | Images tied to specific platforms. | One portable `.sif` works everywhere with Apptainer.
+| **Learning Curve** | Moderate (builders, provisioners). | Low (simple definition files).
+| **Analogy** | A factory that produces machines. | A sealed box containing an app.
 3. Modify or fix the drawing to show how your team will deploy containers.
 
 
