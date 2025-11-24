@@ -97,6 +97,8 @@ https://apptainer.org/docs/user/latest/introduction.html#why-use-apptainer
 
 - Container/Runtime Environment: Responsible for running containerizaed
   applications.  
+    - The CRE manages the lifecycle of containers by pulling container images,
+      unpacking them, and running them as isolated processes on the host OS.  
 
 - CI/CD: Continuous Integration / Continuous Delivery
     - The practice of automating the building, testing, and deployments of
