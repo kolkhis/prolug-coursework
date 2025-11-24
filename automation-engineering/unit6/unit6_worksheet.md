@@ -96,9 +96,11 @@ https://apptainer.org/docs/user/latest/introduction.html#why-use-apptainer
 
 - Container/Runtime Environment
 
-- CI/CD
+- CI/CD: Continuous Integration / Continuous Delivery
+    - The practice of automating the building, testing, and deployments of
+      software applications.  
 
-- Release engineering
+- Release Engineering
     - Releases
     - Code base
     - Code changes
