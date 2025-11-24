@@ -90,7 +90,8 @@ https://apptainer.org/docs/user/latest/introduction.html#why-use-apptainer
 
 ## Definitions/Terminology
 
-- Docker Images
+- Docker Images: Machine images that are used for containerization.  
+    - These are single-unit files that are bundled with an operating system and other software.
 
 - Docker processes
 
