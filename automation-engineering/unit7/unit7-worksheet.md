@@ -53,14 +53,42 @@ Your team is having problems with a deployment. This is the
 code snippet they are using.
 
 1. What is the provider they are using?
+   ```txt
+   They're using the kreuzwerker/docker provider, which is the standard
+   provider used for Docker.  
+   ```
+
 2. How many docker instance are they trying to run, and what are their names?
+   ```txt
+   There are 3 instances they're spinning up with this terraform config.  
+   There's nginx8080, nginx8081, and nginx8082.  
+   All 3 instances are using the docker_image resource named "nginx".  
+   ```
+   
 	- What ports are they going to be running on?
-3. Your team is having problems executing this and have brought it to you. What might
-you check, or do with terraform to try to resolve the issue?
+      ```txt
+      8080, 8081, and 8082
+      ```
+
+3. Your team is having problems executing this and have brought it to you. What 
+   might you check, or do with terraform to try to resolve the issue?
+   ```txt
+   I'd probably try to use `terraform fmt` and `terraform validate` and see if the 
+   config is valid first and foremost.  
+   ```
 	- If it’s telling you there are no providers?
+      ```txt
+      Use `terraform init` to download providers.
+      ```
 	- If it’s saying there’s a syntax problem (how can you find it)?
+      ```txt
+      Use `terraform validate` to check syntax
+      ```
 	- If there are no resources created?
-	
+      ```txt
+      Use `terraform plan` to see what exactly the configuration will do.
+      ```
+
 ```hcl
 terraform {
 	required_providers {
